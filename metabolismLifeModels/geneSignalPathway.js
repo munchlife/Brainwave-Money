@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        wavePheromoneExpiration: {
+        signalPheromoneExpiration: {
             type: DataTypes.DATE,
             allowNull: true,
             defaultValue: null,
@@ -43,7 +43,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        reinforcementWavePheromone: {
+        reinforcementSignalPheromone: {
             type: DataTypes.STRING( SIGNAL_PATHWAY_TOKEN_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
@@ -54,7 +54,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        reinforcementWavePheromoneExpiration: {
+        reinforcementSignalPheromoneExpiration: {
             type: DataTypes.DATE,
             allowNull: true,
             defaultValue: null,
@@ -105,9 +105,6 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         instanceMethods: {
-            generateWavePheromone: function() {
-                return charges.renderCharges(this.instanceId.cellUltrasoundPing.constructiveInterference === charges.x);
-            },
         }
     });
 

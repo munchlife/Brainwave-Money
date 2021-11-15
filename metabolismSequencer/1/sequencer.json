@@ -1,0 +1,39 @@
+{
+    "currency-code" : "CHARGES",
+    "categories" :
+    [
+     {
+        "position" : "0",
+        "name" : "Related News Articles",
+        "description" : "",
+        "items" :
+        [
+         {
+            "position" : "0",
+            "item-id" : "10001000",
+            "name" : "US Intelligence Releases Report Covid 19 Origins",
+            "description" : "U.S. spy agencies say origins of COVID-19 may never be known",
+            "charge" : "charge",
+            "option-selected" : "NO",
+            "option-required" : "NO",
+            "options" :
+            [
+            ]
+         },
+         {
+            "position" : "1",
+            "item-id" : "10002000",
+            "name" : "US Intelligence Community Still Divided Covid 19s Origin Summary",
+            "description" : "U.S. intelligence community says cannot solve COVID mystery without China",
+            "charge" : "charge",
+            "option-selected" : "NO",
+            "option-required" : "NO",
+            "options" :
+            [
+            ]
+         },
+    ],
+    "info" : {
+        "version" : 1
+    }
+}

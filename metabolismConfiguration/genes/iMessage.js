@@ -129,12 +129,12 @@ module.exports = function() {
                   /*signalPathwayId: 0,*/
                     signalPheromone:                        result.data.access_token,
                     signalPheromoneExpiration:              new Date(new Date().getTime() + ((result.data.expire_in-3)*1000)),
-                    reinforcementWavePheromone:           result.data.refresh_token,
-                    reinforcementWavePheromoneExpiration: null,
-                    optional:                             null
-                  /*lifeId:                               null,*/
-                  /*cellId:                               null,*/
-                  /*geneId:                               null*/
+                    reinforcementSignalPheromone:           result.data.refresh_token,
+                    reinforcementSignalPheromoneExpiration: null,
+                    optional:                               null
+                  /*lifeId:                                 null,*/
+                  /*cellId:                                 null,*/
+                  /*geneId:                                 null*/
                 };
                 console.log(signalPathwayData)
                 //this.signalPathwayData = signalPathwayData;

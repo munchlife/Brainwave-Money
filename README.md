@@ -2,4 +2,6 @@
 
 # Munch
 
-© 2013-2015 MunchAmerica, Inc.
+Munch is a digital metabolism exposing a genetic programming environment for evolving earth and its life.
+
+© 2021 MunchAmerica, Inc.

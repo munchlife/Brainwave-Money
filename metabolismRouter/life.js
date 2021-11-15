@@ -55,15 +55,15 @@ var authCallback = function(req, res, lifeId, geneId) {
         return geneAPI.authenticateCallback(req.query.code, req.headers.host + '/v1', life.lifeId, null);
     })
     .then(function(newSignalPathway) {
-      /*newSignalPathway.signalPathwayId:                      0,*/
-      /*newSignalPathway.signalPheromone:                      set by geneAPI*/
-      /*newSignalPathway.signalPheromoneExpiration:            set by geneAPI*/
-      /*newSignalPathway.reinforcementWavePheromone:           set by geneAPI*/
-      /*newSignalPathway.reinforcementWavePheromoneExpiration: set by geneAPI*/
-      /*newSignalPathway.optional:                             set by geneAPI*/
-        newSignalPathway.lifeId                                = this.life.lifeId;
-      /*newSignalPathway.cellId:                               null,*/
-        newSignalPathway.geneId                                = this.gene.geneId;
+      /*newSignalPathway.signalPathwayId:                        0,*/
+      /*newSignalPathway.signalPheromone:                        set by geneAPI*/
+      /*newSignalPathway.signalPheromoneExpiration:              set by geneAPI*/
+      /*newSignalPathway.reinforcementSignalPheromone:           set by geneAPI*/
+      /*newSignalPathway.reinforcementSignalPheromoneExpiration: set by geneAPI*/
+      /*newSignalPathway.optional:                               set by geneAPI*/
+        newSignalPathway.lifeId                                  = this.life.lifeId;
+      /*newSignalPathway.cellId:                                 null,*/
+        newSignalPathway.geneId                                  = this.gene.geneId;
 
         return metabolism.GeneSignalPathway.create(newSignalPathway);
     })

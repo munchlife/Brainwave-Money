@@ -1,0 +1,67 @@
+{
+  "name": "munch",
+  "version": "0.1.0",
+  "description": "Server side environment for Munch API endpoints and serving up the frontend of the website.",
+  "homepage": "http://www.munchmode.com",
+  "private": "true",
+  "main": "server.js",
+  "author": {
+    "name": "Joe Kramer",
+    "email": "joe@munchmode.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/"
+  },
+  "bugs": {
+    "email": "joe@munchmode.com"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.1.0",
+    "bower": "^1.3.12",
+    "continuation-local-storage": "^3.1.4",
+    "debug": "^2.2.0",
+    "ejs": "^2.3.2",
+    "express": "^4.13.0",
+    "formidable": "^1.0.17",
+    "jwt-simple": "^0.2.0",
+    "morgan": "^1.6.0",
+    "mv": "^2.1.1",
+    "mysql": "^2.7.0",
+    "nodemailer": "^1.4.0",
+    "passport": "^0.2.2",
+    "passport-http-bearer": "^1.0.1",
+    "passport-local": "^1.0.0",
+    "phone": "^1.0.4",
+    "random-js": "^1.0.4",
+    "randomstring": "^1.0.6",
+    "restling": "^0.9.1",
+    "sequelize": "^2.1.3",
+    "twilio": "^2.3.0"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "chai-as-promised": "^5.1.0",
+    "chai-passport-strategy": "^0.2.0",
+    "istanbul": "^0.3.17",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.4",
+    "sinon-chai": "^2.8.0",
+    "supertest": "^1.0.1"
+  },
+  "scripts": {
+    "start": "node ./bin/munch",
+    "test": "make test"
+  },
+  "keywords": [
+    "munch",
+    "api"
+  ],
+  "readme": "Munch server side for website and APIs\n",
+  "readmeFilename": "README.md",
+  "//": [
+    "COMMENT SECTION:",
+    "Add 'url' into bugs with link to bug tracker",
+    "Maybe remove 'cookie-parser' from dependencies"
+  ]
+}

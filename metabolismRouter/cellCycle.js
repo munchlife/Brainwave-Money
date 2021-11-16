@@ -8,14 +8,14 @@ var verbose = require('debug')('munch:verbose:routes:Cell:Cycle');
 var express = require('express');
 
 // Local js modules
-var metabolism     = require('../../models/database');
-var Cycles         = require('../../config/cycle');
-var CycleOutsiders = require('../../config/cycleOutsider');
-var CycleLifes     = require('../../config/cycleLife');
-var Immunities     = require('../../config/immunities');
-var Genes          = require('../../config/genes');
-var Blockages      = require('../../config/blockages');
-var CycleType      = require('../../data/cycleTypes');
+var metabolism     = require('../../metabolismLifeModels/database');
+var Cycles         = require('../../metabolismConfiguration/cycle');
+var CycleOutsiders = require('../../metabolismConfiguration/cycleOutsider');
+var CycleLifes     = require('../../metabolismConfiguration/cycleLife');
+var Immunities     = require('../../metabolismConfiguration/immunities');
+var Genes          = require('../../metabolismConfiguration/genes');
+var Blockages      = require('../../metabolismConfiguration/blockages');
+var CycleType      = require('../../metabolismTypes/cycleTypes');
 
 var validate = metabolism.Sequelize.Validator;
 

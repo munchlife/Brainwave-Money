@@ -2,7 +2,7 @@
 
 // cellDevice.js (model)
 
-var CellDeviceType = require('../data/cellDeviceTypes');
+var CellDeviceType = require('../metabolismTypes/cellDeviceTypes');
 
 var DEVICE_SERIAL_NUM_MAX_LENGTH = 100;
 var DEVICE_DESCRIPTION_MAX_LENGTH = 255;

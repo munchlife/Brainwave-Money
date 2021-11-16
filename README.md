@@ -8,7 +8,7 @@ The digital metabolism is designed to work for any life type and allows life to 
 
 The digital metabolism can be deployed by running a the code on a "digital cell" instance that "mines" information carried in bioelectromagnetic signals through an electromagnetic or ultrasound beacon connected to Your front-end application.
 
-TODO: Include reference instance(s) that pegs the "charges" API of the digital metabolism to the ionospheric ("schumann") resonances so as to provide a clearinghouse used to obtain planetarily-sound validity of information cycles by comparing the waveform of a life or cell signal with the waveform of the ionosphere resonances.
+TODO: Include reference instance(s) that pegs the "charge" functions of the digital metabolism to the ionospheric ("schumann") resonances so as to provide a clearinghouse used to obtain planetarily-sound validity of information cycles by comparing the waveform of a life or cell signal with the waveform of the ionosphere resonances.
 
 [GET] /cell/instance/interferometer?
 

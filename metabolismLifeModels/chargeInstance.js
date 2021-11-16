@@ -2,7 +2,7 @@
 
 // chargeInstance.js (model)
 
-var CountryCodes = require('../data/countryCodes');
+var CountryCodes = require('../metabolismTypes/countryCodes');
 
 var LOCATION_NAME_MAX_LENGTH = 255;
 var LOCATION_WEBSITE_MAX_LENGTH = 255;

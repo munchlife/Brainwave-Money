@@ -1,6 +1,6 @@
 'use strict';
 
-// cycleOutsiderType_5814.js (model)
+// cycleOutsiderType_4815.js (model)
 
 // Local js modules
 var metabolism = require('../../metabolismLifeModels/database');

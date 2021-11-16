@@ -3,8 +3,8 @@
 // cycleOutsiderType_5814.js (model)
 
 // Local js modules
-var metabolism        = require('../../models/database');
-var CycleType = require('../../data/cycleTypes');
+var metabolism = require('../../metabolismLifeModels/database');
+var CycleType  = require('../../metabolismTypes/cycleTypes');
 
 module.exports = function(cellId, cycleLife) {
 
@@ -107,7 +107,7 @@ module.exports = function(cellId, cycleLife) {
                 section = self.gpsReadyForProcessing;
                 break;
 
-            case CycleType.lifeStatusType.ENUM.PRCSPY.status: // Process Signal
+            case CycleType.lifeStatusType.ENUM.PRCSSG.status: // Process Signal
                 section = self.gpsProcessSignal;
                 break;
 

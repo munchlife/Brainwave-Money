@@ -3,10 +3,9 @@
 // cycleLifeType_5814.js (model)
 
 // Local js modules
-var metabolism  = require('../../models/database');
+var metabolism  = require('../../metabolismLifeModels/database');
 var Blockages   = require('../blockages');
-var CycleType   = require('../../data/cycleTypes');
-// var Charges  = require('../../routes/charge');
+var CycleType   = require('../../metabolismTypes/cycleTypes');
 
 module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
 
@@ -213,7 +212,7 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
                 section = self.lifePipelineSectionReadyForProcessing;
                 break;
 
-            case CycleType.lifeStatusType.ENUM.PRCSGN.status: // Process Signal
+            case CycleType.lifeStatusType.ENUM.PRCSSG.status: // Process Signal
                 section = self.lifePipelineSectionProcessSignal;
                 break;
 

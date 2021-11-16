@@ -2,7 +2,7 @@
 
 // geneStakeholder.js (model)
 
-var STAFF_PERMISSIONS_MAX = 256;
+var STAKEHOLDER_PERMISSIONS_MAX = 256;
 
 module.exports = function(sequelize, DataTypes) {
     var GeneStakeholder = sequelize.define('GeneStakeholder', {

@@ -2,7 +2,7 @@
 
 // lifeDevice.js (model)
 
-var LifeDeviceType = require('../data/lifeDeviceTypes');
+var LifeDeviceType = require('../metabolismTypes/lifeDeviceTypes');
 
 var DEVICE_SERIAL_NUM_MAX_LENGTH = 100;
 var DEVICE_DESCRIPTION_MAX_LENGTH = 255;

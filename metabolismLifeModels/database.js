@@ -15,7 +15,7 @@ var phone     = require('phone');
 
 // Local js modules
 var env    = process.env.NODE_ENV || 'development';
-var config = require('../config/metabolismSettings')[env];
+var config = require('../metabolismConfiguration/metabolismSettings')[env];
 
 // -----------------------------------------------------------------------------
 // INTIALIZE & CONNECT METABOLISM
@@ -25,7 +25,7 @@ var metabolism = {};
 // create namespace used for managed transactions in Sequelize
 Sequelize.cls = cls.createNamespace('munch-sequelize-namespace');
 
-// new Sequelize(database, lifename, password, { attributes });
+// new Sequelize(database, username, password, { attributes });
 var sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host || 'localhost', // custom host; default: 'localhost'
 //  port: 3306,                 // custom port; default: 3306

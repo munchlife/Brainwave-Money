@@ -705,10 +705,10 @@ router.get('/:id/sequencer', function(req, res) {
     });
 });
 
-// /cell/instance/search?constructiveInterference=[constructiveInterferenceitude]&destructiveInterference=[destructiveInterferencegitude]&constructiveInterferenceD=[constructiveInterferenceitude region delta]&destructiveInterferenceD=[destructiveInterferencegitude region delta]
-// --- retrieve array of instances in given mapped area (constructiveInterference, destructiveInterference, constructiveInterferenceDelta, destructiveInterferenceDelta)
-router.get('/instance/search', function(req, res) {
-    debug('[GET] /cell/instance/search?');
+// /cell/instance/interferometer?constructiveInterference=[constructiveInterference]&destructiveInterference=[destructiveInterference]&constructiveInterferenceD=[constructiveInterference region delta]&destructiveInterferenceD=[destructiveInterference region delta]
+// --- retrieve array of instances in a given area covered by the interferometer (constructiveInterference, destructiveInterference, constructiveInterferenceDelta, destructiveInterferenceDelta)
+router.get('/instance/interferometer', function(req, res) {
+    debug('[GET] /cell/instance/interferometer?');
     var constructiveInterference      = validate.toFloat(req.query.constructiveInterference);
     var destructiveInterference       = validate.toFloat(req.query.destructiveInterference);
     var constructiveInterferenceDelta = validate.toFloat(req.query.constructiveInterferenceD);

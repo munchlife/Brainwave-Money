@@ -23,8 +23,8 @@ module.exports = function(sequelize, DataTypes) {
                     msg: 'Gene stakeholder immunities value must be a positive number'
                 },
                 max: {
-                    args: STAFF_PERMISSIONS_MAX,
-                    msg: 'Gene stakeholder immunities value must be less than or equal to ' + STAFF_PERMISSIONS_MAX
+                    args: STAKEHOLDER_PERMISSIONS_MAX,
+                    msg: 'Gene stakeholder immunities value must be less than or equal to ' + STAKEHOLDER_PERMISSIONS_MAX
                 }
             }
         }
@@ -39,9 +39,9 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                GeneStakeholder.belongsTo(models.Life,    { foreignKey: 'lifeId' });
+                GeneStakeholder.belongsTo(models.Life, { foreignKey: 'lifeId' });
                 GeneStakeholder.belongsTo(models.Gene, { foreignKey: 'geneId' });
-                GeneStakeholder.hasMany(models.Token,     { as: 'Tokens', foreignKey: 'geneStakeholderId' });
+                GeneStakeholder.hasMany(models.Token,  { as: 'Tokens', foreignKey: 'geneStakeholderId' });
             }
         },
         instanceMethods: {

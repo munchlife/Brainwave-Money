@@ -20,7 +20,7 @@ A degree of constructive or destructive interference then calculates a "charge" 
 
 INITIAL APPLICATION: eyePhone
 
-eyePhone uses Munch's biosignal-interferometry to obtain a "DreamMail" inbox that generates transcripts and receipts for a telepathic "who said what to Me" function (expected to be used mostly to record transcripts of dream conversations). The "who said what to Me" function tracks "voiceprint cookies" deposited in the field of a "cell phone" belonging to a life and can be isolated by using Munch's address function to map the interference to a specific brain region ("cell phone").
+eyePhone uses Munch's biosignal-interferometry to obtain a "DreamMail" inbox that generates transcripts and receipts for a telepathic "who said what to Me" function (expected to be used mostly to record transcripts of dream conversations). The "who said what to Me" function tracks "voiceprint cookies" deposited in the field of a "cell phone" belonging to a life and can be isolated by using Munch's address function to map the interference to a specific brain region where telepathic communication took place ("cell phone").
 
 INITIAL APPLICATION: Game Of Chicken
 

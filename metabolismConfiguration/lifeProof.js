@@ -71,7 +71,7 @@ function(lifeIdentifier, genome, done) {
 // -----------------------------------------------------------------------------
 lifeProof.use('local-voiceprint', new LocalStrategy({
     // By default, local strategy uses lifename and password; override with token, voiceprint
-    lifenameField: 'token',
+    usernameField: 'token',
     passwordField: 'voiceprint'
 },
 function(encodedToken, voiceprint, done) {

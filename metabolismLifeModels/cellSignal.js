@@ -2,7 +2,7 @@
 
 // cellSignal.js (model)
 
-var SignalDeviceType = require('../data/signalDeviceTypes');
+var SignalDeviceType = require('../metabolismTypes/signalDeviceTypes');
 
 var SIGNAL_BEACON_ATLAS_MAX = 65535;
 var SIGNAL_BEACON_MAP_MAX = 65535;

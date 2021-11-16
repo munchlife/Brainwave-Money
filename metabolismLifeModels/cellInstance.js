@@ -2,7 +2,7 @@
 
 // cellInstance.js (model)
 
-var CountryCodes = require('../data/countryCodes');
+var CountryCodes = require('../metabolismTypes/countryCodes');
 var charges = require('electric-field-demo');
 
 var INSTANCE_NAME_MAX_LENGTH = 255;
@@ -42,15 +42,15 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: true,
             validate: {
                 isFloat: {
-                    msg: 'Instance constructive interferenceitude value must be a number'
+                    msg: 'Instance constructive interference value must be a number'
                 },
                 min: {
                     args: -90.0,
-                    msg: 'Instance constructive interferenceitude value must be greater than or equal to -90.0 degrees'
+                    msg: 'Instance constructive interference value must be greater than or equal to -90.0 degrees'
                 },
                 max: {
                     args: 90.0,
-                    msg: 'Instance constructive interferenceitude value must be less than or equal to 90.0 degrees'
+                    msg: 'Instance constructive interference value must be less than or equal to 90.0 degrees'
                 }
             }
         },

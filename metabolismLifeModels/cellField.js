@@ -1,8 +1,8 @@
 'use strict';
 
-// cellCellSignal.js (model)
+// cellField.js (model)
 
-// UUID Version Info:
+// Field (UUID) Version Info:
 //      Version 1 - MAC address  (UNSECURE)
 //      Version 2 - DCE Security (UNSECURE)
 //      Version 3 - MD5 hash     (UNSECURE)

@@ -13,13 +13,13 @@ var mv      = require('mv');
 
 // Local js modules
 var Middlewares  = require('./middlewares');
-var metabolism   = require('../../metabolismLifeModels/database');
-var CellGraph   = require('../../metabolismConfiguration/cellGraph');
-var Immunities   = require('../../metabolismConfiguration/immunities');
-var Genes        = require('../../metabolismConfiguration/genes');
-var Blockages    = require('../../metabolismConfiguration/blockages');
-var CountryCodes = require('../../metabolismTypes/countryCodes');
-var GeneType     = require('../../metabolismTypes/geneTypes');
+var metabolism   = require('../../models/database');
+var CellGraph   = require('../../config/cellGraph');
+var Immunities   = require('../../config/immunities');
+var Genes        = require('../../config/genes');
+var Blockages    = require('../../config/blockages');
+var CountryCodes = require('../../data/countryCodes');
+var GeneType     = require('../../data/geneTypes');
 
 var validate = metabolism.Sequelize.Validator;
 
@@ -55,14 +55,14 @@ var authCallback = function(req, res, cellId, geneId) {
     })
     .then(function(newSignalPathway) {
       /*newSignalPathway.signalPathwayId: 0,*/
-      /*newSignalPathway.signalPheromone:                        set by geneAPI*/
-      /*newSignalPathway.signalPheromoneExpiration:              set by geneAPI*/
-      /*newSignalPathway.reinforcementSignalPheromone:           set by geneAPI*/
-      /*newSignalPathway.reinforcementSignalPheromoneExpiration: set by geneAPI*/
-      /*newSignalPathway.optional:                               set by geneAPI*/
-      /*newSignalPathway.lifeId                                  null,*/
-        newSignalPathway.cellId                                  = this.cell.cellId;
-        newSignalPathway.geneId                                  = this.gene.geneId;
+      /*newSignalPathway.signalPheromone:                      set by geneAPI*/
+      /*newSignalPathway.signalPheromoneExpiration:            set by geneAPI*/
+      /*newSignalPathway.reinforcementWavePheromone:           set by geneAPI*/
+      /*newSignalPathway.reinforcementWavePheromoneExpiration: set by geneAPI*/
+      /*newSignalPathway.optional:                             set by geneAPI*/
+      /*newSignalPathway.lifeId                                null,*/
+        newSignalPathway.cellId                                = this.cell.cellId;
+        newSignalPathway.geneId                                = this.gene.geneId;
 
         return metabolism.GeneSignalPathway.create(newSignalPathway);
     })
@@ -171,21 +171,21 @@ router.get('/:id', function(req, res) {
         });
 });
 
-// TODO: determine different image types and sizes to expand uses
-var sendCellImage = function(res, cellId, size) {
-    var imageSizes = [ '100', '200', '400', '100-125', '200-250', '400-500' ];
+// TODO: determine different media types and types to expand uses
+var sendCellMedia = function(res, cellId, type) {
+    var mediaTypes = [ '.png', '.wav', '.mov', '.fasta' ];
 
-    if (!validate.isIn(size, imageSizes))
-        return res.status(400).send(Blockages.respMsg(res, false, 'Image size not recognized'));
+    if (!validate.isIn(type, mediaTypes))
+        return res.status(400).send(Blockages.respMsg(res, false, 'Media type not recognized'));
 
-    var imageFile = 'image-' + size + '.png';
-    var imagePath = res.app.locals.rootDir + '/images/cell/' + cellId + '/';
-    var imageInfo = { root: imagePath };
+    var mediaFile = 'media-name' + type;
+    var mediaPath = res.app.locals.rootDir + '/medias/cell/' + cellId + '/';
+    var mediaInfo = { root: mediaPath };
 
-    res.sendFile(imageFile, imageInfo, function (error) {
+    res.sendFile(mediaFile, mediaInfo, function (error) {
         if (error) {
             if (res.statusCode !== 304 || error.code !== 'ECONNABORT') {
-    			res.status(error.status).send(Blockages.respMsg(res, false, 'No image found'));
+    			res.status(error.status).send(Blockages.respMsg(res, false, 'No media found'));
             }
     		else { /* 304 cache hit, no data sent but still success */ }
         }
@@ -193,28 +193,28 @@ var sendCellImage = function(res, cellId, size) {
     });
 };
 
-// /cell/:id/image (default size)
-// --- retrieve cell image (logo) for cell (:id)
-router.get('/:id/image', function(req, res) {
-    debug('[GET] /cell/:id/image');
+// /cell/:id/media (default type)
+// --- retrieve cell media (logo) for cell (:id)
+router.get('/:id/media', function(req, res) {
+    debug('[GET] /cell/:id/media');
     var cellId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    sendCellImage(res, cellId, '200');
+    sendCellMedia(res, cellId);
 });
 
-// /cell/:id/image/:size (all supported sizes)
-// --- retrieve cell image (logo) for cell (:id)
-router.get('/:id/image/:size', function(req, res) {
-    debug('[GET] /cell/:id/image/:size');
+// /cell/:id/media/:type (all supported types)
+// --- retrieve cell media (logo) for cell (:id)
+router.get('/:id/media/:type', function(req, res) {
+    debug('[GET] /cell/:id/media/:type');
     var cellId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    sendCellImage(res, cellId, req.params.size);
+    sendCellMedia(res, cellId, req.params.type);
 });
 
 // /cell/:id/address
@@ -727,7 +727,7 @@ router.get('/instance/search', function(req, res) {
         .findAll({
             where: {
                 constructiveInterference: { between: [constructiveInterferenceMin, constructiveInterferenceMax] },
-                destructiveInterference:  { between: [destructiveInterferenceMin, destructiveInterferenceMax] }
+                destructiveInterference: { between: [destructiveInterferenceMin, destructiveInterferenceMax] }
             },
             include: [includeAddress, includePhone, {model: metabolism.Cell, attributes: cellAttributes}],
             attributes: instanceAttributes
@@ -947,12 +947,12 @@ router.put('/:id/instance/:instanceId', function(req, res) {
                 throw new Blockages.NotFoundError('Instance not found');
 
             // Extract 'constructiveInterference' from the body
-            var constructiveInterference = instance.calculateDestructiveInterference();
+            var constructiveInterference = null;
             if (req.body.hasOwnProperty('constructiveInterference'))
                 constructiveInterference = metabolism.CellInstance.extractConstructiveInterferenceitude(metabolism, req.body.constructiveInterference);
 
             // Extract 'destructiveInterference' from the body
-            var destructiveInterference = instance.calculateDestructiveInterference();
+            var destructiveInterference = null;
             if (req.body.hasOwnProperty('destructiveInterference'))
                 destructiveInterference = metabolism.CellInstance.extractDestructiveInterferencegitude(metabolism, req.body.destructiveInterference);
 
@@ -961,9 +961,9 @@ router.put('/:id/instance/:instanceId', function(req, res) {
             instance.destructiveInterference  = destructiveInterference;
             instance.name                     = metabolism.CellInstance.extractName(metabolism, req.body.name);
             instance.website                  = metabolism.CellInstance.extractWebsite(metabolism, req.body.website);
-          /*instance.cellType: 		      not accessible for change */
-          /*instance.countryCode: 	      not accessible for change */
-          /*instance.chargeCellId: 	      not accessible for change */
+          /*instance.cellType: not accessible for change */
+          /*instance.countryCode: not accessible for change */
+          /*instance.chargeCellId: not accessible for change */
 
             return instance.save();
         })
@@ -1001,20 +1001,20 @@ router.put('/:id/instance/:instanceId/address/:addressId', function(req, res) {
             if (!address)
                 throw new Blockages.NotFoundError('Address not found');
 
-          /*address.addressId: 	      not accessible for change */
-          /*address.name:      	      not accessible for change */
-            address.address1   	      = validate.trim(validate.toString(req.body.address1));
-            address.address2   	      = metabolism.Address.extractAddress(metabolism, req.body.address2);
-            address.address3   	      = metabolism.Address.extractAddress(metabolism, req.body.address3);
-            address.address4   	      = metabolism.Address.extractAddress(metabolism, req.body.address4);
-            address.locality   	      = validate.trim(validate.toString(req.body.locality));
-            address.region     	      = validate.trim(validate.toString(req.body.region));
-            address.postalCode 	      = validate.trim(validate.toString(req.body.postalCode));
-          /*address.lifeId: 	      not accessible for change */
-          /*address.cellId:	      not accessible for change */
-          /*address.instanceId:       not accessible for change */
-          /*address.geneId: 	      not accessible for change */
-          /*address.chargeCellId:     not accessible for change */
+          /*address.addressId: not accessible for change */
+          /*address.name: not accessible for change */
+            address.address1   = validate.trim(validate.toString(req.body.address1));
+            address.address2   = metabolism.Address.extractAddress(metabolism, req.body.address2);
+            address.address3   = metabolism.Address.extractAddress(metabolism, req.body.address3);
+            address.address4   = metabolism.Address.extractAddress(metabolism, req.body.address4);
+            address.locality   = validate.trim(validate.toString(req.body.locality));
+            address.region     = validate.trim(validate.toString(req.body.region));
+            address.postalCode = validate.trim(validate.toString(req.body.postalCode));
+          /*address.lifeId: not accessible for change */
+          /*address.cellId: not accessible for change */
+          /*address.instanceId: not accessible for change */
+          /*address.geneId: not accessible for change */
+          /*address.chargeCellId: not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
@@ -1053,15 +1053,15 @@ router.put('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
             if (!phone)
                 throw new Blockages.NotFoundError('Phone not found');
 
-          /*phone.phoneId:          not accessible for change */
-            phone.name              = metabolism.Phone.extractName(metabolism, req.body.name);
-            phone.number            = validate.trim(validate.toString(req.body.number));
-            phone.extension         = metabolism.Phone.extractExtension(metabolism, req.body.extension);
-          /*phone.lifeId:           not accessible for change */
-          /*phone.cellId:           not accessible for change */
-          /*phone.instanceId:       not accessible for change */
-          /*phone.geneId:           not accessible for change */
-          /*phone.chargeCellId:     not accessible for change */
+          /*phone.phoneId: not accessible for change */
+            phone.name      = metabolism.Phone.extractName(metabolism, req.body.name);
+            phone.number    = validate.trim(validate.toString(req.body.number));
+            phone.extension = metabolism.Phone.extractExtension(metabolism, req.body.extension);
+          /*phone.lifeId: not accessible for change */
+          /*phone.cellId: not accessible for change */
+          /*phone.instanceId: not accessible for change */
+          /*phone.geneId: not accessible for change */
+          /*phone.chargeCellId: not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
@@ -1102,10 +1102,10 @@ router.put('/:id/instance/:instanceId/stakeholderMember/:lifeId', function(req, 
                 throw new Blockages.NotFoundError('Stakeholder member not found');
 
           /*stakeholderMember.stakeholderId: not accessible for change */
-            stakeholderMember.immunities     = validate.toInt(req.body.immunities);
-          /*stakeholderMember.lifeId:        not accessible for change */
-          /*stakeholderMember.cellId:        not accessible for change */
-          /*stakeholderMember.instanceId:    not accessible for change */
+            stakeholderMember.immunities = validate.toInt(req.body.immunities);
+          /*stakeholderMember.lifeId: not accessible for change */
+          /*stakeholderMember.cellId: not accessible for change */
+          /*stakeholderMember.instanceId: not accessible for change */
 
             return stakeholderMember.save();
         })
@@ -1151,14 +1151,14 @@ router.put('/:id/instance/:instanceId/device/:deviceId', function(req, res) {
             if (req.body.hasOwnProperty('acceptsCredit'))
                 acceptsCredit = metabolism.CellDevice.extractAcceptsCredit(metabolism, req.body.acceptsCredit);
 
-          /*device.deviceId:     not accessible for change */
-          /*device.map:	         not accessible for change */
+          /*device.deviceId: not accessible for change */
+          /*device.map: not accessible for change */
             device.type          = validate.trim(validate.toString(req.body.type)).toUpperCase();
             device.serialNumber  = validate.trim(validate.toString(req.body.serialNumber));
             device.description   = metabolism.CellDevice.extractDescription(metabolism, req.body.textDescription);
             device.acceptsCash   = acceptsCash;
             device.acceptsCredit = acceptsCredit;
-          /*device.instanceId:   not accessible for change */
+          /*device.instanceId: not accessible for change */
 
             return device.save();
         })
@@ -1268,16 +1268,16 @@ router.post('/instance/signup', function(req, res) {
 
             // Create the instance record
             var newInstance = {
-              /*instanceId:   		   0,*/
-                atlas:        		   0,
-                constructiveInterference:  constructiveInterference,
-                destructiveInterference:   destructiveInterference,
-              /*name:         		   null,*/
-              /*website:      		   null,*/
-              /*cellType:     		   null,*/
-              /*countryCode:  		   null,*/
-                cellId:       		   this.cell.cellId
-              /*fieldId:       		   null*/
+              /*instanceId:   0,*/
+                atlas:        0,
+                constructiveInterference:          constructiveInterference,
+                destructiveInterference:          destructiveInterference,
+              /*name:         null,*/
+              /*website:      null,*/
+              /*cellType:     null,*/
+              /*countryCode:  null,*/
+                cellId:       this.cell.cellId
+              /*fieldId:       null*/
             };
 
             return metabolism.CellInstance.create(newInstance);
@@ -1360,10 +1360,10 @@ router.post('/instance/signup', function(req, res) {
         });
 });
 
-// /cell/:id/image
-// --- add an image to an existing cell (:id)
-router.post('/:id/image', function(req, res) {
-    debug('[POST] /cell/:id/image');
+// /cell/:id/media
+// --- add an media to an existing cell (:id)
+router.post('/:id/media', function(req, res) {
+    debug('[POST] /cell/:id/media');
     var cellId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
@@ -1378,16 +1378,16 @@ router.post('/:id/image', function(req, res) {
             if (!cell)
                 throw new Blockages.NotFoundError('Cell not found');
 
-            // Validate 'image' format
-            // TODO: restrict image format to PNG
-            // TODO: restrict image size to  200x200 (??)
-            var imagePath = req.files.image.path;
-            if (validate.equals(req.files.image.name, ''))
-                throw new Blockages.BadRequestError('Image is required');
+            // Validate 'media' format
+            // TODO: restrict media format to PNG
+            // TODO: restrict media type to  200x200 (??)
+            var mediaPath = req.files.media.path;
+            if (validate.equals(req.files.media.name, ''))
+                throw new Blockages.BadRequestError('Media is required');
 
-            // Move the image into the directory associated with the cell
-            var imageDir = 'images/cell/' + cell.cellId + '/';
-            mv(imagePath, imageDir + 'image-200.png', {mkdirp: true}, function(error) {
+            // Move the media into the directory associated with the cell
+            var mediaDir = 'medias/cell/' + cell.cellId + '/';
+            mv(mediaPath, mediaDir + 'cell-media.extension', {mkdirp: true}, function(error) {
                 if (error)
                     throw error;
                 else
@@ -1559,15 +1559,15 @@ router.post('/:id/allowPaymentGene/:geneId', function(req, res) {
             throw new Blockages.NotFoundError('Cell not found');
 
         var newSignalPathway = {
-          /*signalPathwayId: 			  0,*/
-          /*signalPheromone:         		  null,*/
-          /*signalPheromoneExpiration:    	  null,*/
-          /*reinforcementWavePheromone:           null,*/
-          /*reinforcementWavePheromoneExpiration: null,*/
-          /*optional:       			  null,*/
-          /*lifeId:         		          null,*/
-            cellId:     		          cell.cellId,
-            geneId:      			  gene.geneId
+          /*signalPathwayId: 0,*/
+          /*signalPheromone:         null,*/
+          /*signalPheromoneExpiration:    null,*/
+          /*reinforcementWavePheromone:         null,*/
+          /*reinforcementWavePheromoneExpiration:    null,*/
+          /*optional:       null,*/
+          /*lifeId:         null,*/
+            cellId:     cell.cellId,
+            geneId:      gene.geneId
         };
 
         return metabolism.GeneSignalPathway.create(newSignalPathway);
@@ -1612,11 +1612,11 @@ router.post('/:id/stakeholderMember', function(req, res) {
             throw new Blockages.NotFoundError('Life not found');
 
         var newStakeholderMember = {
-          /*stakeholderId: 0,*/
-            immunities:    validate.toInt(req.body.immunities),
-            lifeId:        life.lifeId,
-            cellId:        cell.cellId
-          /*instanceId:    null*/
+          /*stakeholderId:     0,*/
+            immunities: validate.toInt(req.body.immunities),
+            lifeId:      life.lifeId,
+            cellId:  cell.cellId
+          /*instanceId:  null*/
         };
 
         return metabolism.CellStakeholder.create(newStakeholderMember);
@@ -1651,26 +1651,26 @@ router.post('/:id/instance', function(req, res) {
                 throw new Blockages.NotFoundError('Cell not found');
 
             // Extract 'constructiveInterference' from the body
-            var constructiveInterference = instance.calculateDestructiveInterference();
+            var constructiveInterference = null;
             if (req.body.hasOwnProperty('constructiveInterference'))
                 constructiveInterference = metabolism.CellInstance.extractConstructiveInterferenceitude(metabolism, req.body.constructiveInterference);
 
             // Extract 'destructiveInterference' from the body
-            var destructiveInterference = instance.calculateDestructiveInterference();
+            var destructiveInterference = null;
             if (req.body.hasOwnProperty('destructiveInterference'))
                 destructiveInterference = metabolism.CellInstance.extractDestructiveInterferencegitude(metabolism, req.body.destructiveInterference);
 
             var newInstance = {
-              /*instanceId:   		  0,*/
-                atlas:        		  0,
-                constructiveInterference: constructiveInterference,
-                destructiveInterference:  destructiveInterference,
-              /*name:         	          null,*/
-              /*website:      	          null,*/
-              /*cellType:     	          null,*/
-              /*countryCode:  	          null,*/
-                cellId:       	          cell.cellId
-              /*fieldId: 		  null*/
+              /*instanceId:   0,*/
+                atlas:        0,
+                constructiveInterference:  constructiveInterference,
+                destructiveInterference:   destructiveInterference,
+              /*name:         null,*/
+              /*website:      null,*/
+              /*cellType:     null,*/
+              /*countryCode:  null,*/
+                cellId:       cell.cellId
+              /*fieldId: null*/
             };
 
             return metabolism.CellInstance.create(newInstance);
@@ -1844,11 +1844,11 @@ router.post('/:id/instance/:instanceId/stakeholderMember', function(req, res) {
             throw new Blockages.NotFoundError('Life not found');
 
         var newStakeholderMember = {
-          /*stakeholderId: 0,*/
-            immunities:    validate.toInt(req.body.immunities),
-            lifeId:        life.lifeId,
-            cellId:        cell.cellId,
-            instanceId:    instance.instanceId
+          /*stakeholderId:     0,*/
+            immunities:  validate.toInt(req.body.immunities),
+            lifeId:      life.lifeId,
+            cellId:      cell.cellId,
+            instanceId:  instance.instanceId
         };
 
         return metabolism.CellStakeholder.create(newStakeholderMember);
@@ -1898,7 +1898,7 @@ router.post('/:id/instance/:instanceId/device', function(req, res) {
 
             var newDevice = {
               /*deviceId:      0,*/
-                map:           0,
+                map:         0,
                 type:          validate.trim(validate.toString(req.body.type)).toUpperCase(),
                 serialNumber:  validate.trim(validate.toString(req.body.serialNumber)),
                 description:   metabolism.CellDevice.extractDescription(metabolism, req.body.textDescription),
@@ -1944,10 +1944,10 @@ router.delete('/:id', function(req, res) {
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /cell/:id/image/:size
-// --- delete an image of an existing cell (:id)
-router.delete('/:id/image/:size', function(req, res) {
-    debug('[DELETE] /cell/:id/image/:size');
+// /cell/:id/media/:type
+// --- delete an media of an existing cell (:id)
+router.delete('/:id/media/:type', function(req, res) {
+    debug('[DELETE] /cell/:id/media/:type');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
@@ -1987,8 +1987,8 @@ router.delete('/:id/address/:addressId', function(req, res) {
 // --- delete a phone number (:phoneId) of an existing cell (:id)
 router.delete('/:id/phone/:phoneId', function(req, res) {
     debug('[DELETE] /cell/:id/phone/:phoneId');
-    var cellId  = req.params.id;
-    var phoneId = req.params.phoneId;
+    var cellId = req.params.id;
+    var phoneId    = req.params.phoneId;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
@@ -2019,7 +2019,7 @@ router.delete('/:id/phone/:phoneId', function(req, res) {
 // --- delete a signalPathway (:signalPathwayId) for a cell (:id) of an existing gene
 router.delete('/:id/signalPathway/:signalPathwayId', function(req, res) {
     debug('[DELETE] /cell/:id/signalPathway/:signalPathwayId');
-    var cellId          = req.params.id;
+    var cellId     = req.params.id;
     var signalPathwayId = req.params.signalPathwayId;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
@@ -2063,7 +2063,7 @@ router.delete('/:id/instance/:instanceId', function(req, res) {
 // --- delete an address (:addressId) of an existing instance (:instanceId) of cell (:id)
 router.delete('/:id/instance/:instanceId/address/:addressId', function(req, res) {
     debug('[DELETE] /cell/:id/instance/:instanceId/address/:addressId');
-    var cellId     = req.params.id;
+    var cellId = req.params.id;
     var instanceId = req.params.instanceId;
     var addressId  = req.params.addressId;
 
@@ -2096,7 +2096,7 @@ router.delete('/:id/instance/:instanceId/address/:addressId', function(req, res)
 // --- delete a phone number (:phoneId) of an existing instance (:instanceId) of cell (:id)
 router.delete('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
     debug('[DELETE] /cell/:id/instance/:instanceId/phone/:phoneId');
-    var cellId     = req.params.id;
+    var cellId = req.params.id;
     var instanceId = req.params.instanceId;
     var phoneId    = req.params.phoneId;
 

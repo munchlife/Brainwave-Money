@@ -12,14 +12,15 @@ var myVoiceIt = require('TwilioVoiceItServerlessStudio');
 
 // Local js modules
 var Middlewares             = require('./middlewares');
-var metabolism              = require('../../metabolismLifeModels/database');
-// var Transporter          = require('../../metabolismConfiguration/transporter');
-var Immunities              = require('../../metabolismConfiguration/immunities');
-var Genes                   = require('../../metabolismConfiguration/genes');
-var Blockages               = require('../../metabolismConfiguration/blockages');
-var CountryCodes            = require('../../metabolismTypes/countryCodes');
-var GeneType                = require('../../metabolismTypes/geneTypes');
-var genomeVoiceprintReceipt = require('../../metabolismConfiguration/cellUltrasoundPing');
+var metabolism              = require('../../models/database');
+// var Transporter          = require('../../config/transporter');
+var Immunities              = require('../../config/immunities');
+var Genes                   = require('../../config/genes');
+var Blockages               = require('../../config/blockages');
+var CountryCodes            = require('../../data/countryCodes');
+var GeneType                = require('../../data/geneTypes');
+// var TextMessage          = require('../../config/textMessage');
+var genomeVoiceprintReceipt = require('../../config/cellUltrasoundPing');
 
 var validate = metabolism.Sequelize.Validator;
 
@@ -54,15 +55,15 @@ var authCallback = function(req, res, lifeId, geneId) {
         return geneAPI.authenticateCallback(req.query.code, req.headers.host + '/v1', life.lifeId, null);
     })
     .then(function(newSignalPathway) {
-      /*newSignalPathway.signalPathwayId:                        0,*/
-      /*newSignalPathway.signalPheromone:                        set by geneAPI*/
-      /*newSignalPathway.signalPheromoneExpiration:              set by geneAPI*/
-      /*newSignalPathway.reinforcementSignalPheromone:           set by geneAPI*/
-      /*newSignalPathway.reinforcementSignalPheromoneExpiration: set by geneAPI*/
-      /*newSignalPathway.optional:                               set by geneAPI*/
-        newSignalPathway.lifeId                                  = this.life.lifeId;
-      /*newSignalPathway.cellId:                                 null,*/
-        newSignalPathway.geneId                                  = this.gene.geneId;
+      /*newSignalPathway.signalPathwayId:                      0,*/
+      /*newSignalPathway.signalPheromone:                      set by geneAPI*/
+      /*newSignalPathway.signalPheromoneExpiration:            set by geneAPI*/
+      /*newSignalPathway.reinforcementWavePheromone:           set by geneAPI*/
+      /*newSignalPathway.reinforcementWavePheromoneExpiration: set by geneAPI*/
+      /*newSignalPathway.optional:                             set by geneAPI*/
+        newSignalPathway.lifeId                                = this.life.lifeId;
+      /*newSignalPathway.cellId:                               null,*/
+        newSignalPathway.geneId                                = this.gene.geneId;
 
         return metabolism.GeneSignalPathway.create(newSignalPathway);
     })
@@ -81,7 +82,7 @@ var authCallback = function(req, res, lifeId, geneId) {
 // --- OAuth2 authorization callback handler (correctly uses state query field)
 router.get('/gene/:geneId/auth/callback', function(req, res) {
     debug('[GET] /life/gene/:geneId/auth/callback');
-    var lifeId    = req.query.state;
+    var lifeId = req.query.state;
     var geneId = req.params.geneId;
 
     authCallback(req, res, lifeId, geneId);
@@ -91,7 +92,7 @@ router.get('/gene/:geneId/auth/callback', function(req, res) {
 // --- OAuth2 authorization callback handler (for genes that don't support the state field)
 router.get('/:id/gene/:geneId/auth/callback', function(req, res) {
     debug('[GET] /life/:id/gene/:geneId/auth/callback');
-    var lifeId    = req.params.id;
+    var lifeId = req.params.id;
     var geneId = req.params.geneId;
 
     authCallback(req, res, lifeId, geneId);
@@ -103,7 +104,7 @@ router.get('/:id/gene/:geneId/auth/callback', function(req, res) {
 router.use(Middlewares.tokenAuth);
 
 // -----------------------------------------------------------------------------
-// PERMISSION AUTHORIZATION MIDDLEWARE
+// IMMUNITY REJECTION MIDDLEWARE
 // -----------------------------------------------------------------------------
 // router.use(Middlewares.lifeImmunity);
 
@@ -134,7 +135,7 @@ var includeInstance = { model: metabolism.CellInstance, attributes: [ 'instanceI
 var includeGene = { model: metabolism.Gene, attributes: [ 'geneId', 'geneType', 'geneName', 'companyName', 'website', 'countryCode' ] };
 
 var includeAddress           = { model: metabolism.Address,           as: 'Addresses',       attributes: attributesAddress };
-//  includeCharge            = { model: metabolism.Charge,            as: 'Bounties',        attributes: attributesCharge };
+//  includeCharge            = { model: metabolism.Charge,            as: 'Charges',         attributes: attributesCharge };
 //  includeCellSignal        = { model: metabolism.CellSignal,        as: 'Signals',         attributes: attributesCellSignal };
 var includeCellStakeholder   = { model: metabolism.CellStakeholder,   as: 'CellStakeholder', attributes: attributesCellStakeholder };
 var includePhone             = { model: metabolism.Phone,             as: 'Phones',          attributes: attributesPhone };
@@ -176,21 +177,16 @@ router.get('/:id', function(req, res) {
         });
 });
 
-// TODO: determine different image types and sizes to expand uses
-var sendLifeImage  = function(res, lifeId, size) {
-    var imageSizes = [ '100', '200', '400' ];
+var sendLifeGenome  = function(res, lifeId) {
 
-    if (!validate.isIn(size, imageSizes))
-        return res.status(400).send(Blockages.respMsg(res, false, 'Image size not recognized'));
+    var genomeFile = 'genome-' + '.txt';
+    var genomePath = res.app.locals.rootDir + '/genomes/life/' + lifeId + '/';
+    var genomeInfo = { root: genomePath };
 
-    var imageFile = 'image-' + size + '.png';
-    var imagePath = res.app.locals.rootDir + '/images/life/' + lifeId + '/';
-    var imageInfo = { root: imagePath };
-
-    res.sendFile(imageFile, imageInfo, function (error) {
+    res.sendFile(genomeFile, genomeInfo, function (error) {
         if (error) {
             if (res.statusCode !== 304 || error.code !== 'ECONNABORT') {
-    			res.status(error.status).send(Blockages.respMsg(res, false, 'No image found'));
+    			res.status(error.status).send(Blockages.respMsg(res, false, 'No genome found'));
             }
     		else { /* 304 cache hit, no data sent but still success */ }
         }
@@ -198,29 +194,64 @@ var sendLifeImage  = function(res, lifeId, size) {
     });
 };
 
-// /life/:id/image (default size)
-// --- retrieve life image (visual verification) for life (:id)
-router.get('/:id/image', function(req, res) {
-    debug('[GET] /life/:id/image');
+// TODO: determine different media types and sizes to expand uses
+var sendLifeMedia  = function(res, lifeId, type) {
+    var mediaTypes = [ '.png', '.wav', '.mov', '.fasta' ]; // include others as needed
+
+    if (!validate.isIn(type, mediaTypes))
+        return res.status(400).send(Blockages.respMsg(res, false, 'Media size not recognized'));
+
+    var mediaFile = 'media-name' + type;
+    var mediaPath = res.app.locals.rootDir + '/medias/life/' + lifeId + '/';
+    var mediaInfo = { root: mediaPath };
+
+    res.sendFile(mediaFile, mediaInfo, function (error) {
+        if (error) {
+            if (res.statusCode !== 304 || error.code !== 'ECONNABORT') {
+    			res.status(error.status).send(Blockages.respMsg(res, false, 'No media found'));
+            }
+    		else { /* 304 cache hit, no data sent but still success */ }
+        }
+        else { /* Successfully sent, nothing to do here */ }
+    });
+};
+
+// /life/:id/genome (default size)
+// --- retrieve life genome (DNA verification) for life (:id)
+router.get('/:id/genome', function(req, res) {
+    debug('[GET] /life/:id/genome');
     var lifeId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    sendLifeImage(res, lifeId, '200');
+    sendLifeGenome(res, lifeId);
 });
 
-// /life/:id/image/:size (all supported sizes)
-// --- retrieve life image (visual verification) for life (:id)
-router.get('/:id/image/:size', function(req, res) {
-    debug('[GET] /life/:id/image/:size');
+// /life/:id/media (default size)
+// --- retrieve life media (file storage) for life (:id)
+router.get('/:id/media', function(req, res) {
+    debug('[GET] /life/:id/media');
     var lifeId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    sendLifeImage(res, lifeId, validate.toString(req.params.size));
+    sendLifeMedia(res, lifeId);
 });
+
+// /cell/:id/media/:type (all supported types)
+// --- retrieve cell media (logo) for cell (:id)
+router.get('/:id/media/:type', function(req, res) {
+    debug('[GET] /cell/:id/media/:type');
+    var lifeId = req.params.id;
+
+    if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
+        return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
+
+    sendLifeMedia(res, lifeId, req.params.type);
+});
+
 
 // /life/:id/addresses
 // --- retrieve array of addresses for life (:id)
@@ -317,7 +348,7 @@ router.get('/:id/preferences', function(req, res) {
 // --- retrieve array of connected genes of (:type) for life (:id)
 router.get('/:id/signalPathways/:type', function(req, res) {
     debug('[GET] /life/:id/signalPathway/:type');
-    var lifeId            = req.params.id;
+    var lifeId         = req.params.id;
     var geneTypeString = validate.toString(req.params.type).toLowerCase();
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -1122,11 +1153,11 @@ router.put('/:id/device/:deviceId', function(req, res) {
 // -----------------------------------------------------------------------------
 // /life/signup --> located in login.js to avoid token auth middleware
 
-// /life/:id/image
-// --- add an image to an existing life (:id)
-// TODO: extend to allow different image sizes OR resize given image to multiple sizes
-router.post('/:id/image', function(req, res) {
-    debug('[POST] /life/:id/image');
+// /life/:id/genome
+// --- add an genome to an existing life (:id)
+// TODO: extend to allow different genome sizes OR resize given genome to multiple sizes
+router.post('/:id/genome', function(req, res) {
+    debug('[POST] /life/:id/genome');
     var lifeId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -1141,16 +1172,56 @@ router.post('/:id/image', function(req, res) {
             if (!life)
                 throw new Blockages.NotFoundError('Life not found');
 
-            // Validate 'image' format
-            // TODO: restrict image format to PNG
-            // TODO: restrict image size to  200x200 (??)
-            var imagePath = req.files.image.path;
-            if (validate.equals(req.files.image.name, ''))
-                throw new Blockages.BadRequestError('Image is required');
+            // Validate 'genome' format
+            // TODO: restrict genome format to PNG
+            // TODO: restrict genome size to  200x200 (??)
+            var genomePath = req.files.genome.path;
+            if (validate.equals(req.files.genome.name, ''))
+                throw new Blockages.BadRequestError('Genome is required');
 
-            // Move the image into the directory associated with the life
-            var imageDir = 'images/life/' + life.lifeId + '/';
-            mv(imagePath, imageDir + 'image-200.png', {mkdirp: true}, function(error) {
+            // Move the genome into the directory associated with the life
+            var genomeDir = 'genomes/life/' + life.lifeId + '/';
+            mv(genomePath, genomeDir + 'genome-200.png', {mkdirp: true}, function(error) {
+                if (error)
+                    throw error;
+                else
+                    res.status(201).send(Blockages.respMsg(res, true, life));
+            });
+        })
+        .catch(function(error) {
+            res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
+        });
+});
+
+// /life/:id/media
+// --- add an media to an existing life (:id)
+// TODO: extend to allow different media sizes OR resize given media to multiple sizes
+router.post('/:id/media', function(req, res) {
+    debug('[POST] /life/:id/media');
+    var lifeId = req.params.id;
+
+    if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
+        return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
+
+    metabolism.Life
+        .find({
+            where: {lifeId: lifeId},
+            attributes: lifeAttributes
+        })
+        .then(function(life) {
+            if (!life)
+                throw new Blockages.NotFoundError('Life not found');
+
+            // Validate 'media' format
+            // TODO: restrict media format to PNG
+            // TODO: restrict media size to  200x200 (??)
+            var mediaPath = req.files.media.path;
+            if (validate.equals(req.files.media.name, ''))
+                throw new Blockages.BadRequestError('Media is required');
+
+            // Move the media into the directory associated with the life
+            var mediaDir = 'media/life/' + life.lifeId + '/';
+            mv(mediaPath, mediaDir + 'life-media.extension', {mkdirp: true}, function(error) {
                 if (error)
                     throw error;
                 else
@@ -1592,10 +1663,10 @@ router.delete('/:id', function(req, res) {
         });
 });
 
-// /life/:id/image/:size
-// --- delete an image of an existing life (:id)
-router.delete('/:id/image/:size', function(req, res) {
-    debug('[DELETE] /life/:id/image/:size');
+// /life/:id/genome/:size
+// --- delete an genome of an existing life (:id)
+router.delete('/:id/genome/:size', function(req, res) {
+    debug('[DELETE] /life/:id/genome/:size');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 

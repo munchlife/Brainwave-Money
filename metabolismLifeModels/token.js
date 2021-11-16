@@ -5,7 +5,7 @@
 var JWT = require('jwt-simple');
 var RandomString = require('randomstring');
 
-var configAuth = require('../config/auth');
+var configAuth = require('../metabolismConfiguration/auth');
 
 // TODO: consider transitioning this to redis; not storing tokens in the database
 

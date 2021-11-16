@@ -3,7 +3,7 @@
 // life.js (model)
 
 var bcrypt = require('bcryptjs');
-var CountryCodes = require('../data/countryCodes');
+var CountryCodes = require('../metabolismTypes/countryCodes');
 
 var LIFE_PHONE_MAX_LENGTH = 15;
 var LIFE_EMAIL_MAX_LENGTH = 255;

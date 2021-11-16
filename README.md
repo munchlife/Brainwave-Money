@@ -8,7 +8,7 @@ Munch is designed to work for any life type and allows life to network together 
 
 Munch can be deployed by running a "digital cell" that "mines" information carried in bioelectromagnetic signals through an electromagnetic or ultrasound beacon connected to Your front-end application.
 
-TODO: Include reference instance(s) that track(s) the ionospheric ("schumann") resonances so as to provide a clearinghouse used to obtain planetarily-sound validity of information cycles by comparing the waveform of a life or cell signal with the waveform of the ionosphere resonances.
+TODO: Include reference instance(s) that pegs Munch's "charges" API to the ionospheric ("schumann") resonances so as to provide a clearinghouse used to obtain planetarily-sound validity of information cycles by comparing the waveform of a life or cell signal with the waveform of the ionosphere resonances.
 
 [GET] /cell/instance/interferometer
 

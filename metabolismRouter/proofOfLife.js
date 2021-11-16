@@ -16,13 +16,13 @@ var Random            = require('random-js')(); // uses the nativeMath engine
 var myVoiceIt         = require('TwilioVoiceItServerlessStudio');
 
 // Local js modules
-var metabolism     = require('../../models/database');
-// var Transporter = require('../../config/transporter');
-// var TextMessage    = require('../../config/textMessage');
-// var digitalGenome  = require('../../config/geneAutomation');
-var genomeVoiceprintReceipt    = require('../../config/cellUltrasoundPing');
-var Blockages      = require('../../config/blockages');
-var CountryCodes   = require('../../data/countryCodes');
+var metabolism              = require('../../metabolismLifeModels/database');
+// var Transporter          = require('../../metabolismConfiguration/transporter');
+// var TextMessage          = require('../../metabolismConfiguration/textMessage');
+// var digitalGenome        = require('../../metabolismConfiguration/geneAutomation');
+var genomeVoiceprintReceipt = require('../../metabolismConfiguration/cellUltrasoundPing');
+var Blockages               = require('../../metabolismConfiguration/blockages');
+var CountryCodes            = require('../../metabolismTypes/countryCodes');
 
 var validate = metabolism.Sequelize.Validator;
 

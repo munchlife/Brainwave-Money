@@ -39,10 +39,10 @@ var cycleAttributes = [ 'cycleId', 'cellType', 'instanceId', 'deviceId', 'stakeh
 // Remove fields from metabolism.CellGraph[].CycleLife: createdAt, updatedAt, deletedAt
 var cycleLifeAttributes = [ 'cycleLifeId', 'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'signalingGeneId', 'signalingReferenceNumber', 'loyaltyGeneId', 'loyaltyReferenceNumber', 'checkinGeneId', 'checkinReferenceNumber' ];
 
-var includeCycle          = { model: null, as: 'Cycle',  attributes: cycleAttributes };
-//  includeCycleAudit     = { model: null, as: 'Audits', attributes: attributesCycleAudit };
-var includeCycleSequence  = { model: null, as: 'Sequences',  attributes: attributesCycleSequence };
-var includeCycleLife      = { model: null, as: 'Lifes',  attributes: attributesCycleLife };
+var includeCycle          = { model: null, as: 'Cycle',     attributes: cycleAttributes };
+//  includeCycleAudit     = { model: null, as: 'Audits',    attributes: attributesCycleAudit };
+var includeCycleSequence  = { model: null, as: 'Sequences', attributes: attributesCycleSequence };
+var includeCycleLife      = { model: null, as: 'Lifes',     attributes: attributesCycleLife };
 
 var copyIncludeProperties = function(obj, model) {
     return { model: model, as: obj.as, attributes: obj.attributes};
@@ -53,24 +53,24 @@ var copyIncludeProperties = function(obj, model) {
 // -----------------------------------------------------------------------------
 // /cell/:id/cycles
 // --- retrieve array of cycles for cell (:id)
-// router.get('/:id/cycles', function(req, res) {
-//     debug('[GET] /cell/:id/cycles');
-//     var cellId = req.params.id.toString();
+router.get('/:id/cycles', function(req, res) {
+    debug('[GET] /cell/:id/cycles');
+    var cellId = req.params.id.toString();
 
-//     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
-//         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
+    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+        return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-//     metabolism.CellGraph[cellId].Cycle
-//         .findAll({
-//             attributes: cycleAttributes
-//         })
-//         .then(function(cycles) {
-//             res.status(200).send(Blockages.respMsg(res, true, cycles));
-//         })
-//         .catch(function(error) {
-//             res.status(500).send(Blockages.respMsg(res, false, error));
-//         });
-// });
+    metabolism.CellGraph[cellId].Cycle
+        .findAll({
+            attributes: cycleAttributes
+        })
+        .then(function(cycles) {
+            res.status(200).send(Blockages.respMsg(res, true, cycles));
+        })
+        .catch(function(error) {
+            res.status(500).send(Blockages.respMsg(res, false, error));
+        });
+});
 
 // /cell/:id/cycle/:cycleId
 // --- retrieve info on cycle (:cycleId) for cell (:id)

@@ -2,8 +2,8 @@
 
 // cycle.js (model)
 
-var CycleType = require('../data/cycleTypes');
-var instance = require('../models/cellInstance');
+var CycleType = require('../metabolismTypes/cycleTypes');
+var instance = require('../metabolismLifeModels/cellInstance');
 
 module.exports = function(sequelize, DataTypes, cellId) {
     var Cycle = sequelize.define('Cycle_' + cellId, {

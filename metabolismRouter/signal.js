@@ -9,9 +9,9 @@ var express = require('express');
 
 // Local js modules
 var Middlewares = require('./middlewares');
-var metabolism  = require('../../models/database');
-var Immunities  = require('../../config/immunities');
-var Blockages   = require('../../config/blockages');
+var metabolism  = require('../../metabolismLifeModels/database');
+var Immunities  = require('../../metabolismConfiguration/immunities');
+var Blockages   = require('../../metabolismConfiguration/blockages');
 
 var validate = metabolism.Sequelize.Validator;
 

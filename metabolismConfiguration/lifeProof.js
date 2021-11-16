@@ -23,12 +23,12 @@ var validate = metabolism.Sequelize.Validator;
 // passport.deserializeLife(function(id, done) {});
 
 // -----------------------------------------------------------------------------
-// USER PROOF OF LIFE STRATEGY
+// LIFE PROOF OF LIFE STRATEGY
 // -----------------------------------------------------------------------------
 // Strategy 'local-login' is used to authenticate the life and issue a token.
 lifeProof.use('local-login', new LocalStrategy({
     // By default, local strategy uses lifename and password; override with identifier
-    lifenameField: 'identifier',
+    usernameField: 'identifier',
     passwordField: 'genome'
 },
 function(lifeIdentifier, genome, done) {

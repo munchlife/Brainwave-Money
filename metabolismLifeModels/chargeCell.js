@@ -2,7 +2,7 @@
 
 // chargeCell.js (model)
 
-var CountryCodes = require('../data/countryCodes');
+var CountryCodes = require('../metabolismTypes/countryCodes');
 
 var MERCHANT_NAME_MAX_LENGTH = 255;
 var MERCHANT_WEBSITE_MAX_LENGTH = 255;

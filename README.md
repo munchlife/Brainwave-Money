@@ -10,7 +10,7 @@ Munch can be deployed by running a "digital cell" that "mines" information carri
 
 TODO: Include reference instance(s) that pegs Munch's "charges" API to the ionospheric ("schumann") resonances so as to provide a clearinghouse used to obtain planetarily-sound validity of information cycles by comparing the waveform of a life or cell signal with the waveform of the ionosphere resonances.
 
-[GET] /cell/instance/interferometer
+[GET] /cell/instance/interferometer?
 
 Calling the biosignal-interferometer instance function in Munch from registers degrees of interference associated with a specific instance of communication signaling within a cell.
 

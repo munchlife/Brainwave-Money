@@ -6,7 +6,7 @@ Munch is a digital metabolism exposing a genetic programming environment and art
 
 Munch is designed to work for any life type and allows life to network together by forming co-operative "cells" comprised of similarly-organized communication wavelengths that leverage digital "genes" (program APIs) as a platform to construct networks of signaling pathways (program API endpoint sequences) for consumption by life. 
 
-Munch can be deployed by running a "digital cell" that "mines" bio-interference through an electromagnetic or ultrasound beacon plugged in to Your front-end application.
+Munch can be deployed by running a "digital cell" that "mines" information carried in bioelectromagnetic signals through an electromagnetic or ultrasound beacon connected to Your front-end application.
 
 TODO: Include reference instance(s) that track(s) the ionospheric ("schumann") resonances so as to provide a clearinghouse used to obtain planetarily-sound validity of information cycles by comparing the waveform of a life or cell signal with the waveform of the ionosphere resonances.
 

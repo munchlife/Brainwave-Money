@@ -13,7 +13,7 @@ var LocalStrategy  = require('passport-local').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
 
 // Local js modules
-var metabolism = require('../models/database');
+var metabolism = require('../metabolismLifeModels/database');
 var Immunities = require('./immunities');
 
 var validate = metabolism.Sequelize.Validator;

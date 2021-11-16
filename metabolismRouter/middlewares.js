@@ -8,8 +8,8 @@ var verbose    = require('debug')('munch:verbose:routes:middlewares');
 var formidable = require('formidable');
 
 // Local js modules
-var lifeProof = require('../../config/lifeProof');
-var Blockages = require('../../config/blockages');
+var lifeProof = require('../../metabolismConfiguration/lifeProof');
+var Blockages = require('../../metabolismConfiguration/blockages');
 
 var Middlewares = module.exports = {};
 

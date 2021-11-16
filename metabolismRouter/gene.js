@@ -10,12 +10,12 @@ var mv      = require('mv');
 
 // Local js modules
 var Middlewares  = require('./middlewares');
-var metabolism           = require('../../models/database');
-var Immunities  = require('../../config/immunities');
-var Genes     = require('../../config/genes');
-var Blockages        = require('../../config/blockages');
-var CountryCodes = require('../../data/countryCodes');
-var GeneType  = require('../../data/geneTypes');
+var metabolism   = require('../../metabolismLifeModels/database');
+var Immunities   = require('../../metabolismConfiguration/immunities');
+var Genes        = require('../../metabolismConfiguration/genes');
+var Blockages    = require('../../metabolismConfiguration/blockages');
+var CountryCodes = require('../../metabolismTypes/countryCodes');
+var GeneType     = require('../../metabolismTypes/geneTypes');
 
 var validate = metabolism.Sequelize.Validator;
 

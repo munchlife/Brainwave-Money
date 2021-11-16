@@ -2,7 +2,7 @@
 
 // cycleLife.js (model)
 
-var CycleType = require('../data/cycleTypes');
+var CycleType = require('../metabolismTypes/cycleTypes');
 
 module.exports = function(sequelize, DataTypes, cellId) {
     var CycleLife = sequelize.define('CycleLife_' + cellId, {

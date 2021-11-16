@@ -6,7 +6,7 @@ var fs    = require('fs');
 
 var debug = require('debug')('munch');
 var app   = require('../app');
-var metabolism    = require('../models/database');
+var metabolism    = require('../metabolismLifeModels/database');
 
 app.set('port-http',  process.env.PORT || 8080);
 app.set('port-https', process.env.PORT_HTTPS || 8443);

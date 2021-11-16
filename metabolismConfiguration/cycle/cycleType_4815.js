@@ -3,9 +3,9 @@
 // cycleType_5814.js (model)
 
 // Local js modules
-var metabolism        = require('../../models/database');
-var Blockages     = require('../blockages');
-var CycleType = require('../../data/cycleTypes');
+var metabolism = require('../../metabolismLifeModels/database');
+var Blockages  = require('../blockages');
+var CycleType  = require('../../metabolismTypes/cycleTypes');
 
 module.exports = function(cellId, cycle) {
 

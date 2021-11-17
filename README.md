@@ -20,7 +20,7 @@ A degree of constructive or destructive interference then calculates a "charge" 
 
 INITIAL APPLICATION: eyePhone
 
-eyePhone uses the biosignal-interferometry of the digital metabolism to obtain a "DreamMail" inbox that generates transcripts and receipts for a telepathic "who said what to Me" function (expected to be used mostly to record transcripts of dream conversations). The "who said what to Me" function tracks telepathic "voicemails" that deposit "voiceprint cookies" in the electromagnetic field of a life the effects of which can be isolated to a specific location in the field by using the address functions to map the interference to the brain region where telepathic communication took place ("cell phone").
+eyePhone uses the biosignal-interferometry of the digital metabolism along with the iMessage API (a digital "gene") to establish a "DreamMail" inbox that generates transcripts and receipts for a telepathic "who said what to Me" function (expected to be used mostly to record transcripts of dream conversations). The "who said what to Me" function tracks telepathic "voicemails" that deposit "voiceprint cookies" in the electromagnetic field of a life the effects of which can be isolated to a specific location in the field by using the address functions to map the interference to the brain region where telepathic communication took place ("cell phone").
 
 INITIAL APPLICATION: Game Of Chicken
 

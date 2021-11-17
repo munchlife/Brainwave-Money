@@ -2,7 +2,7 @@
 
 // geneSignalPathway.js (model)
 
-var SIGNAL_PATHWAY_PHEROMONE_MAX_LENGTH = 255;
+var SIGNAL_PATHWAY_SIGNAL_PHEROMONE_MAX_LENGTH = 255;
 var SIGNAL_PATHWAY_OPTIONAL_MAX_LENGTH = 255;
 
 module.exports = function(sequelize, DataTypes) {
@@ -22,14 +22,14 @@ module.exports = function(sequelize, DataTypes) {
         //         }
         //     }
         // },
-        pheromone: {
-            type: DataTypes.STRING( SIGNAL_PATHWAY_PHEROMONE_MAX_LENGTH ),
+        signalPheromone: { 
+            type: DataTypes.STRING( SIGNAL_PATHWAY_SIGNAL_PHEROMONE_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate : {
                 len: {
-                    args: [ 1, SIGNAL_PATHWAY_PHEROMONE_MAX_LENGTH ],
-                    msg: 'Signal pathway pheromone can be no more than ' + SIGNAL_PATHWAY_PHEROMONE_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SIGNAL_PATHWAY_SIGNAL_PHEROMONE_MAX_LENGTH ],
+                    msg: 'Signal pathway signal pheromone can be no more than ' + SIGNAL_PATHWAY_SIGNAL_PHEROMONE_MAX_LENGTH + ' characters in length'
                 }
             }
         },

@@ -13,9 +13,9 @@ var express = require('express');
 // Local js modules
 var Middlewares  = require('./middlewares');
 var metabolism   = require('../../models/database');
-var Immunities   = require('../../metabolismConfiguration/immunities');
-var Blockages    = require('../../metabolismConfiguration/blockages');
-var CountryCodes = require('../../metabolismTypes/countryCodes');
+var Immunities   = require('../../config/immunities');
+var Blockages    = require('../../config/blockages');
+var CountryCodes = require('../../data/countryCodes');
 
 var validate = metabolism.Sequelize.Validator;
 
@@ -330,8 +330,8 @@ router.get('/cell/:id/instance/:instanceId/phones', function(req, res) {
 
 // /charge/instance/interferenceDegree?constructive=[constructive]&destructive=[destructive]&constructiveDelta=[constructive region delta]&destructiveDelta=[destructive region delta]
 // --- retrieve array of instance charge interference(s) in given mapped area of field (constructive, destructive, constructiveDelta, destructiveDelta) // retrieve charge alignments or misalignments for cell charge at a point in time during a cell cycle
-router.get('/cell/instance/interferenceDegree', function(req, res) {
-    debug('[GET] /charge/cell/instance/interferenceDegree'); 
+router.get('/cell/instance/interferometer?', function(req, res) {
+    debug('[GET] /charge/cell/instance/interferometer?'); 
     var constructiveInterference      = validate.toFloat(req.query.constructiveInterference);
     var destructiveInterference       = validate.toFloat(req.query.destructiveInterference);
     var deltaConstructiveInterference = validate.toFloat(req.query.deltaConstructiveInterference);
@@ -340,9 +340,9 @@ router.get('/cell/instance/interferenceDegree', function(req, res) {
     // No immunity level necessary for this route; all are allowed access after signature has been verified.
 
 verbose('constructiveInterference: ' + constructiveInterference + ' destructiveInterference: ' + destructiveInterference + 'deltaConstructiveInterference: ' + deltaConstructiveInterference + 'deltaDestructiveInterference: ' + deltaDestructiveInterference);
-    var minimumConstructiveInterference = Math.max(constructiveInterference - (deltaConstructiveInterference/2), 0);
-    var maximumConstructiveInterference = Math.min(constructiveInterference + (deltaConstructiveInterference/2), 90);
-    var maximumDestructiveInterference  = Math.min(destructiveInterference  + (deltaDestructiveInterference/2),  0);
+    var minimumConstructiveInterference = Math.max(constructiveInterference - (deltaConstructiveInterference/2),   0);
+    var maximumConstructiveInterference = Math.min(constructiveInterference + (deltaConstructiveInterference/2),  90);
+    var maximumDestructiveInterference  = Math.min(destructiveInterference  + (deltaDestructiveInterference/2),    0);
     var minimumDestructiveInterference  = Math.max(destructiveInterference  - (deltaDestructiveInterference/2),  -90);
     verbose('minimumConstructiveInterference: ' + minimumConstructiveInterference + 'maximumConstructiveInterference: ' + maximumConstructiveInterference + 'minimumDestructiveInterference: ' + minimumDestructiveInterference + 'maximumDestructiveInterference: ' + maximumDestructiveInterference);
 
@@ -362,55 +362,6 @@ verbose('constructiveInterference: ' + constructiveInterference + ' destructiveI
             res.status(error.status || 500).send(Blockages.response(res, false, error));
         });
 });
-
-// /charge/cell/:id/interference
-// --- retrieve total interference(s) for charge (:id)
-router.get('/instance/:id/interferenceTotal', function(req, res) {
-    debug('[GET] /charge/instance/:id/interferenceTotal');
-    var chargeCellId = req.params.id;
-
-    // No immunity level necessary for this route; all are allowed access after signature has been verified.
-
-    metabolism.Charge // instance charge constructive and interference degree totals
-        .findAll({ where: {chargeCellId: chargeCellId} })
-                //   {constructiveInterference: constructiveInterference},
-                //   destructiveInterference:  destructiveInterference}),
-        .then(function(charges) {
-            var interferenceTotal = 0; // charge interference
-            for (var i = 0; i < charges.length; i++)
-                interferenceTotal += charges[i].value;
-
-            res.status(200).send(Blockages.response(res, true, { charges: charges.length, value: interferenceTotal }));
-        })
-        .catch(function(error) {
-            res.status(error.status || 500).send(Blockages.response(res, false, error));
-        });
-});
-
-// // /charge/cell/:id/interference
-// // --- retrieve total interference(s) for charge (:id)
-// router.get('/instance/:id/interferenceTotal', function(req, res) {
-//     debug('[GET] /charge/instance/:id/interferenceTotal');
-//     var chargeInstanceId = req.params.id;
-
-//     // No immunity level necessary for this route; all are allowed access after signature has been verified.
-//   
-
-//     metabolism.Charge // instance charge constructive and interference degree totals
-//         .findAll({ where: {chargeInstanceId: chargeInstanceId} })
-//                 //   {constructiveInterference: constructiveInterference},
-//                 //   destructiveInterference:  destructiveInterference}),
-//         .then(function(charges) {
-//             var instanceInterferenceTotal = 0; // charge interference
-//             for (var i = 0; i < constructiveChargeInterference.length + destructiveChargeInterference.length; i++)
-//                 interferenceTotal += constructiveChargeInterference[i].value + destructiveChargeInterference.[i].value;
-
-//             res.status(200).send(Blockages.response(res, true, { constructiveChargeInterference: constructiveChargeInterference.length, value: interferenceTotal }));
-//         })
-//         .catch(function(error) {
-//             res.status(error.status || 500).send(Blockages.response(res, false, error));
-//         });
-// });
 
 // /charge/cell/:id/life/:id/chargeContributionMargin
 // --- retrieve contribution margin for life's charge interferenceDegree (:id)
@@ -763,10 +714,10 @@ router.put('/cell/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
 // -----------------------------------------------------------------------------
 // POST ROUTES
 // -----------------------------------------------------------------------------
-// /charge/cell/signup
+// /charge/cell/register
 // --- create a new charge cell
-router.post('/cell/signup', function(req, res) {
-    debug('[POST] /charge/cell/signup');
+router.post('/cell/register', function(req, res) {
+    debug('[POST] /charge/cell/register');
     
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 

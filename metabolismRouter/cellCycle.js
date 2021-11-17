@@ -8,14 +8,14 @@ var verbose = require('debug')('munch:verbose:routes:Cell:Cycle');
 var express = require('express');
 
 // Local js modules
-var metabolism     = require('../../metabolismLifeModels/database');
-var Cycles         = require('../../metabolismConfiguration/cycle');
-var CycleOutsiders = require('../../metabolismConfiguration/cycleOutsider');
-var CycleLifes     = require('../../metabolismConfiguration/cycleLife');
-var Immunities     = require('../../metabolismConfiguration/immunities');
-var Genes          = require('../../metabolismConfiguration/genes');
-var Blockages      = require('../../metabolismConfiguration/blockages');
-var CycleType      = require('../../metabolismTypes/cycleTypes');
+var metabolism     = require('../../models/database');
+var Cycles         = require('../../config/cycle');
+var CycleOutsiders = require('../../config/cycleOutsider');
+var CycleLives     = require('../../config/cycleLife');
+var Immunities     = require('../../config/immunities');
+var Genes          = require('../../config/genes');
+var Blockages      = require('../../config/blockages');
+var CycleType      = require('../../data/cycleTypes');
 
 var validate = metabolism.Sequelize.Validator;
 
@@ -25,13 +25,13 @@ var router = module.exports = express.Router();
 // -----------------------------------------------------------------------------
 // ATTRIBUTE/INCLUDE SETUP
 // -----------------------------------------------------------------------------
-//  attributesCycleAudit     = [ 'cycleAuditId', 'cycleId', 'messageNumber', 'message', 'createdAt' ];
-var attributesCycleSequence  = [ 'cycleSequenceId',  'cycleId', 'productId', 'cycleLifeId', 'position', 'status', 'charge', 'quantity' ];
-var attributesCycleLife      = [ 'cycleLifeId',  'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'signalingGeneId', 'signalingReferenceNumber', 'loyaltyGeneId', 'loyaltyReferenceNumber', 'checkinGeneId', 'checkinReferenceNumber' ];
+//  attributesCycleAudit     = [ 'cycleAuditId',    'cycleId', 'messageNumber', 'message', 'createdAt' ];
+var attributesCycleSequence  = [ 'cycleSequenceId', 'cycleId', 'productId', 'cycleLifeId', 'position', 'status', 'charge', 'quantity' ];
+var attributesCycleLife      = [ 'cycleLifeId',     'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'signalingGeneId', 'signalingReferenceNumber', 'loyaltyGeneId', 'loyaltyReferenceNumber', 'checkinGeneId', 'checkinReferenceNumber' ];
 var attributesOutsider       = [ 'outsiderId',      'givenName', 'familyName', 'phone', 'extension', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ];
 
 // Remove fields from metabolism.CellGraph[].Cycle: deletedAt
-var cycleAttributes = [ 'cycleId', 'cellType', 'instanceId', 'deviceId', 'stakeholderCreatorId', 'stakeholderDelivererId', 'originGeneId', 'deliveryMethod', 'status', 'distributedGeneral', 'taxPercentage', 'subTotal', 'chargeDiscount', 'chargeFee', 'chargeTax', 'chargeTip', 'chargeTotal', 'cycleNotes', 'createdAt', 'updatedAt' ];
+var cycleAttributes = [ 'cycleId', 'cellType', 'instanceId', 'deviceId', 'stakeholderCreatorId', 'stakeholderDelivererId', 'originGeneId', 'deliveryMethod', 'status', 'distributedCharge', 'taxPercentage', 'subTotal', 'chargeDiscount', 'chargeFee', 'chargeTax', 'chargeTip', 'chargeTotal', 'cycleNotes', 'createdAt', 'updatedAt' ];
 
 // Remove fields from metabolism.CellGraph[].CycleSequence: createdAt, updatedAt, deletedAt
 // cycleSequenceAttributes = [ 'cycleSequenceId', 'cycleId', 'productId', 'cycleLifeId', 'position', 'charge', 'quantity' ];
@@ -42,7 +42,7 @@ var cycleLifeAttributes = [ 'cycleLifeId', 'cycleId', 'lifeId', 'outsiderId', 's
 var includeCycle          = { model: null, as: 'Cycle',     attributes: cycleAttributes };
 //  includeCycleAudit     = { model: null, as: 'Audits',    attributes: attributesCycleAudit };
 var includeCycleSequence  = { model: null, as: 'Sequences', attributes: attributesCycleSequence };
-var includeCycleLife      = { model: null, as: 'Lifes',     attributes: attributesCycleLife };
+var includeCycleLife      = { model: null, as: 'Lives',     attributes: attributesCycleLife };
 
 var copyIncludeProperties = function(obj, model) {
     return { model: model, as: obj.as, attributes: obj.attributes};
@@ -166,10 +166,10 @@ router.get('/:id/cycle/:cycleId/sequence/:sequenceId', function(req, res) {
         });
 });
 
-// /cell/:id/cycle/:cycleId/lifes
-// --- retrieve array of cycle lifes of cycle (:cycleId) for cell (:id)
-router.get('/:id/cycle/:cycleId/lifes', function(req, res) {
-    debug('[GET] /cell/:id/cycle/:cycleId/lifes');
+// /cell/:id/cycle/:cycleId/lives
+// --- retrieve array of cycle lives of cycle (:cycleId) for cell (:id)
+router.get('/:id/cycle/:cycleId/lives', function(req, res) {
+    debug('[GET] /cell/:id/cycle/:cycleId/lives');
     var cellId     = req.params.id.toString();
     var cycleId    = req.params.cycleId;
 
@@ -184,8 +184,8 @@ router.get('/:id/cycle/:cycleId/lifes', function(req, res) {
             where: {cycleId: cycleId},
             attributes: attributesCycleLife
         })
-        .then(function(lifes) {
-            res.status(200).send(Blockages.respMsg(res, true, lifes));
+        .then(function(lives) {
+            res.status(200).send(Blockages.respMsg(res, true, lives));
         })
         .catch(function(error) {
             res.status(500).send(Blockages.respMsg(res, false, error));
@@ -296,7 +296,7 @@ router.put('/:id/cycle/:cycleId', function(req, res) {
           /*cycle.table                  = null */
           /*cycle.status:                not accessible for change */
             cycle.cycleNotes             = metabolism.CellGraph[cellId].Cycle.extractCycleNotes(metabolism, req.body.notes);
-            cycle.distributedCharge      = validate.trim(validate.toString(req.body.distributedGeneral)).toUpperCase();
+            cycle.distributedCharge      = validate.trim(validate.toString(req.body.distributedCharge)).toUpperCase();
           /*cycle.taxPercentage:         not accessible for change */
           /*cycle.subTotal:              not accessible for change */
           /*cycle.chargeDiscount:        not accessible for change */
@@ -528,8 +528,6 @@ router.post('/:id/cycle', function(req, res) {
                 // chargeFee:           chargeFee,
                 // chargeTax:           chargeTax,
                 // chargeTip:           chargeTip,
-                constructiveCharge:     metabolism.CellInstance.extractConstructiveInterference(metabolism, req.body.constructiveInterference),
-                destructiveCharge:      metabolism.CellInstance.extractDestructiveInterference(metabolism, req.body.destructiveInterference),
                 chargeTotal:            validate.toFloat(req.body.chargeTotal)
             };
 
@@ -814,8 +812,8 @@ router.post('/:id/cycle/:cycleId/process', function(req, res) {
 
 // /cell/:id/cycle/:cycleId/life/:cycleLifeId/verify
 // --- verify information in cycle life (:cycleLifeId) of cycle (:cycleId) for cell (:id)
-router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verifySequence', function(req, res) {
-    debug('[POST] /cell/:id/cycle/:cycleId/life/:cycleLifeId/verifySequence');
+router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verify', function(req, res) {
+    debug('[POST] /cell/:id/cycle/:cycleId/life/:cycleLifeId/verify');
     var cellId      = req.params.id.toString();
     var cycleId     = req.params.cycleId;
     var cycleLifeId = req.params.cycleLifeId;
@@ -911,7 +909,7 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verifySequence', function(req
                         };
 
                         var signalingGeneAPI = new Genes[this.cycleLife.signalingGeneId.toString()](metabolism);
-                        cycleLifeProcessor = new CycleLifes[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, signalingGeneAPI);
+                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, signalingGeneAPI);
                     }
                     else {
                         if (!lifeOrOutsider)
@@ -935,8 +933,8 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verifySequence', function(req
 
 // /cell/:id/cycle/:cycleId/life/:cycleLifeId/process
 // --- process an cycle life (:cycleLifeId) of cycle (:cycleId) for cell (:id)
-router.post('/:id/cycle/:cycleId/life/:cycleLifeId/processSequence', function(req, res) {
-    debug('[POST] /cell/:id/cycle/:cycleId/life/:cycleLifeId/processSequence');
+router.post('/:id/cycle/:cycleId/life/:cycleLifeId/process', function(req, res) {
+    debug('[POST] /cell/:id/cycle/:cycleId/life/:cycleLifeId/process');
     var cellId      = req.params.id.toString();
     var cycleId     = req.params.cycleId;
     var cycleLifeId = req.params.cycleLifeId;
@@ -1036,7 +1034,7 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/processSequence', function(re
                         };
 
                         var signalingGeneAPI = new Genes[this.cycleLife.signalingGeneId.toString()](metabolism);
-                        cycleLifeProcessor = new CycleLifes[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, signalingGeneAPI);
+                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, signalingGeneAPI);
                     }
                     else {
                         if (!lifeOrOutsider)

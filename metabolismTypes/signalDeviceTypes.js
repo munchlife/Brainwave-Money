@@ -1,17 +1,18 @@
 'use strict';
 
-// checkinDeviceTypes.js
+// signalDeviceTypes.js
 
-var checkinDeviceTypes = module.exports = {};
+var signalDeviceTypes = module.exports = {};
 
-checkinDeviceTypes.ENUM = {
+signalDeviceTypes.ENUM = {
     BLE: { abbr: 'BLE', fullName: 'Bluetooth Low Energy Device' },
-    NFC: { abbr: 'NFC', fullName: 'NFC Stand-alone Device' }
+    NFC: { abbr: 'NFC', fullName: 'NFC Stand-alone Device' },
+    HAM: { abbr: 'HAM', fullName: 'HAM Radio' },
 };
 
-checkinDeviceTypes.totalCount = 0;
-checkinDeviceTypes.abbrs      = [];
-for (var checkinDevice in checkinDeviceTypes.ENUM) {
-    checkinDeviceTypes.totalCount++;
-    checkinDeviceTypes.abbrs.push(checkinDeviceTypes.ENUM[checkinDevice].abbr);
+signalDeviceTypes.totalCount = 0;
+signalDeviceTypes.abbrs      = [];
+for (var signalDevice in signalDeviceTypes.ENUM) {
+    signalDeviceTypes.totalCount++;
+    signalDeviceTypes.abbrs.push(signalDeviceTypes.ENUM[signalDevice].abbr);
 }

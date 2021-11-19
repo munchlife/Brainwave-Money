@@ -76,11 +76,11 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                Cell.hasMany(models.CellInstance,    { as: 'Instances',     foreignKey: 'cellId' });
-                Cell.hasMany(models.CellStakeholder,       { as: 'StakeholderMembers',  foreignKey: 'cellId' });
-                Cell.hasMany(models.GeneSignalPathway, { as: 'SignalPathways', foreignKey: 'cellId' });
-                Cell.hasOne(models.Address,              { as: 'Address',       foreignKey: 'cellId' });
-                Cell.hasMany(models.Phone,               { as: 'Phones',        foreignKey: 'cellId' });
+                Cell.hasMany(models.CellInstance,      { as: 'Instances',          foreignKey: 'cellId' });
+                Cell.hasMany(models.CellStakeholder,   { as: 'StakeholderMembers', foreignKey: 'cellId' });
+                Cell.hasMany(models.GeneSignalPathway, { as: 'SignalPathways',     foreignKey: 'cellId' });
+                Cell.hasOne(models.Address,            { as: 'Address',            foreignKey: 'cellId' });
+                Cell.hasMany(models.Phone,             { as: 'Phones',             foreignKey: 'cellId' });
             },
             extractWebsite: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value)).toLowerCase();

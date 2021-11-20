@@ -4,8 +4,8 @@
 
 var CountryCodes = require('../metabolismTypes/countryCodes');
 
-var MERCHANT_NAME_MAX_LENGTH = 255;
-var MERCHANT_WEBSITE_MAX_LENGTH = 255;
+var CELL_NAME_MAX_LENGTH = 255;
+var CELL_WEBSITE_MAX_LENGTH = 255;
 
 module.exports = function(sequelize, DataTypes) {
     var ChargeCell = sequelize.define('ChargeCell', {

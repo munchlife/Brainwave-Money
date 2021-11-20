@@ -4,8 +4,8 @@
 
 var CountryCodes = require('../metabolismTypes/countryCodes');
 
-var LOCATION_NAME_MAX_LENGTH = 255;
-var LOCATION_WEBSITE_MAX_LENGTH = 255;
+var INSTANCE_NAME_MAX_LENGTH = 255;
+var INSTANCE_WEBSITE_MAX_LENGTH = 255;
 
 module.exports = function(sequelize, DataTypes) {
     var ChargeInstance = sequelize.define('ChargeInstance', {
@@ -14,38 +14,38 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true,
             autoIncrement: true
         },
-        lat : {
+        constructiveInterference: {
             // precision of 0.00000001 degs is 1.11mm distance
             type: DataTypes.DECIMAL(10, 8),
             allowNull: true,
             validate: {
                 isFloat: {
-                    msg: 'Charge instance latitude value must be a number'
+                    msg: 'Charge instance constructive interference value must be a number'
                 },
                 min: {
                     args: -90.0,
-                    msg: 'Charge instance latitude value must be greater than or equal to -90.0 degrees'
+                    msg: 'Charge instance constructive interference value must be greater than or equal to -90.0 degrees'
                 },
                 max: {
                     args: 90.0,
-                    msg: 'Charge instance latitude value must be less than or equal to 90.0 degrees'
+                    msg: 'Charge instance constructive interference value must be less than or equal to 90.0 degrees'
                 }
             }
         },
-        lon : {
+        destructiveInterference: {
             type: DataTypes.DECIMAL(11, 8),
             allowNull: true,
             validate: {
                 isFloat: {
-                    msg: 'Charge instance longitude value must be a number'
+                    msg: 'Charge instance destructive interference value must be a number'
                 },
                 min: {
                     args: -180.0,
-                    msg: 'Charge instance longitude value must be greater than or equal to -180.0 degrees'
+                    msg: 'Charge instance destructive interference value must be greater than or equal to -180.0 degrees'
                 },
                 max: {
                     args: 180.0,
-                    msg: 'Charge instance longitude value must be less than or equal to 180.0 degrees'
+                    msg: 'Charge instance destructive interference value must be less than or equal to 180.0 degrees'
                 }
             }
         },
@@ -104,9 +104,9 @@ module.exports = function(sequelize, DataTypes) {
         // freezeTableName: true,     // defaulted globally
         tableName: 'chargeInstances', // force table name to this value
         validate: {
-            validateCoordinates: function() {
-                if ((this.lat === null) !== (this.lon === null))
-                    throw new Error('Require either both latitude and longitude or neither');
+            validateInterference: function() {
+                if ((this.constructiveInterference === null) !== (this.destructiveInterference === null))
+                    throw new Error('Require either both constructive interference and destructive interference or neither');
             }
         },
         classMethods: {
@@ -136,12 +136,12 @@ module.exports = function(sequelize, DataTypes) {
 
                 return value;
             },
-            extractLatitude: function(metabolism, value) {
+            extractConstructiveInterference: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.toFloat(value);
 
                 return value;
             },
-            extractLongitude: function(metabolism, value) {
+            extractDestructiveInterference: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.toFloat(value);
 
                 return value;

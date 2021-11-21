@@ -6,7 +6,11 @@
 
 The digital metabolism is designed to work for any life type and allows life to network together by forming co-operative "cells" comprised of similarly-organized communication wavelengths that leverage digital "genes" (program APIs) as a platform to construct networks of signaling pathways (program API endpoint sequences) for consumption by life. 
 
-The digital metabolism can be deployed by running the code on a "digital cell" instance that "mines" information carried in bioelectromagnetic signals through an electromagnetic or ultrasound beacon connected to Your front-end application.
+The digital metabolism can be deployed by running the code on a "digital cell" instance that "mines" information carried in "extremely low frequency" and "very low frequency" (<~1KHZ) bioelectromagnetic signals through a receiver antenna and analog-to-digital converter connected to Your front-end application.
+
+https://www.celnav.de/hamradio/ELF.htm (Building a Simple ELF Receiver)
+https://www.elektormagazine.com/magazine/elektor-201410/27086 (Arduino + Analog-to-Digital Extremely Low Frequency Receiver)
+https://jwcn-eurasipjournals.springeropen.com/articles/10.1186/s13638-018-1157-7 (A new portable ELF Schumann resonance receiver: design and detailed analysis of the antenna and the analog front-end)
 
 TODO: Include reference instance(s) that pegs the "charge" functions of the digital metabolism to the ionospheric ("schumann") resonances so as to provide a clearinghouse used to obtain planetarily-sound validity of information cycles by comparing the waveform of a life or cell signal with the waveform of the ionosphere resonances.
 

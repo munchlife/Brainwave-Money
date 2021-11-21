@@ -134,8 +134,8 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.CellInstance.create({ instanceId: 1, atlas: 1, constructiveInterference: 40.735366, destructiveInterference: -73.991638, name: 'Munch Restaurant 1', cellType: null, website: null, countryCode: null, cellId: 1, fieldId: 1 }); })
-.then(function() { return metabolism.CellInstance.create({ instanceId: 2, atlas: 2, constructiveInterference: 40.733456, destructiveInterference: -73.989960, name: 'Munch Restaurant 2', cellType: null, website: null, countryCode: null, cellId: 1, fieldId: 1 }); })
+.then(function() { return metabolism.CellInstance.create({ instanceId: 1, atlas: 1, constructiveInterference: null, destructiveInterference: null, name: 'Climate Engineering Instance 1', cellType: null, website: null, countryCode: null, cellId: 1, fieldId: 1 }); })
+.then(function() { return metabolism.CellInstance.create({ instanceId: 2, atlas: 2, constructiveInterference: null, destructiveInterference: null, name: 'Climate Engineering Instance 2', cellType: null, website: null, countryCode: null, cellId: 1, fieldId: 1 }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `cellInstances` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
@@ -286,10 +286,10 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.Address.create({ addressId: 1, name: 'Home',      address1: '830 Madison St',   address2: 'APT 230', address3: null, address4: null, locality: 'Hoboken',     region: 'NJ', postalCode: '07030', lifeId: 1,    cellId: null, instanceId: null, geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Address.create({ addressId: 2, name: 'Home',      address1: '2345 Long Rd',     address2: null,      address3: null, address4: null, locality: 'East Meadow', region: 'NY', postalCode: '10323', lifeId: 2,    cellId: null, instanceId: null, geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Address.create({ addressId: 3, name: '$$_locale', address1: '1 Union Square W', address2: null,      address3: null, address4: null, locality: 'New York',    region: 'NY', postalCode: '10003', lifeId: null, cellId: null, instanceId: 1,    geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Address.create({ addressId: 4, name: '$$_locale', address1: '134 4th Ave',      address2: null,      address3: null, address4: null, locality: 'New York',    region: 'NY', postalCode: '10003', lifeId: null, cellId: null, instanceId: 2,    geneId: null, bountyCellId: null, bountyInstanceId: null }); })
+.then(function() { return metabolism.Address.create({ addressId: 1, name: 'Home',      address1: '830 Madison St',   address2: 'APT 230', address3: null, address4: null, locality: 'Hoboken',     region: 'NJ', postalCode: '07030', lifeId: 1,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Address.create({ addressId: 2, name: 'Home',      address1: '2345 Long Rd',     address2: null,      address3: null, address4: null, locality: 'East Meadow', region: 'NY', postalCode: '10323', lifeId: 2,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Address.create({ addressId: 3, name: '$$_locale', address1: '1 Union Square W', address2: null,      address3: null, address4: null, locality: 'New York',    region: 'NY', postalCode: '10003', lifeId: null, cellId: null, instanceId: 1,    geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Address.create({ addressId: 4, name: '$$_locale', address1: '134 4th Ave',      address2: null,      address3: null, address4: null, locality: 'New York',    region: 'NY', postalCode: '10003', lifeId: null, cellId: null, instanceId: 2,    geneId: null, chargeCellId: null, chargeInstanceId: null }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `addresses` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
@@ -301,16 +301,16 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.Phone.create({ phoneId: 1,  name: 'Work',       number: '+18583123656', extension: null,  lifeId: 1,    cellId: null, instanceId: null, geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 2,  name: 'Cell',       number: '+16313551062', extension: null,  lifeId: 2,    cellId: null, instanceId: null, geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 3,  name: 'Cell',       number: '+19144143484', extension: null,  lifeId: 3,    cellId: null, instanceId: null, geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 4,  name: 'Cell',       number: '+19142628540', extension: null,  lifeId: 4,    cellId: null, instanceId: null, geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 5,  name: 'Main',       number: '+12125551234', extension: null,  lifeId: null, cellId: 1,    instanceId: null, geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 6,  name: 'Support',    number: '+12125554564', extension: null,  lifeId: null, cellId: 1,    instanceId: null, geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-// .then(function() { return metabolism.Phone.create({ phoneId: 8,  name: '$$_support', number: '+13035551231', extension: null,  lifeId: null, cellId: null, instanceId: null, geneId: 1000, bountyCellId: null, bountyInstanceId: null }); })
-// .then(function() { return metabolism.Phone.create({ phoneId: 9,  name: '$$_support', number: '+13035558483', extension: '123', lifeId: null, cellId: null, instanceId: null, geneId: 1001, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 10, name: 'Main',       number: '+12125552345', extension: null,  lifeId: null, cellId: null, instanceId: 1,    geneId: null, bountyCellId: null, bountyInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 11, name: 'Main',       number: '+12125553456', extension: null,  lifeId: null, cellId: null, instanceId: 2,    geneId: null, bountyCellId: null, bountyInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 1,  name: 'Work',       number: '+18583123656', extension: null,  lifeId: 1,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 2,  name: 'Cell',       number: '+16313551062', extension: null,  lifeId: 2,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 3,  name: 'Cell',       number: '+19144143484', extension: null,  lifeId: 3,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 4,  name: 'Cell',       number: '+19142628540', extension: null,  lifeId: 4,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 5,  name: 'Main',       number: '+12125551234', extension: null,  lifeId: null, cellId: 1,    instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 6,  name: 'Support',    number: '+12125554564', extension: null,  lifeId: null, cellId: 1,    instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+// .then(function() { return metabolism.Phone.create({ phoneId: 8,  name: '$$_support', number: '+13035551231', extension: null,  lifeId: null, cellId: null, instanceId: null, geneId: 1000, chargeCellId: null, chargeInstanceId: null }); })
+// .then(function() { return metabolism.Phone.create({ phoneId: 9,  name: '$$_support', number: '+13035558483', extension: '123', lifeId: null, cellId: null, instanceId: null, geneId: 1001, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 10, name: 'Main',       number: '+12125552345', extension: null,  lifeId: null, cellId: null, instanceId: 1,    geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 11, name: 'Main',       number: '+12125553456', extension: null,  lifeId: null, cellId: null, instanceId: 2,    geneId: null, chargeCellId: null, chargeInstanceId: null }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `phones` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------

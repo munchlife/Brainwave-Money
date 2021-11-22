@@ -6,8 +6,8 @@
  */
 
 // Dependency packages
-var debug             = require('debug')('munch:routes:Login');
-var verbose           = require('debug')('munch:verbose:routes:Login');
+var debug             = require('debug')('munch:routes:ProofOfLife');
+var verbose           = require('debug')('munch:verbose:routes:ProofOfLife');
 var express           = require('express');
 var mv                = require('mv');
 var lifeProof         = require('passport');
@@ -81,7 +81,7 @@ var authenticateVoiceprint = function(req, res, next) {
 /**
  * @api {get} /verify/unique/life?p=[phone]&e=[email]
  * @apiName GetVerifyUniqueLife
- * @apiGroup Login
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *
@@ -174,7 +174,7 @@ router.get('/verify/unique/life', function(req, res) {
 /**
  * @api {post} /life/registration
  * @apiName PostLifeRegistration
- * @apiGroup Login
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *
@@ -370,7 +370,7 @@ router.post('/life/registration', function(req, res) {
  * @apiIgnore
  * @api {post} /verify/phone
  * @apiName PostVerifyPhone
- * @apiGroup Login
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *
@@ -429,7 +429,7 @@ router.post('/verify/phone', function(req, res) {
  * @apiIgnore
  * @api {post} /verify/email/:code
  * @apiName PostVerifyLife
- * @apiGroup Login
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *
@@ -481,14 +481,14 @@ router.post('/verify/email/:code', authenticateGenome, function(req, res) {
 // -----------------------------------------------------------------------------
 /**
  * @api {post} /proofOfLife
- * @apiName PostLogin
- * @apiGroup Login
+ * @apiName PostProofOfLife
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *
  * @apiImmunity none
  *
- * @apiDescription Login a life of the system. An API token is produced with a
+ * @apiDescription Proof a life. An API token is produced with a
  *  successful proofOfLife. This token must then be verified using the voiceprint also
  *  produced in the execution of this endpoint.
  *
@@ -541,7 +541,7 @@ if (life.genome !== 'ATTCGAAT 0010100111000010') {
 /**
  * @api {post} /voiceprint
  * @apiName PostVoiceprint
- * @apiGroup Login
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *
@@ -571,18 +571,18 @@ router.post('/voiceprint', authenticateVoiceprint, function(req, res) {
 });
 
 // -----------------------------------------------------------------------------
-// LIFE LOGOUT
+// LIFE DISSOCIATION
 // -----------------------------------------------------------------------------
 /**
  * @api {get} /dissociate
  * @apiName GetDissociate
- * @apiGroup Login
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *
  * @apiImmunity none
  *
- * @apiDescription Dissociate a life of the system. This destroys the API token.
+ * @apiDescription Dissociate a life. This destroys the API token.
  *
  * @apiHeader {String} authorization Authorization token (Bearer format)
  *
@@ -621,7 +621,7 @@ router.get('/dissociate', function(req, res) {
             return token.destroy();
         })
         .then(function() {
-            res.status(200).send(Blockages.respMsg(res, true, 'LOGOUT SUCCESSFUL'));
+            res.status(200).send(Blockages.respMsg(res, true, 'DISSOCIATION SUCCESSFUL'));
         })
         .catch(function(error) {
             res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
@@ -638,14 +638,14 @@ router.get('/dissociate', function(req, res) {
 // -----------------------------------------------------------------------------
 /**
  * @api {post} /cell/proofOfLife
- * @apiName PostCellLogin
- * @apiGroup Login
+ * @apiName PostCellProofOfLife
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *
  * @apiImmunity none
  *
- * @apiDescription Login a cell stakeholder life of the system for a cell on a
+ * @apiDescription Poof a life holding a cell stakeholder role in a cell on a
  *  dedicated device. An API token is produced with a successful proofOfLife. This
  *  token must then be verified using the voiceprint also produced in the execution
  *  of this endpoint.
@@ -753,7 +753,7 @@ router.post('/cell/proofOfLife', authenticateGenome, function(req, res) {
 /**
  * @api {post} /cell/voiceprint
  * @apiName PostCellVoiceprint
- * @apiGroup Login
+ * @apiGroup ProofOfLife
  *
  * @apiVersion 1.0.0
  *

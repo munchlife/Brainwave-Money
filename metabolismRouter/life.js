@@ -1151,7 +1151,7 @@ router.put('/:id/device/:deviceId', function(req, res) {
 // -----------------------------------------------------------------------------
 // POST ROUTES
 // -----------------------------------------------------------------------------
-// /life/signup --> located in login.js to avoid token auth middleware
+// /life/register --> located in proofOfLife.js to avoid token auth middleware
 
 // /life/:id/genome
 // --- add an genome to an existing life (:id)

@@ -1443,26 +1443,6 @@ router.post('/:id/verify/genome', function(req, res) {
                 body: 'Verification code for changing your genome: ' + this.voiceprint
             });
 
-        //     this.life = life;
-        //     this.voiceprint = Random.integer(100000, 999999).toString();
-
-        //     if (life.phone === '+12125551234') {
-        //         this.voiceprint = '123456';
-        //     }
-
-        //     life.voiceprint = this.voiceprint;
-        //     life.voiceprintExpiration = new Date(new Date().getTime() + (5*60*60*1000)); // 5 minute expiration
-
-        //     return life.save();
-        // })
-        // .then(function() {
-        //     if (this.life.phone !== '+12125551234') {
-
-        //     return TextMessage.send({
-        //         to: this.life.phone,
-        //         body: 'Verification code for changing your genome: ' + this.voiceprint
-        //     });
-
             } else {
                 return metabolism.sequelize.Promise.resolve();
             }

@@ -1173,15 +1173,14 @@ router.post('/:id/genome', function(req, res) {
                 throw new Blockages.NotFoundError('Life not found');
 
             // Validate 'genome' format
-            // TODO: restrict genome format to PNG
-            // TODO: restrict genome size to  200x200 (??)
+            // TODO: restrict genome format to txt
             var genomePath = req.files.genome.path;
             if (validate.equals(req.files.genome.name, ''))
                 throw new Blockages.BadRequestError('Genome is required');
 
             // Move the genome into the directory associated with the life
             var genomeDir = 'genomes/life/' + life.lifeId + '/';
-            mv(genomePath, genomeDir + 'genome-200.png', {mkdirp: true}, function(error) {
+            mv(genomePath, genomeDir + 'genome.txt', {mkdirp: true}, function(error) {
                 if (error)
                     throw error;
                 else
@@ -1213,8 +1212,6 @@ router.post('/:id/media', function(req, res) {
                 throw new Blockages.NotFoundError('Life not found');
 
             // Validate 'media' format
-            // TODO: restrict media format to PNG
-            // TODO: restrict media size to  200x200 (??)
             var mediaPath = req.files.media.path;
             if (validate.equals(req.files.media.name, ''))
                 throw new Blockages.BadRequestError('Media is required');

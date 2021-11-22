@@ -809,10 +809,10 @@ router.get('/:id/token/associate/gene/:geneId', function(req, res) {
     });
 });
 
-// /life/:id/token/disassociate
-// --- Disassociate the current cell or gene from the life (:id) in current token
-router.get('/:id/token/disassociate', function(req, res) {
-    debug('[GET] /life/:id/token/disassociate');
+// /life/:id/token/dissociate
+// --- Dissociate the current cell or gene from the life (:id) in current token
+router.get('/:id/token/dissociate', function(req, res) {
+    debug('[GET] /life/:id/token/dissociate');
     var lifeId  = req.params.id;
     var tokenId = res.locals.lifePacket.tokenId;
 

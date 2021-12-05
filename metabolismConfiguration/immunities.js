@@ -27,7 +27,7 @@ Immunities.createAuthInfoPacket = function(tokenId, life, stakeholderMember) {
 };
 
 // -----------------------------------------------------------------------------
-// USER
+// LIFE
 // -----------------------------------------------------------------------------
 Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, geneAccess, lifePacket) {
     if (arguments.length !== 5 || !lifePacket || !(typeof lifePacket === 'object'))
@@ -48,7 +48,7 @@ Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, 
 };
 
 // -----------------------------------------------------------------------------
-// MERCHANT
+// CELL
 // -----------------------------------------------------------------------------
 // Immunities.verifyNoRejectionFromCell = function(cellId, instanceId, authLevelRequired, lifeAccess, geneAccess, lifePacket) {
 //     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
@@ -138,7 +138,7 @@ Immunities.verifyNoRejectionFromCellInstance = function(cellId, instanceId, auth
 };
 
 // -----------------------------------------------------------------------------
-// SERVICE
+// GENE
 // -----------------------------------------------------------------------------
 Immunities.verifyNoRejectionFromGene = function(geneId, authLevelRequired, lifeAccess, cellAccess, lifePacket) {
     if (arguments.length !== 5 || !lifePacket || !(typeof lifePacket === 'object'))

@@ -6,7 +6,7 @@
 
 The digital metabolism is designed to work for any life type and allows life to network together by forming co-operative "cells" comprised of similarly-organized communication wavelengths that leverage digital "genes" (program APIs) as a platform to construct networks of signaling pathways (program API endpoint sequences) for consumption by life. 
 
-The digital metabolism can be deployed by running the code on a "digital cell" instance that "mines" information carried in "extremely low frequency" and "very low frequency" (<~1KHZ) bioelectromagnetic signals through a receiver antenna and analog-to-digital converter connected to a front-end application.
+The digital metabolism can be deployed by running the code on a "digital cell" instance that "mines" information carried in the "noosphere" (the collective set of bioelectromagnetic wavelengths transmitting consciousness) "extremely low frequency" and "very low frequency" (<~1KHZ) bioelectromagnetic signals through a receiver antenna and analog-to-digital converter connected to a front-end application.
 
 https://www.celnav.de/hamradio/ELF.htm (Building a Simple ELF Receiver)
 

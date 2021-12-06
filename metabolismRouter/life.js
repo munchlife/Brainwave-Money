@@ -1633,7 +1633,7 @@ router.delete('/:id', function(req, res) {
             return life.destroy();
         })
         .then(function() {
-            res.status(200).send(Blockages.respMsg(res, true, 'USER (' + lifeId + ') DELETED'));
+            res.status(200).send(Blockages.respMsg(res, true, 'LIFE (' + lifeId + ') DELETED'));
         })
         .catch(function(error) {
             res.status(error.status || 500).send(Blockages.respMsg(res, false, error));

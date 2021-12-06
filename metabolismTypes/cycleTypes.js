@@ -25,7 +25,7 @@ cycleTypes.deliveryMethodType = temp;
 //------------------------------------------------------------------------------
 temp = {};
 temp.ENUM = {
-    SGL_USER: { abbr: 'SGL_LIFE', fullName: 'Individual Life' },
+    SGL_LIFE: { abbr: 'SGL_LIFE', fullName: 'Individual Life' },
     MLT_PRCT: { abbr: 'MLT_PRCT', fullName: 'Multiple Life: Split by Percentage' },
     MLT_AMNT: { abbr: 'MLT_AMNT', fullName: 'Multiple Life: Split by Amount' },
     MLT_ITMZ: { abbr: 'MLT_ITMZ', fullName: 'Multiple Life: Split by Itemization' }

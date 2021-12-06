@@ -44,7 +44,7 @@ module.exports = function(cellId, cycle) {
 
                 // Cycle fields not checked here: staffDelivererId, originGeneId, deliveryMethod, status
 
-                if (self.cycle.distributedSignal !== CycleType.distributedSignalType.ENUM.SGL_USER.abbr)
+                if (self.cycle.distributedSignal !== CycleType.distributedSignalType.ENUM.SGL_LIFE.abbr)
                     throw new Blockages.CycleProcessError(20105, 'ERROR: distributedSignal invalid');
 
                 // Cycle fields not checked here: taxPercentage, subTotal, chargeDiscount, chargeFee, chargeTax, chargeTip

@@ -29,7 +29,7 @@ module.exports = function(cellId, cycle) {
     self.psOpen = function() {
         return self.audit(20000, ' (PS)Open - Start')
             .then(function() {
-                if (validate.toInt(self.cycle.cellType) !== 5814)
+                if (validate.toInt(self.cycle.cellType) !== 4815)
                     throw new Blockages.CycleProcessError(20101, 'ERROR: cellType invalid');
 
                 if (self.cycle.instanceId === null)

@@ -15,12 +15,12 @@ module.exports = function(sequelize, DataTypes) {
             autoIncrement: true
         },
         name: {
-            type: DataTypes.STRING( MERCHANT_NAME_MAX_LENGTH ),
+            type: DataTypes.STRING( CELL_NAME_MAX_LENGTH ),
             allowNull: false,
             validate: {
                 len: {
-                    args: [ 1, MERCHANT_NAME_MAX_LENGTH ],
-                    msg: 'Charge cell name must be inclusively between 1 and ' + MERCHANT_NAME_MAX_LENGTH + ' characters in length'
+                    args: [ 1, CELL_NAME_MAX_LENGTH ],
+                    msg: 'Charge cell name must be inclusively between 1 and ' + CELL_NAME_MAX_LENGTH + ' characters in length'
                 }
             }
         },
@@ -30,8 +30,8 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: null,
             validate: {
                 isIn: {
-                    args: [[ 5814 ]],
-                    msg: 'Charge cell type is not in the approved set of MCC numbers'
+                    args: [[ 4815 ]],
+                    msg: 'Charge cell type is not in the approved set of category numbers'
                 }
             }
         },

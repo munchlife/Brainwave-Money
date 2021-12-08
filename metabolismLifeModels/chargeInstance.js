@@ -111,7 +111,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                ChargeInstance.belongsTo(models.ChargeCell, { foreignKey: 'chargeCellId' });
+                ChargeInstance.belongsTo(models.ChargeCell,     { foreignKey: 'chargeCellId' });
                 ChargeInstance.hasOne(models.Address,           { as: 'Address', foreignKey: 'chargeInstanceId' });
                 ChargeInstance.hasMany(models.Phone,            { as: 'Phones',  foreignKey: 'chargeInstanceId' });
             },

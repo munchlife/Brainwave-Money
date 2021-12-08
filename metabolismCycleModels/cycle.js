@@ -16,8 +16,8 @@ module.exports = function(sequelize, DataTypes, cellId) {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
                 isIn: {
-                    args: [[ 5814 ]],
-                    msg: 'Cell type is not in the approved set of MCC numbers'
+                    args: [[ 4815 ]],
+                    msg: 'Cell type is not in the approved set of category numbers'
                 }
         },
         instanceId: {

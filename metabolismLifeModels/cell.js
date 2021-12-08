@@ -22,12 +22,12 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: false
         },
         name: {
-            type: DataTypes.STRING( MERCHANT_NAME_MAX_LENGTH ),
+            type: DataTypes.STRING( CELL_NAME_MAX_LENGTH ),
             allowNull: false,
             validate: {
                 len: {
-                    args: [ 1, MERCHANT_NAME_MAX_LENGTH ],
-                    msg: 'Cell name must be inclusively between 1 and ' + MERCHANT_NAME_MAX_LENGTH + ' characters in length'
+                    args: [ 1, CELL_NAME_MAX_LENGTH ],
+                    msg: 'Cell name must be inclusively between 1 and ' + CELL_NAME_MAX_LENGTH + ' characters in length'
                 }
             }
         },
@@ -36,19 +36,19 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             validate: {
                 isIn: {
-                    args: [[ 5814 ]],
-                    msg: 'Cell type is not in the approved set of MCC numbers'
+                    args: [[ 4815 ]],
+                    msg: 'Cell type is not in the approved set of category numbers'
                 }
             }
         },
         website: {
-            type: DataTypes.STRING( MERCHANT_WEBSITE_MAX_LENGTH ),
+            type: DataTypes.STRING( CELL_WEBSITE_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, MERCHANT_WEBSITE_MAX_LENGTH ],
-                    msg: 'Cell website can be no more than ' + MERCHANT_WEBSITE_MAX_LENGTH + ' characters in length'
+                    args: [ 1, CELL_WEBSITE_MAX_LENGTH ],
+                    msg: 'Cell website can be no more than ' + CELL_WEBSITE_MAX_LENGTH + ' characters in length'
                 },
                 isUrl: {
                     msg: 'Cell website must be a valid URL'

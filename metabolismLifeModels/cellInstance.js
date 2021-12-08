@@ -88,7 +88,7 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: null,
             validate: {
                 isIn: {
-                    args: [[ 5814 ]],
+                    args: [[ 4815 ]],
                     msg: 'Instance type is not in the approved set of MCC numbers'
                 }
             }

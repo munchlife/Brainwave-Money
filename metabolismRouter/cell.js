@@ -761,11 +761,11 @@ router.put('/:id', function(req, res) {
             if (!cell)
                 throw new Blockages.NotFoundError('Cell not found');
 
-          /*cell.cellId: not accessible for change */
-          /*cell.verified: not accessible for change */
-            cell.name    = validate.trim(validate.toString(req.body.name));
-            cell.type    = validate.trim(validate.toString(req.body.type));
-            cell.website = metabolism.Cell.extractWebsite(metabolism, req.body.website);
+          /*cell.cellId:      not accessible for change */
+          /*cell.verified:    not accessible for change */
+            cell.name         = validate.trim(validate.toString(req.body.name));
+            cell.type         = validate.trim(validate.toString(req.body.type));
+            cell.website      = metabolism.Cell.extractWebsite(metabolism, req.body.website);
           /*cell.countryCode: not accessible for change */
 
             return cell.save();
@@ -956,14 +956,14 @@ router.put('/:id/instance/:instanceId', function(req, res) {
             if (req.body.hasOwnProperty('destructiveInterference'))
                 destructiveInterference = metabolism.CellInstance.extractDestructiveInterferencegitude(metabolism, req.body.destructiveInterference);
 
-          /*instance.instanceId: not accessible for change */
+          /*instance.instanceId: 	      not accessible for change */
             instance.constructiveInterference = constructiveInterference;
             instance.destructiveInterference  = destructiveInterference;
             instance.name                     = metabolism.CellInstance.extractName(metabolism, req.body.name);
             instance.website                  = metabolism.CellInstance.extractWebsite(metabolism, req.body.website);
-          /*instance.cellType: not accessible for change */
-          /*instance.countryCode: not accessible for change */
-          /*instance.chargeCellId: not accessible for change */
+          /*instance.cellType: 		      not accessible for change */
+          /*instance.countryCode: 	      not accessible for change */
+          /*instance.chargeCellId: 	      not accessible for change */
 
             return instance.save();
         })
@@ -1001,20 +1001,20 @@ router.put('/:id/instance/:instanceId/address/:addressId', function(req, res) {
             if (!address)
                 throw new Blockages.NotFoundError('Address not found');
 
-          /*address.addressId: not accessible for change */
-          /*address.name: not accessible for change */
-            address.address1   = validate.trim(validate.toString(req.body.address1));
-            address.address2   = metabolism.Address.extractAddress(metabolism, req.body.address2);
-            address.address3   = metabolism.Address.extractAddress(metabolism, req.body.address3);
-            address.address4   = metabolism.Address.extractAddress(metabolism, req.body.address4);
-            address.locality   = validate.trim(validate.toString(req.body.locality));
-            address.region     = validate.trim(validate.toString(req.body.region));
-            address.postalCode = validate.trim(validate.toString(req.body.postalCode));
-          /*address.lifeId: not accessible for change */
-          /*address.cellId: not accessible for change */
-          /*address.instanceId: not accessible for change */
-          /*address.geneId: not accessible for change */
-          /*address.chargeCellId: not accessible for change */
+          /*address.addressId:        not accessible for change */
+          /*address.name:             not accessible for change */
+            address.address1          = validate.trim(validate.toString(req.body.address1));
+            address.address2          = metabolism.Address.extractAddress(metabolism, req.body.address2);
+            address.address3          = metabolism.Address.extractAddress(metabolism, req.body.address3);
+            address.address4          = metabolism.Address.extractAddress(metabolism, req.body.address4);
+            address.locality          = validate.trim(validate.toString(req.body.locality));
+            address.region            = validate.trim(validate.toString(req.body.region));
+            address.postalCode        = validate.trim(validate.toString(req.body.postalCode));
+          /*address.lifeId:           not accessible for change */
+          /*address.cellId:           not accessible for change */
+          /*address.instanceId:       not accessible for change */
+          /*address.geneId: 	      not accessible for change */
+          /*address.chargeCellId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
@@ -1053,15 +1053,15 @@ router.put('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
             if (!phone)
                 throw new Blockages.NotFoundError('Phone not found');
 
-          /*phone.phoneId: not accessible for change */
-            phone.name      = metabolism.Phone.extractName(metabolism, req.body.name);
-            phone.number    = validate.trim(validate.toString(req.body.number));
-            phone.extension = metabolism.Phone.extractExtension(metabolism, req.body.extension);
-          /*phone.lifeId: not accessible for change */
-          /*phone.cellId: not accessible for change */
-          /*phone.instanceId: not accessible for change */
-          /*phone.geneId: not accessible for change */
-          /*phone.chargeCellId: not accessible for change */
+          /*phone.phoneId: 	    not accessible for change */
+            phone.name      	    = metabolism.Phone.extractName(metabolism, req.body.name);
+            phone.number    	    = validate.trim(validate.toString(req.body.number));
+            phone.extension 	    = metabolism.Phone.extractExtension(metabolism, req.body.extension);
+          /*phone.lifeId: 	    not accessible for change */
+          /*phone.cellId: 	    not accessible for change */
+          /*phone.instanceId: 	    not accessible for change */
+          /*phone.geneId: 	    not accessible for change */
+          /*phone.chargeCellId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
@@ -1102,10 +1102,10 @@ router.put('/:id/instance/:instanceId/stakeholderMember/:lifeId', function(req, 
                 throw new Blockages.NotFoundError('Stakeholder member not found');
 
           /*stakeholderMember.stakeholderId: not accessible for change */
-            stakeholderMember.immunities = validate.toInt(req.body.immunities);
-          /*stakeholderMember.lifeId: not accessible for change */
-          /*stakeholderMember.cellId: not accessible for change */
-          /*stakeholderMember.instanceId: not accessible for change */
+            stakeholderMember.immunities     = validate.toInt(req.body.immunities);
+          /*stakeholderMember.lifeId:        not accessible for change */
+          /*stakeholderMember.cellId:        not accessible for change */
+          /*stakeholderMember.instanceId:    not accessible for change */
 
             return stakeholderMember.save();
         })
@@ -1151,14 +1151,14 @@ router.put('/:id/instance/:instanceId/device/:deviceId', function(req, res) {
             if (req.body.hasOwnProperty('acceptsCredit'))
                 acceptsCredit = metabolism.CellDevice.extractAcceptsCredit(metabolism, req.body.acceptsCredit);
 
-          /*device.deviceId: not accessible for change */
-          /*device.map: not accessible for change */
+          /*device.deviceId: 	 not accessible for change */
+          /*device.map: 	 not accessible for change */
             device.type          = validate.trim(validate.toString(req.body.type)).toUpperCase();
             device.serialNumber  = validate.trim(validate.toString(req.body.serialNumber));
             device.description   = metabolism.CellDevice.extractDescription(metabolism, req.body.textDescription);
             device.acceptsCash   = acceptsCash;
             device.acceptsCredit = acceptsCredit;
-          /*device.instanceId: not accessible for change */
+          /*device.instanceId:   not accessible for change */
 
             return device.save();
         })
@@ -1198,11 +1198,11 @@ router.post('/signup', function(req, res) {
 
             // Create cell stakeholder record to make the life an admin
             var newStakeholder = {
-              /*stakeholderId:     0,*/
-                immunities:  Immunities.AuthLevelAdminStakeholder,
-                lifeId:      res.locals.lifePacket.life.lifeId,
-                cellId:      cell.cellId
-              /*instanceId:  null*/
+              /*stakeholderId: 0,*/
+                immunities:    Immunities.AuthLevelAdminStakeholder,
+                lifeId:        res.locals.lifePacket.life.lifeId,
+                cellId:        cell.cellId
+              /*instanceId:    null*/
             };
 
             return metabolism.CellStakeholder.create(newStakeholder);
@@ -1229,7 +1229,7 @@ router.post('/instance/signup', function(req, res) {
 
     // Create the cell record
     var newCell = {
-      /*cellId:  0,*/
+      /*cellId:      0,*/
       /*verified:    false,*/
         name:        validate.trim(validate.toString(req.body.name)),
         type:        validate.trim(validate.toString(req.body.type)),
@@ -1243,11 +1243,11 @@ router.post('/instance/signup', function(req, res) {
 
             // Create cell stakeholder record to make the life an admin
             var newStakeholder = {
-              /*stakeholderId:     0,*/
-                immunities:  Immunities.AuthLevelAdminStakeholder,
-                lifeId:      res.locals.lifePacket.life.lifeId,
-                cellId:      cell.cellId
-              /*instanceId:  null*/
+              /*stakeholderId: 0,*/
+                immunities:    Immunities.AuthLevelAdminStakeholder,
+                lifeId:        res.locals.lifePacket.life.lifeId,
+                cellId:        cell.cellId
+              /*instanceId:    null*/
             };
 
             return metabolism.CellStakeholder.create(newStakeholder);
@@ -1268,16 +1268,16 @@ router.post('/instance/signup', function(req, res) {
 
             // Create the instance record
             var newInstance = {
-              /*instanceId:   0,*/
-                atlas:        0,
-                constructiveInterference:          constructiveInterference,
-                destructiveInterference:          destructiveInterference,
-              /*name:         null,*/
-              /*website:      null,*/
-              /*cellType:     null,*/
-              /*countryCode:  null,*/
-                cellId:       this.cell.cellId
-              /*fieldId:       null*/
+              /*instanceId:   		  0,*/
+                atlas:       		  0,
+                constructiveInterference: constructiveInterference,
+                destructiveInterference:  destructiveInterference,
+              /*name:        		  null,*/
+              /*website:      		  null,*/
+              /*cellType:     		  null,*/
+              /*countryCode:  	          null,*/
+                cellId:       	          this.cell.cellId
+              /*fieldId:      		  null*/
             };
 
             return metabolism.CellInstance.create(newInstance);
@@ -1559,15 +1559,15 @@ router.post('/:id/allowPaymentGene/:geneId', function(req, res) {
             throw new Blockages.NotFoundError('Cell not found');
 
         var newSignalPathway = {
-          /*signalPathwayId: 0,*/
-          /*signalPheromone:         null,*/
-          /*signalPheromoneExpiration:    null,*/
-          /*reinforcementWavePheromone:         null,*/
-          /*reinforcementWavePheromoneExpiration:    null,*/
-          /*optional:       null,*/
-          /*lifeId:         null,*/
-            cellId:     cell.cellId,
-            geneId:      gene.geneId
+          /*signalPathwayId: 			  0,*/
+          /*signalPheromone:         	          null,*/
+          /*signalPheromoneExpiration:    	  null,*/
+          /*reinforcementWavePheromone:           null,*/
+          /*reinforcementWavePheromoneExpiration: null,*/
+          /*optional:       			  null,*/
+          /*lifeId:         		          null,*/
+            cellId:     	 		  cell.cellId,
+            geneId:      			  gene.geneId
         };
 
         return metabolism.GeneSignalPathway.create(newSignalPathway);
@@ -1612,11 +1612,11 @@ router.post('/:id/stakeholderMember', function(req, res) {
             throw new Blockages.NotFoundError('Life not found');
 
         var newStakeholderMember = {
-          /*stakeholderId:     0,*/
-            immunities: validate.toInt(req.body.immunities),
-            lifeId:      life.lifeId,
-            cellId:  cell.cellId
-          /*instanceId:  null*/
+          /*stakeholderId: 0,*/
+            immunities:    validate.toInt(req.body.immunities),
+            lifeId:        life.lifeId,
+            cellId:        cell.cellId
+          /*instanceId:    null*/
         };
 
         return metabolism.CellStakeholder.create(newStakeholderMember);
@@ -1661,16 +1661,16 @@ router.post('/:id/instance', function(req, res) {
                 destructiveInterference = metabolism.CellInstance.extractDestructiveInterferencegitude(metabolism, req.body.destructiveInterference);
 
             var newInstance = {
-              /*instanceId:   0,*/
-                atlas:        0,
+              /*instanceId:   		   0,*/
+                atlas:        		   0,
                 constructiveInterference:  constructiveInterference,
                 destructiveInterference:   destructiveInterference,
-              /*name:         null,*/
-              /*website:      null,*/
-              /*cellType:     null,*/
-              /*countryCode:  null,*/
-                cellId:       cell.cellId
-              /*fieldId: null*/
+              /*name:         	           null,*/
+              /*website:     		   null,*/
+              /*cellType:     		   null,*/
+              /*countryCode:  		   null,*/
+                cellId:       		   cell.cellId
+              /*fieldId: 		   null*/
             };
 
             return metabolism.CellInstance.create(newInstance);
@@ -1898,7 +1898,7 @@ router.post('/:id/instance/:instanceId/device', function(req, res) {
 
             var newDevice = {
               /*deviceId:      0,*/
-                map:         0,
+                map:           0,
                 type:          validate.trim(validate.toString(req.body.type)).toUpperCase(),
                 serialNumber:  validate.trim(validate.toString(req.body.serialNumber)),
                 description:   metabolism.CellDevice.extractDescription(metabolism, req.body.textDescription),

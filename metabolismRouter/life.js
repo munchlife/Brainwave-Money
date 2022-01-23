@@ -393,7 +393,7 @@ router.get('/:id/signalPathways/:type', function(req, res) {
 // --- retrieve info on signalPathway (:signalPathwayId) for life (:id)
 router.get('/:id/signalPathway/:signalPathwayId', function(req, res) {
     debug('[GET] /life/:id/signalPathway/:signalPathwayId');
-    var lifeId         = req.params.id;
+    var lifeId          = req.params.id;
     var signalPathwayId = req.params.signalPathwayId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -423,7 +423,7 @@ router.get('/:id/signalPathway/:signalPathwayId', function(req, res) {
 // --- retrieve info on signalPathway to gene (:geneId) for life (:id)
 router.get('/:id/signalPathwayForGene/:geneId', function(req, res) {
     debug('[GET] /life/:id/signalPathwayForGene/:geneId');
-    var lifeId    = req.params.id;
+    var lifeId = req.params.id;
     var geneId = req.params.geneId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -475,7 +475,7 @@ router.get('/:id/cell/stakeholder', function(req, res) {
 // --- retrieve immunity info on cell stakeholder member (:stakeholderId) for life (:id)
 router.get('/:id/cell/stakeholderMember/:stakeholderId', function(req, res) {
     debug('[GET] /life/:id/cell/stakeholderMember/:stakeholderId');
-    var lifeId  = req.params.id;
+    var lifeId        = req.params.id;
     var stakeholderId = req.params.stakeholderId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -527,7 +527,7 @@ router.get('/:id/gene/stakeholder', function(req, res) {
 // --- retrieve immunity info on gene stakeholder member (:stakeholderId) for life (:id)
 router.get('/:id/gene/stakeholderMember/:stakeholderId', function(req, res) {
     debug('[GET] /life/:id/gene/stakeholderMember/:stakeholderId');
-    var lifeId  = req.params.id;
+    var lifeId        = req.params.id;
     var stakeholderId = req.params.stakeholderId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -586,7 +586,7 @@ var cellSignal = function(signal) {
             .find({ where: {cycleLifeId: signal.cycleLifeId}, /* attributes: defaults */ })
         ])
         .spread(function(cell, cycleLife) {
-            signal.Cell = cell;
+            signal.Cell      = cell;
             signal.CycleLife = cycleLife;
 
             return metabolism.sequelize.Promise.all([
@@ -621,7 +621,7 @@ var lifeSignal = function(signal) {
 // --- retrieve info on signal (:signalId) for life (:id)
 router.get('/:id/signal/:signalId', function(req, res) {
     debug('[GET] /life/:id/signal/:signalId');
-    var lifeId        = req.params.id;
+    var lifeId   = req.params.id;
     var signalId = req.params.signalId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -660,8 +660,8 @@ router.get('/:id/signal/:signalId', function(req, res) {
                 signalJSON.Instance  = this.signal.Instance.get();
             }
             else {
-                // signalJSON.LifeSender
-                // signalJSON.LifeReceiver
+                signalJSON.LifeSender
+                signalJSON.LifeReceiver
             }
 
             signalJSON.Gene = this.signal.Gene.get();
@@ -733,9 +733,9 @@ var associateWithCell = function(res, tokenId, lifeId, cellId, instanceId) {
 // --- Associate the cell (:cellId) with the life (:id) in current token
 router.get('/:id/token/associate/cell/:cellId', function(req, res) {
     debug('[GET] /life/:id/token/associate/cell/:cellId');
-    var lifeId     = req.params.id;
-    var cellId = req.params.cellId;
-    var tokenId    = res.locals.lifePacket.tokenId;
+    var lifeId  = req.params.id;
+    var cellId  = req.params.cellId;
+    var tokenId = res.locals.lifePacket.tokenId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
@@ -762,9 +762,9 @@ router.get('/:id/token/associate/cell/:cellId/instance/:instanceId', function(re
 // --- Associate the gene (:geneId) with the life (:id) in current token
 router.get('/:id/token/associate/gene/:geneId', function(req, res) {
     debug('[GET] /life/:id/token/associate/gene/:geneId');
-    var lifeId    = req.params.id;
-    var geneId = req.params.geneId;
-    var tokenId   = res.locals.lifePacket.tokenId;
+    var lifeId  = req.params.id;
+    var geneId  = req.params.geneId;
+    var tokenId = res.locals.lifePacket.tokenId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
@@ -1539,7 +1539,7 @@ var setPreference = function(res, lifeId, signalPathwayId, geneTypeValue, prefer
 // --- set the signaling gene signalPathway (:signalPathwayId) preference for a life (:id)
 router.post('/:id/preference/signaling', function(req, res) {
     debug('[POST] /life/:id/preference/signaling');
-    var lifeId         = req.params.id;
+    var lifeId          = req.params.id;
     var signalPathwayId = req.body.signalPathwayId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -1552,7 +1552,7 @@ router.post('/:id/preference/signaling', function(req, res) {
 // // --- set the loyalty gene signalPathway (:signalPathwayId) preference for a life (:id)
 // router.post('/:id/preference/loyalty', function(req, res) {
 //     debug('[POST] /life/:id/preference/loyalty');
-//     var lifeId         = req.params.id;
+//     var lifeId          = req.params.id;
 //     var signalPathwayId = req.body.signalPathwayId;
 
 //     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -1565,7 +1565,7 @@ router.post('/:id/preference/signaling', function(req, res) {
 // // --- set the signal gene signalPathway (:signalPathwayId) preference for a life (:id)
 // router.post('/:id/preference/signal', function(req, res) {
 //     debug('[POST] /life/:id/preference/signal');
-//     var lifeId         = req.params.id;
+//     var lifeId          = req.params.id;
 //     var signalPathwayId = req.body.signalPathwayId;
 
 //     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
@@ -1578,7 +1578,7 @@ router.post('/:id/preference/signaling', function(req, res) {
 // --- add a signalPathway for a life (:id) of an existing gene (:geneId)
 router.post('/:id/signalPathwayForGene/:geneId', function(req, res) {
     debug('[POST] /life/:id/signalPathwayForGene/:geneId');
-    var lifeId    = req.params.id;
+    var lifeId = req.params.id;
     var geneId = req.params.geneId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))

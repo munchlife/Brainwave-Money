@@ -32,4 +32,4 @@ INITIAL APPLICATION: Game Of Chicken
 
 Game Of Chicken uses the biosignal-interferometry of the digital metabolism to obtain a "signal collision" map that works to plot outcomes for a series of statuses attribtued to a dispute regarding a cycle of information involved in intra and inter cell communication. The "signal collision" map instructs the life involved in a disputed information cycle on whether or not a suboptimal outcome ("go left or leave behind and ignore instances of destructive interference") optimal outcome ("go right and correct instances of destructive interference or deposit more instances of constructive interference") is being carried out. Game Of Chicken can be used to optimize the chirality of DNA within the electromagnetic field(s) that house networks of cells belogning to a life (thus establishing a new form of on-the-fly DNA repair based solely on optimizing the alignment of bioelectromagnetic-interference circulating amongst cells). 
 
-© 2021 Munch 
+© 2022 Munch 

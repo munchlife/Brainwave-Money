@@ -35,9 +35,9 @@ var authCallback = function(req, res, cellId, geneId) {
         metabolism.GeneSignalPathway
             .find({ where: {cellId: cellId, geneId: geneId} /* attributes: default */ }),
         metabolism.Gene
-            .find({ where: {geneId: geneId}                         /* attributes: default */ }),
+            .find({ where: {geneId: geneId}                 /* attributes: default */ }),
         metabolism.Cell
-            .find({ where: {cellId: cellId}                       /* attributes: default */ })
+            .find({ where: {cellId: cellId}                 /* attributes: default */ })
     ]).bind({})
     .spread(function(signalPathway, gene, cell) {
         if (signalPathway)

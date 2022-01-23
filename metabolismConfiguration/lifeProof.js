@@ -67,17 +67,17 @@ function(lifeIdentifier, genome, done) {
 }));
 
 // -----------------------------------------------------------------------------
-// VOICEPRINT PROOF OF LIFE STRATEGY
+// NEURAL SIGNATURE (EEG) PROOF OF LIFE STRATEGY
 // -----------------------------------------------------------------------------
-lifeProof.use('local-voiceprint', new LocalStrategy({
-    // By default, local strategy uses lifename and password; override with token, voiceprint
+lifeProof.use('local-eeg', new LocalStrategy({
+    // By default, local strategy uses lifename and password; override with token, eeg
     usernameField: 'token',
-    passwordField: 'voiceprint'
+    passwordField: 'eeg'
 },
-function(encodedToken, voiceprint, done) {
-    debug('#use(local-voiceprint)');
+function(encodedToken, eeg, done) {
+    debug('#use(local-eeg)');
     verbose('    token:    ' + arguments[0]);
-    verbose('    voiceprint: ' + arguments[1]);
+    verbose('    eeg: ' + arguments[1]);
     verbose('    done? ' + (typeof arguments[2]));
 
     process.nextTick(function() {
@@ -106,8 +106,8 @@ function(encodedToken, voiceprint, done) {
                 else if (token.CellStakeholder && token.GeneStakeholder)
                     return done(null, false, 'Token is not properly formatted');
                 // Validate the token
-                else if (!token.Life.validVoiceprint(voiceprint))
-                    return done(null, false, 'Voiceprint is not valid');
+                else if (!token.Life.validEeg(eeg))
+                    return done(null, false, 'Eeg is not valid');
                 else
                     return done(null, token);
             })

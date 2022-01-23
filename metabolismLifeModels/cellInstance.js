@@ -184,10 +184,10 @@ module.exports = function(sequelize, DataTypes) {
                 this.atlas = this.instanceId % INSTANCE_BEACON_ATLAS_MAX;
             },
             calculateConstructiveInterference: function() {
-                return charges.renderCharges(this.instanceId.cellUltrasoundPing.constructiveInterference === charges.x);
+                return charges.renderCharges(this.instanceId.eegFrequencyPing.constructiveInterference === charges.x);
             },
             calculateDestructiveInterference: function() {
-                return charges.renderCharges(this.instanceId.cellUltrasoundPing.destructiveInterference === charges.y);
+                return charges.renderCharges(this.instanceId.eegFrequencyPing.destructiveInterference === charges.y);
         }
         }
     });

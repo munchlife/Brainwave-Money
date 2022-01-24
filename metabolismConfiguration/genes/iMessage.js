@@ -44,11 +44,11 @@ module.exports = function() {
         // If only one of lifeId and cellId is not null, construct the URL.
         if ((lifeId !== null) !== (cellId !== null)) {
             if (lifeId !== null) {
-                result.callbackURL = 'https://' + host + '/life/gene/1006/auth/callback';
+                result.callbackURL = 'https://' + host + '/life/gene/iMessage/auth/callback';
                 result.state = lifeId;
             }
             else { // cellId !== null
-                result.callbackURL = 'https://' + host + '/cell/gene/1006/auth/callback';
+                result.callbackURL = 'https://' + host + '/cell/gene/iMessage/auth/callback';
                 result.state = cellId;
             }
         }
@@ -201,7 +201,7 @@ module.exports = function() {
                 client_id:     iMessageAuth.client_id,
                 client_secret: iMessageAuth.secret,
                 grant_type:    'refresh_token',
-                refresh_token: signalPathway.reinforcementWavePheromoneExpiration
+                refresh_token: signalPathway.reinforcementSignalPheromoneExpiration
             };
 
             var url = 'https://' + self.info.host + self.info.endpoints.refresh;
@@ -224,8 +224,8 @@ module.exports = function() {
 
                     signalPathway.signalPheromone                      = result.access_token;
                     signalPathway.signalPheromoneExpiration            = new Date(new Date().getTime() + ((result.expires_in-3)*1000));
-                    signalPathway.reinforcementWavePheromone           = result.refresh_token;
-                    signalPathway.reinforcementWavePheromoneExpiration = null;
+                    signalPathway.reinforcementSignalPheromone           = result.refresh_token;
+                    signalPathway.reinforcementSignalPheromoneExpiration = null;
                     // signalPathway.optional:                         don't set, account ID saved in this field
 
                     return signalPathway.save();

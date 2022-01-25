@@ -2,7 +2,7 @@
 
 // cellStakeholder.js (model)
 
-var STAFF_PERMISSIONS_MAX = 256;
+var STAKEHOLDER_IMMUNITIES_MAX = 256;
 
 module.exports = function(sequelize, DataTypes) {
     var CellStakeholder = sequelize.define('CellStakeholder', {
@@ -23,8 +23,8 @@ module.exports = function(sequelize, DataTypes) {
                     msg: 'Cell stakeholder immunities value must be a positive number'
                 },
                 max: {
-                    args: STAFF_PERMISSIONS_MAX,
-                    msg: 'Cell stakeholder immunities value must be less than or equal to ' + STAFF_PERMISSIONS_MAX
+                    args: STAKEHOLDER_IMMUNITIES_MAX,
+                    msg: 'Cell stakeholder immunities value must be less than or equal to ' + STAKEHOLDER_IMMUNITIES_MAX
                 }
             }
         }

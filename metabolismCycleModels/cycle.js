@@ -163,9 +163,9 @@ module.exports = function(sequelize, DataTypes, cellId) {
         },
         classMethods: {
             associate: function(models) {
-                Cycle.hasMany(models.CycleItem,  { as: 'Items',  foreignKey: 'cycleId' });
-                Cycle.hasMany(models.CycleLife,  { as: 'Lifes',  foreignKey: 'cycleId' });
-                Cycle.hasMany(models.CycleAudit, { as: 'Audits', foreignKey: 'cycleId', constraints: false });
+                Cycle.hasMany(models.CycleSequence, { as: 'Sequences', foreignKey: 'cycleId' });
+                Cycle.hasMany(models.CycleLife,     { as: 'Lifes',     foreignKey: 'cycleId' });
+                Cycle.hasMany(models.CycleAudit,    { as: 'Audits',    foreignKey: 'cycleId', constraints: false });
             },
             extractId: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.toInt(value);

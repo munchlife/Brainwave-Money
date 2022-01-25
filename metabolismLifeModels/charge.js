@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                Charge.belongsTo(models.Life,           { foreignKey: 'lifeId' });
+                Charge.belongsTo(models.Life,       { foreignKey: 'lifeId' });
                 Charge.belongsTo(models.ChargeCell, { foreignKey: 'chargeCellId' });
             },
         },

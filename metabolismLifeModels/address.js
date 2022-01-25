@@ -135,12 +135,12 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                Address.belongsTo(models.Life,             { foreignKey: 'lifeId' });
-                Address.belongsTo(models.Cell,         { foreignKey: 'cellId' });
-                Address.belongsTo(models.CellInstance, { foreignKey: 'instanceId' });
-                Address.belongsTo(models.Gene,          { foreignKey: 'geneId' });
-                Address.belongsTo(models.ChargeCell,   { foreignKey: 'chargeCellId' });
-                Address.belongsTo(models.ChargeInstance,   { foreignKey: 'chargeInstanceId' });
+                Address.belongsTo(models.Life,           { foreignKey: 'lifeId' });
+                Address.belongsTo(models.Cell,           { foreignKey: 'cellId' });
+                Address.belongsTo(models.CellInstance,   { foreignKey: 'instanceId' });
+                Address.belongsTo(models.Gene,           { foreignKey: 'geneId' });
+                Address.belongsTo(models.ChargeCell,     { foreignKey: 'chargeCellId' });
+                Address.belongsTo(models.ChargeInstance, { foreignKey: 'chargeInstanceId' });
             },
             extractName: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));

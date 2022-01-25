@@ -39,8 +39,8 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                GeneStakeholder.belongsTo(models.Life, { foreignKey: 'lifeId' });
-                GeneStakeholder.belongsTo(models.Gene, { foreignKey: 'geneId' });
+                GeneStakeholder.belongsTo(models.Life, {               foreignKey: 'lifeId' });
+                GeneStakeholder.belongsTo(models.Gene, {               foreignKey: 'geneId' });
                 GeneStakeholder.hasMany(models.Token,  { as: 'Tokens', foreignKey: 'geneStakeholderId' });
             }
         },

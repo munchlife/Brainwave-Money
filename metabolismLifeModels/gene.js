@@ -133,11 +133,11 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                Gene.hasMany(models.GeneStakeholder,        { as: 'StakeholderMembers',  foreignKey: 'geneId' });
-                Gene.hasMany(models.GeneSignalPathway, { as: 'SignalPathways', foreignKey: 'geneId' });
-                Gene.hasOne(models.Address,              { as: 'Address',       foreignKey: 'geneId' });
-                Gene.hasMany(models.Phone,               { as: 'Phones',        foreignKey: 'geneId' });
-                Gene.hasOne(models.GeneSetting,       { as: 'Settings',      foreignKey: 'geneId', onDelete: 'cascade' });
+                Gene.hasMany(models.GeneStakeholder,   { as: 'StakeholderMembers', foreignKey: 'geneId' });
+                Gene.hasMany(models.GeneSignalPathway, { as: 'SignalPathways',     foreignKey: 'geneId' });
+                Gene.hasOne(models.Address,            { as: 'Address',            foreignKey: 'geneId' });
+                Gene.hasMany(models.Phone,             { as: 'Phones',             foreignKey: 'geneId' });
+                Gene.hasOne(models.GeneSetting,        { as: 'Settings',           foreignKey: 'geneId', onDelete: 'cascade' });
             },
             extractCompanyName: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));

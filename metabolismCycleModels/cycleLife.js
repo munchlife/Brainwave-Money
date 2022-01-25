@@ -51,37 +51,37 @@ module.exports = function(sequelize, DataTypes, cellId) {
             // referencesKey: 'geneId'
             // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
         },
-        generalReferenceNumber: {
-            type: DataTypes.STRING(255),
-            allowNull: true,
-            defaultValue: null
-        },
-        loyaltyGeneId: {
-            type: DataTypes.BIGINT.UNSIGNED,
-            allowNull: true,
-            defaultValue: null,
-            // reference: 'genes',
-            // referencesKey: 'geneId'
-            // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
-        },
-        loyaltyReferenceNumber: {
-            type: DataTypes.STRING(255),
-            allowNull: true,
-            defaultValue: null
-        },
-        checkinGeneId: {
-            type: DataTypes.BIGINT.UNSIGNED,
-            allowNull: true,
-            defaultValue: null,
-            // reference: 'genes',
-            // referencesKey: 'geneId'
-            // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
-        },
-        checkinReferenceNumber: {
+        signalingReferenceNumber: {
             type: DataTypes.STRING(255),
             allowNull: true,
             defaultValue: null
         }
+//         loyaltyGeneId: {
+//             type: DataTypes.BIGINT.UNSIGNED,
+//             allowNull: true,
+//             defaultValue: null,
+//             // reference: 'genes',
+//             // referencesKey: 'geneId'
+//             // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
+//         },
+//         loyaltyReferenceNumber: {
+//             type: DataTypes.STRING(255),
+//             allowNull: true,
+//             defaultValue: null
+//         },
+//         checkinGeneId: {
+//             type: DataTypes.BIGINT.UNSIGNED,
+//             allowNull: true,
+//             defaultValue: null,
+//             // reference: 'genes',
+//             // referencesKey: 'geneId'
+//             // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
+//         },
+//         checkinReferenceNumber: {
+//             type: DataTypes.STRING(255),
+//             allowNull: true,
+//             defaultValue: null
+//         }
     }, {
         // timestamps: true,                   // defaulted globally
         // createdAt:  true,
@@ -93,9 +93,9 @@ module.exports = function(sequelize, DataTypes, cellId) {
         },
         classMethods: {
             associate: function(models) {
-                CycleLife.belongsTo(models.Cycle,    { as: 'Cycle',  foreignKey: 'cycleId' });
-                CycleLife.hasMany(models.CycleItem,  { as: 'Items',  foreignKey: 'cycleLifeId' });
-                CycleLife.hasMany(models.CycleAudit, { as: 'Audits', foreignKey: 'cycleLifeId', constraints: false });
+                CycleLife.belongsTo(models.Cycle,       { as: 'Cycle',     foreignKey: 'cycleId' });
+                CycleLife.hasMany(models.CycleSequence, { as: 'Sequences', foreignKey: 'cycleLifeId' });
+                CycleLife.hasMany(models.CycleAudit,    { as: 'Audits',    foreignKey: 'cycleLifeId', constraints: false });
             },
             extractId: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.toInt(value);

@@ -61,12 +61,12 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                Phone.belongsTo(models.Life,             { foreignKey: 'lifeId' });
-                Phone.belongsTo(models.Cell,         { foreignKey: 'cellId' });
-                Phone.belongsTo(models.CellInstance, { foreignKey: 'instanceId' });
-                Phone.belongsTo(models.Gene,          { foreignKey: 'geneId' });
-                Phone.belongsTo(models.ChargeCell,   { foreignKey: 'chargeCellId' });
-                Phone.belongsTo(models.ChargeInstance,   { foreignKey: 'chargeInstanceId' });
+                Phone.belongsTo(models.Life,           { foreignKey: 'lifeId' });
+                Phone.belongsTo(models.Cell,           { foreignKey: 'cellId' });
+                Phone.belongsTo(models.CellInstance,   { foreignKey: 'instanceId' });
+                Phone.belongsTo(models.Gene,           { foreignKey: 'geneId' });
+                Phone.belongsTo(models.ChargeCell,     { foreignKey: 'chargeCellId' });
+                Phone.belongsTo(models.ChargeInstance, { foreignKey: 'chargeInstanceId' });
             },
             extractName: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));

@@ -39,10 +39,10 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                CellStakeholder.belongsTo(models.Life,             { foreignKey: 'lifeId' });
-                CellStakeholder.belongsTo(models.Cell,         { foreignKey: 'cellId' });
-                CellStakeholder.belongsTo(models.CellInstance, { foreignKey: 'instanceId' });
-                CellStakeholder.hasMany(models.Token,              { as: 'Tokens', foreignKey: 'cellStakeholderId' });
+                CellStakeholder.belongsTo(models.Life,         {               foreignKey: 'lifeId' });
+                CellStakeholder.belongsTo(models.Cell,         {               foreignKey: 'cellId' });
+                CellStakeholder.belongsTo(models.CellInstance, {               foreignKey: 'instanceId' });
+                CellStakeholder.hasMany(models.Token,          { as: 'Tokens', foreignKey: 'cellStakeholderId' });
             }
         },
         instanceMethods: {

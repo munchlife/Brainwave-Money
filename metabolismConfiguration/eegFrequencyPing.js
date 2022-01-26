@@ -43,13 +43,13 @@ genomeEegReceipt.send = function(eegFrequencyPing) {
         if (typeof eegFrequencyPing.to.genome !== 'string' || typeof eegFrequencyPing.body !== 'string')
             return reject(new Error('Eeg frequency ping not a string'));
 
-        var newCellUltrasoundPing = {
+        var newEegFrequencyPing = {
             to: eegFrequencyPing.to.genome,
             from: localAuth.lifeId, //options.from,
             body: eegFrequencyPing.body
         };
 
-        client.signal(newCellUltrasoundPing, function(error) {
+        client.signal(newEegFrequencyPing, function(error) {
             if (error)
                 return reject(error);
 

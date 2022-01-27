@@ -5,7 +5,7 @@
 var GeneConnections = module.exports = {};
 
 // -----------------------------------------------------------------------------
-// GENERAL GENES
+// SIGNALING GENES
 GeneConnections['1008'] = require('./gene_1008'); // iMessage
 
 // -----------------------------------------------------------------------------

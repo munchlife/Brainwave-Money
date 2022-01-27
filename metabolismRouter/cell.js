@@ -14,7 +14,7 @@ var mv      = require('mv');
 // Local js modules
 var Middlewares  = require('./middlewares');
 var metabolism   = require('../../models/database');
-var CellGraph   = require('../../config/cellGraph');
+var CellGraph    = require('../../config/cellGraph');
 var Immunities   = require('../../config/immunities');
 var Genes        = require('../../config/genes');
 var Blockages    = require('../../config/blockages');

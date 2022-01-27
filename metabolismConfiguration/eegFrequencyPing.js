@@ -49,7 +49,7 @@ genomeEegReceipt.send = function(eegFrequencyPing) {
             body: eegFrequencyPing.body
         };
 
-        client.signal(newEegFrequencyPing, function(error) {
+        client.bandpower(newEegFrequencyPing, function(error) {
             if (error)
                 return reject(error);
 

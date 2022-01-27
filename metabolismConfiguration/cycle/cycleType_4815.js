@@ -13,7 +13,7 @@ module.exports = function(cellId, cycle) {
 
     var self = this;
     self.continueProcessing = true;
-    self.cellId         = cellId;
+    self.cellId             = cellId;
     self.cycle              = cycle;
 
     self.audit = function(messageNumber, message) {
@@ -39,13 +39,13 @@ module.exports = function(cellId, cycle) {
                     throw new Blockages.CycleProcessError(20103, 'ERROR: deviceId not set');
 
                 // TODO: consider bringing in later when multi-login support is in cell app
-                // if (self.cycle.staffCreatorId === null)
-                //     throw new Blockages.CycleProcessError(20104, 'ERROR: staffCreatorId not set');
+                // if (self.cycle.stakeholderCreatorId === null)
+                //     throw new Blockages.CycleProcessError(20104, 'ERROR: stakeholderCreatorId not set');
 
-                // Cycle fields not checked here: staffDelivererId, originGeneId, deliveryMethod, status
+                // Cycle fields not checked here: stakeholderDelivererId, originGeneId, deliveryMethod, status
 
-                if (self.cycle.distributedSignal !== CycleType.distributedSignalType.ENUM.SGL_LIFE.abbr)
-                    throw new Blockages.CycleProcessError(20105, 'ERROR: distributedSignal invalid');
+                if (self.cycle.distributedCharge !== CycleType.distributedChargeType.ENUM.SGL_LIFE.abbr)
+                    throw new Blockages.CycleProcessError(20105, 'ERROR: distributedCharge invalid');
 
                 // Cycle fields not checked here: taxPercentage, subTotal, chargeDiscount, chargeFee, chargeTax, chargeTip
 

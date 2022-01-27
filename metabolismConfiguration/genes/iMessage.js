@@ -222,11 +222,11 @@ module.exports = function() {
                     //      scope:         <String> list of authorized scope values
                     // }
 
-                    signalPathway.signalPheromone                      = result.access_token;
-                    signalPathway.signalPheromoneExpiration            = new Date(new Date().getTime() + ((result.expires_in-3)*1000));
+                    signalPathway.signalPheromone                        = result.access_token;
+                    signalPathway.signalPheromoneExpiration              = new Date(new Date().getTime() + ((result.expires_in-3)*1000));
                     signalPathway.reinforcementSignalPheromone           = result.refresh_token;
                     signalPathway.reinforcementSignalPheromoneExpiration = null;
-                    // signalPathway.optional:                         don't set, account ID saved in this field
+                 // signalPathway.optional:                                don't set, account ID saved in this field
 
                     return signalPathway.save();
                 },

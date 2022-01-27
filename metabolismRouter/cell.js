@@ -1683,7 +1683,7 @@ router.post('/:id/instance', function(req, res) {
         })
         .then(function(field) {
             if (!field)
-                throw new Blockages.NotFoundError('UUID to associate with instance not found');
+                throw new Blockages.NotFoundError('Field to associate with instance not found');
 
             return field.addInstance(this.instance);
         })

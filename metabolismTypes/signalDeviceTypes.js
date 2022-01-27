@@ -5,9 +5,10 @@
 var signalDeviceTypes = module.exports = {};
 
 signalDeviceTypes.ENUM = {
-    BLE: { abbr: 'BLE', fullName: 'Bluetooth Low Energy Device' },
-    NFC: { abbr: 'NFC', fullName: 'NFC Stand-alone Device' },
-    HAM: { abbr: 'HAM', fullName: 'HAM Radio' },
+    ELF: { abbr: 'ELF', fullName: 'Extremely Low-Frequency Device' },
+ // BLE: { abbr: 'BLE', fullName: 'Bluetooth Low Energy Device' },
+ // NFC: { abbr: 'NFC', fullName: 'NFC Stand-alone Device' },
+ // HAM: { abbr: 'HAM', fullName: 'HAM Radio' },
 };
 
 signalDeviceTypes.totalCount = 0;

@@ -15,11 +15,11 @@ CellGraph.create = function(cellId) {
     cellId = cellId.toString();
     var cellGraph = metabolism.CellGraph[cellId] = {};
 
-    cellGraph.Cycle         = modelCycle(metabolism.sequelize, metabolism.Sequelize, cellId);
+    cellGraph.Cycle         = modelCycle(metabolism.sequelize,         metabolism.Sequelize, cellId);
     cellGraph.CycleOutsider = modelCycleOutsider(metabolism.sequelize, metabolism.Sequelize, cellId);
     cellGraph.CycleSequence = modelCycleSequence(metabolism.sequelize, metabolism.Sequelize, cellId);
-    cellGraph.CycleLife     = modelCycleLife(metabolism.sequelize, metabolism.Sequelize, cellId);
-    cellGraph.CycleAudit    = modelCycleAudit(metabolism.sequelize, metabolism.Sequelize, cellId);
+    cellGraph.CycleLife     = modelCycleLife(metabolism.sequelize,     metabolism.Sequelize, cellId);
+    cellGraph.CycleAudit    = modelCycleAudit(metabolism.sequelize,    metabolism.Sequelize, cellId);
 
     // Call associate() on each of the cell models
     Object.keys(cellGraph).forEach(function(modelName) {
@@ -41,11 +41,11 @@ CellGraph.sync = function() {
             var cellId = cell.cellId.toString();
             var cellGraph = metabolism.CellGraph[cellId] = {};
 
-            cellGraph.Cycle         = modelCycle(metabolism.sequelize, metabolism.Sequelize, cellId);
+            cellGraph.Cycle         = modelCycle(metabolism.sequelize,         metabolism.Sequelize, cellId);
             cellGraph.CycleOutsider = modelCycleOutsider(metabolism.sequelize, metabolism.Sequelize, cellId);
             cellGraph.CycleSequence = modelCycleSequence(metabolism.sequelize, metabolism.Sequelize, cellId);
-            cellGraph.CycleLife     = modelCycleLife(metabolism.sequelize, metabolism.Sequelize, cellId);
-            cellGraph.CycleAudit    = modelCycleAudit(metabolism.sequelize, metabolism.Sequelize, cellId);
+            cellGraph.CycleLife     = modelCycleLife(metabolism.sequelize,     metabolism.Sequelize, cellId);
+            cellGraph.CycleAudit    = modelCycleAudit(metabolism.sequelize,    metabolism.Sequelize, cellId);
 
             // Call associate() on each of the cell models
             Object.keys(cellGraph).forEach(function(modelName) {

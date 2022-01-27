@@ -5,7 +5,7 @@ var metabolism = require('../models/database');
 
 var modelCycle         = require('../modelsCell/cycle');
 var modelCycleOutsider = require('../modelsCell/cycleOutsider');
-var modelCycleItem     = require('../modelsCell/cycleItem');
+var modelCycleSequence = require('../modelsCell/cycleSequence');
 var modelCycleLife     = require('../modelsCell/cycleLife');
 var modelCycleAudit    = require('../modelsCell/cycleAudit');
 
@@ -17,7 +17,7 @@ CellGraph.create = function(cellId) {
 
     cellGraph.Cycle         = modelCycle(metabolism.sequelize, metabolism.Sequelize, cellId);
     cellGraph.CycleOutsider = modelCycleOutsider(metabolism.sequelize, metabolism.Sequelize, cellId);
-    cellGraph.CycleItem     = modelCycleItem(metabolism.sequelize, metabolism.Sequelize, cellId);
+    cellGraph.CycleSequence = modelCycleSequence(metabolism.sequelize, metabolism.Sequelize, cellId);
     cellGraph.CycleLife     = modelCycleLife(metabolism.sequelize, metabolism.Sequelize, cellId);
     cellGraph.CycleAudit    = modelCycleAudit(metabolism.sequelize, metabolism.Sequelize, cellId);
 
@@ -43,7 +43,7 @@ CellGraph.sync = function() {
 
             cellGraph.Cycle         = modelCycle(metabolism.sequelize, metabolism.Sequelize, cellId);
             cellGraph.CycleOutsider = modelCycleOutsider(metabolism.sequelize, metabolism.Sequelize, cellId);
-            cellGraph.CycleItem     = modelCycleItem(metabolism.sequelize, metabolism.Sequelize, cellId);
+            cellGraph.CycleSequence = modelCycleSequence(metabolism.sequelize, metabolism.Sequelize, cellId);
             cellGraph.CycleLife     = modelCycleLife(metabolism.sequelize, metabolism.Sequelize, cellId);
             cellGraph.CycleAudit    = modelCycleAudit(metabolism.sequelize, metabolism.Sequelize, cellId);
 

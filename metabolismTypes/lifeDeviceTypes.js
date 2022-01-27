@@ -5,12 +5,9 @@
 var lifeDeviceTypes = module.exports = {};
 
 lifeDeviceTypes.ENUM = {
-    NFC: { abbr: 'NFC', fullName: 'NFC Stand-alone Device' },
-    IOS: { abbr: 'IOS', fullName: 'iOS Device' },
-
-    // AND: { abbr: 'AND', fullName: 'Android Device' },
-    // WIN: { abbr: 'WIN', fullName: 'Windows Device' },
-    // BBY: { abbr: 'BBY', fullName: 'BlackBerry Device' }
+    RPI: { abbr: 'RPI', fullName: 'Raspberry Pi Device' },
+ // IOS: { abbr: 'IOS', fullName: 'iOS Device' },
+ // AND: { abbr: 'AND', fullName: 'Android Device' },
 };
 
 lifeDeviceTypes.totalCount = 0;

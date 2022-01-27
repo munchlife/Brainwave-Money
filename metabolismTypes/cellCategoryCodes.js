@@ -1,6 +1,6 @@
 'use strict';
 
-// merchantCodes.js
+// cellCategoryCodes.js
 
 // SOURCE: http://www.irs.gov/irb/2004-31_IRB/ar17.html
 //         http://web.archive.org/web/20070710202209/http://usa.visa.com/download/corporate/resources/mcc_booklet.pdf
@@ -10,7 +10,7 @@
 // description = Merchant Category
 // reportable  = Reportable under 6041/6041A and Authority for Exception
 
-var MerchantCodes = module.exports = [
+var CellCategoryCodes = module.exports = [
  // { mccNumber: 0742, mccMin: null, mccMax: null, abbr: 'XXXXXX', description: 'Veterinary Services',                                                             reportable: true  },
  // { mccNumber: 0763, mccMin: null, mccMax: null, abbr: 'XXXXXX', description: 'Agricultural Cooperative',                                                        reportable: true  },
  // { mccNumber: 0780, mccMin: null, mccMax: null, abbr: 'XXXXXX', description: 'Landscaping Services',                                                            reportable: true  },

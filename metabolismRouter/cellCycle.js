@@ -483,7 +483,7 @@ router.put('/:id/cycle/:cycleId/outsider/:outsiderId', function(req, res) {
 // --- create a new cycle for existing cell (:id)
 router.post('/:id/cycle', function(req, res) {
     debug('[POST] /cell/:id/cycle');
-    var cellId = req.params.id;
+    var cellId     = req.params.id;
     var instanceId = req.body.instanceId;
 
     verbose('  cellId      = ' + cellId);

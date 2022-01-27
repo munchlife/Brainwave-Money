@@ -345,7 +345,7 @@ router.get('/:id/signalPathway/:signalPathwayId', function(req, res) {
 router.get('/:id/signalPathwayForGene/:geneId', function(req, res) {
     debug('[GET] /cell/:id/signalPathwayForGene/:geneId');
     var cellId = req.params.id;
-    var geneId  = req.params.geneId;
+    var geneId = req.params.geneId;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
@@ -1344,7 +1344,7 @@ router.post('/instance/signup', function(req, res) {
                 executeArray.push(metabolism.Phone.create(newPhone));
             }
 
-            // signalPathwayId, signalPheromone, signalPheromoneExpiration, reinforcementWavePheromone, reinforcementWavePheromoneExpiration, optional, lifeId fields are defaults
+         // signalPathwayId, signalPheromone, signalPheromoneExpiration, reinforcementSignalPheromone, reinforcementSignalPheromoneExpiration, optional, lifeId fields are defaults
             executeArray.push(metabolism.GeneSignalPathway.create({ cellId: this.cell.cellId, geneId: 1008 }));
 
             return metabolism.sequelize.Promise.all(executeArray);
@@ -1544,9 +1544,9 @@ router.post('/:id/allowPaymentGene/:geneId', function(req, res) {
         metabolism.GeneSignalPathway
             .find({ where: {cellId: cellId, geneId: geneId} /* attributes: default */ }),
         metabolism.Gene
-            .find({ where: {geneId: geneId}                         /* attributes: default */ }),
+            .find({ where: {geneId: geneId}                 /* attributes: default */ }),
         metabolism.Cell
-            .find({ where: {cellId: cellId}                       /* attributes: default */ })
+            .find({ where: {cellId: cellId}                 /* attributes: default */ })
     ])
     .spread(function(signalPathway, gene, cell) {
         if (signalPathway)
@@ -1559,15 +1559,15 @@ router.post('/:id/allowPaymentGene/:geneId', function(req, res) {
             throw new Blockages.NotFoundError('Cell not found');
 
         var newSignalPathway = {
-          /*signalPathwayId: 			  0,*/
-          /*signalPheromone:         	          null,*/
-          /*signalPheromoneExpiration:    	  null,*/
-          /*reinforcementWavePheromone:           null,*/
-          /*reinforcementWavePheromoneExpiration: null,*/
-          /*optional:       			  null,*/
-          /*lifeId:         		          null,*/
-            cellId:     	 		  cell.cellId,
-            geneId:      			  gene.geneId
+          /*signalPathwayId: 			   0,*/
+          /*signalPheromone:         	           null,*/
+          /*signalPheromoneExpiration:    	   null,*/
+          /*reinforcementSignalPheromone:          null,*/
+          /*reinforcementSignalheromoneExpiration: null,*/
+          /*optional:       			   null,*/
+          /*lifeId:         		           null,*/
+            cellId:     	 		   cell.cellId,
+            geneId:      			   gene.geneId
         };
 
         return metabolism.GeneSignalPathway.create(newSignalPathway);
@@ -1844,11 +1844,11 @@ router.post('/:id/instance/:instanceId/stakeholderMember', function(req, res) {
             throw new Blockages.NotFoundError('Life not found');
 
         var newStakeholderMember = {
-          /*stakeholderId:     0,*/
-            immunities:  validate.toInt(req.body.immunities),
-            lifeId:      life.lifeId,
-            cellId:      cell.cellId,
-            instanceId:  instance.instanceId
+          /*stakeholderId: 0,*/
+            immunities:    validate.toInt(req.body.immunities),
+            lifeId:        life.lifeId,
+            cellId:        cell.cellId,
+            instanceId:    instance.instanceId
         };
 
         return metabolism.CellStakeholder.create(newStakeholderMember);

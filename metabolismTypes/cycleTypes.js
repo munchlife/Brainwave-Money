@@ -2,16 +2,14 @@
 
 // cycleTypes.js
 
-// TODO: add Shipping Type (standard, ground, two-day, next-day, priority, express, etc)
-
 var cycleTypes = module.exports = {};
 
 //------------------------------------------------------------------------------
 var temp = {};
 temp.ENUM = {
-    PCKUP: { abbr: 'DGTL', fullName: 'Digital' },
-    DLVRY: { abbr: 'ANLG', fullName: 'Analog' },
-    DINEN: { abbr: 'CHMCL', fullName: 'Chemical' }
+    DGTL:  { abbr: 'DGTL',  fullName: 'Digital' },
+    ANLG:  { abbr: 'ANLG',  fullName: 'Analog' },
+    CHMCL: { abbr: 'CHMCL', fullName: 'Chemical' }
 };
 
 temp.totalCount = 0;
@@ -33,18 +31,18 @@ temp.ENUM = {
 
 temp.totalCount = 0;
 temp.abbrs      = [];
-for (var distributedSignal in temp.ENUM) {
+for (var distributedCharge in temp.ENUM) {
     temp.totalCount++;
-    temp.abbrs.push(temp.ENUM[distributedSignal].abbr);
+    temp.abbrs.push(temp.ENUM[distributedCharge].abbr);
 }
 
-cycleTypes.distributedSignalType = temp;
+cycleTypes.distributedChargeType = temp;
 //------------------------------------------------------------------------------
 temp = {};
 temp.ENUM = {
-    CASH: { abbr: 'PRSNT', fullName: 'Present' },
-    CRDT: { abbr: 'FTRE', fullName: 'Future' },
-    SRVC: { abbr: 'ARNGD', fullName: 'Arranged' }
+    PRSNT: { abbr: 'PRSNT', fullName: 'Present' },
+    FTRE:  { abbr: 'FTRE',  fullName: 'Future' },
+    ARNGD: { abbr: 'ARNGD', fullName: 'Arranged' }
 };
 
 temp.totalCount = 0;
@@ -85,8 +83,8 @@ temp.ENUM = {
     OPEN:    { status:  0, abbr:'OPEN',    fullName: 'Open'},
     RDYPRCS: { status:  1, abbr:'RDYPRCS', fullName: 'Ready to Process'},
     PRCSPY:  { status:  2, abbr:'PRCSPY',  fullName: 'Process Signal'},
-    // PRCSLO:  { status:  3, abbr:'PRCSLO',  fullName: 'Process Loyalty'},
-    // PRCSCH:  { status:  4, abbr:'PRCSCH',  fullName: 'Process Check-in'},
+ // PRCSLO:  { status:  3, abbr:'PRCSLO',  fullName: 'Process Loyalty'},
+ // PRCSCH:  { status:  4, abbr:'PRCSCH',  fullName: 'Process Check-in'},
     COMPLT:  { status:  5, abbr:'COMPLT',  fullName: 'Complete'}
 };
 

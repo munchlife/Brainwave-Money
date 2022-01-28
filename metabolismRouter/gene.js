@@ -10,12 +10,12 @@ var mv      = require('mv');
 
 // Local js modules
 var Middlewares  = require('./middlewares');
-var metabolism           = require('../../models/database');
-var Immunities  = require('../../config/immunities');
-var Genes     = require('../../config/genes');
-var Blockages        = require('../../config/blockages');
+var metabolism   = require('../../models/database');
+var Immunities   = require('../../config/immunities');
+var Genes        = require('../../config/genes');
+var Blockages    = require('../../config/blockages');
 var CountryCodes = require('../../data/countryCodes');
-var GeneType  = require('../../data/geneTypes');
+var GeneType     = require('../../data/geneTypes');
 
 var validate = metabolism.Sequelize.Validator;
 
@@ -30,9 +30,9 @@ var router = module.exports = express.Router();
 // --- OAuth2 authorization callback handler (correctly uses state query field)
 router.get('/:id/auth/callback', function(req, res) {
     debug('[GET] /gene/:geneId/auth/callback');
-    var geneId  = req.params.id;
+    var geneId     = req.params.id;
     var lifeId     = null;
-    var cellId = null;
+    var cellId     = null;
     var stateType  = req.query.state.substring(0, 1);
     var stateId    = parseInt(req.query.state.substring(1), 10);
     if (stateType === 'l') {
@@ -285,7 +285,7 @@ router.get('/:id/signalPathways', function(req, res) {
 // --- retrieve info on signalPathway (:signalPathwayId) for gene (:id)
 router.get('/:id/signalPathway/:signalPathwayId', function(req, res) {
     debug('[GET] /gene/:id/signalPathway/:signalPathwayId');
-    var geneId      = req.params.id;
+    var geneId          = req.params.id;
     var signalPathwayId = req.params.signalPathwayId;
 
     if (!Immunities.verifyNoRejectionFromGene(geneId, Immunities.AuthLevelStakeholder, false, false, res.locals.lifePacket))
@@ -340,7 +340,7 @@ router.get('/:id/stakeholder', function(req, res) {
 router.get('/:id/stakeholderMember/:lifeId', function(req, res) {
     debug('[GET] /gene/:id/stakeholderMember/:lifeId');
     var geneId = req.params.id;
-    var lifeId    = req.params.lifeId;
+    var lifeId = req.params.lifeId;
 
     if (!Immunities.verifyNoRejectionFromGene(geneId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
@@ -483,7 +483,7 @@ router.put('/:id', function(req, res) {
 // --- update main address (:addressId) for gene (:id)
 router.put('/:id/address/:addressId', function(req, res) {
     debug('[PUT] /gene/:id/address/:addressId');
-    var geneId = req.params.id;
+    var geneId    = req.params.id;
     var addressId = req.params.addressId;
 
     if (!Immunities.verifyNoRejectionFromGene(geneId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
@@ -534,8 +534,8 @@ router.put('/:id/address/:addressId', function(req, res) {
 // --- update phone number (:phoneId) for gene (:id)
 router.put('/:id/phone/:phoneId', function(req, res) {
     debug('[PUT] /gene/:id/phone/:phoneId');
-    var geneId = req.params.id;
-    var phoneId   = req.params.phoneId;
+    var geneId  = req.params.id;
+    var phoneId = req.params.phoneId;
 
     if (!Immunities.verifyNoRejectionFromGene(geneId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
@@ -582,7 +582,7 @@ router.put('/:id/phone/:phoneId', function(req, res) {
 router.put('/:id/stakeholderMember/:lifeId', function(req, res) {
     debug('[PUT] /gene/:id/stakeholderMember/:lifeId');
     var geneId = req.params.id;
-    var lifeId    = req.params.lifeId;
+    var lifeId = req.params.lifeId;
 
     if (!Immunities.verifyNoRejectionFromGene(geneId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
@@ -807,7 +807,7 @@ router.post('/:id/phone', function(req, res) {
 router.post('/:id/stakeholderMember', function(req, res) {
     debug('[POST] /gene/:id/stakeholderMember');
     var geneId = req.params.id;
-    var lifeId    = req.body.lifeId;
+    var lifeId = req.body.lifeId;
 
     if (!Immunities.verifyNoRejectionFromGene(geneId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));

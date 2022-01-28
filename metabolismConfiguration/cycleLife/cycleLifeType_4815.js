@@ -42,14 +42,14 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
 
                 // Verify the required parts of the cycle life are present, and all information is valid
 
-                // Refresh tokens to signal gene signalPathways
+                // Refresh signal pheromones to signal gene signalPathways
                 return metabolism.sequelize.Promise.all([
-                    self.signalingGeneAPI.refreshTokens(self.signalPathways.signal.life),
-                    self.signalingGeneAPI.refreshTokens(self.signalPathways.signal.cell)
+                    self.signalingGeneAPI.refreshSignalPheromones(self.signalPathways.signal.life),
+                    self.signalingGeneAPI.refreshSignalPheromones(self.signalPathways.signal.cell)
                     ]);
             })
             .then(function() {
-                return self.audit(20002, ' (LIFE PIPELINE SECTION)Open - Refreshed Token Signal Gene');
+                return self.audit(20002, ' (LIFE PIPELINE SECTION)Open - Refreshed Signal Pheromone');
             })
             .then(function() {
                 // Verify the account of the general gene 

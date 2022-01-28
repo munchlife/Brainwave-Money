@@ -62,7 +62,7 @@ module.exports = function(cellId, cycle) {
                 // Cycle fields not checked here: cycleNotes
 
                 if (self.cycle.Sequences.length !== 0)
-                    throw new Blockages.CycleProcessError(20107, 'ERROR: attaching items to the cycle is not allowed');
+                    throw new Blockages.CycleProcessError(20107, 'ERROR: attaching sequences to the cycle is not allowed');
 
                 self.continueProcessing = false;
                 return self.updateCycleStatus(CycleType.cycleStatusType.ENUM.RDYPRCS.status, 20002, ' (PS)Open - Updated Status');

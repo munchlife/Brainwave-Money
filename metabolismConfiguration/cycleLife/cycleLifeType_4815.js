@@ -26,7 +26,7 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
     };
 
     // -------------------------------------------------------------------------
-    // USER PIPELINE SECTIONS
+    // LIFE PIPELINE SECTIONS
     // -------------------------------------------------------------------------
     self.lifePipelineSectionOpen = function() {
         return self.audit(20000, ' (LIFE PIPELINE SECTION)Open - Start')
@@ -238,13 +238,13 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
     };
 
     // -------------------------------------------------------------------------
-    // UPDATE ORDER STATUS
+    // UPDATE CYCLE STATUS
     // -------------------------------------------------------------------------
     self.updateCycleStatus = function(status, auditNumber, auditMessage) {
         switch (status) {
             case CycleType.lifeStatusType.ENUM.OPEN.status: // Open
             case CycleType.lifeStatusType.ENUM.RDYPRCS.status: // Ready for Processing
-            case CycleType.lifeStatusType.ENUM.PRCSGN.status: // Process Signal
+            case CycleType.lifeStatusType.ENUM.PRCSSG.status: // Process Signal
             // case CycleType.lifeStatusType.ENUM.PRCSLO.status: // Process Loyalty
             // case CycleType.lifeStatusType.ENUM.PRCSCH.status: // Process Checkin
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete

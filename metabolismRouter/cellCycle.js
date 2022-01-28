@@ -397,18 +397,18 @@ router.put('/:id/cycle/:cycleId/life/:lifeId', function(req, res) {
             if (!life)
                 throw new Blockages.NotFoundError('Cycle life not found');
 
-          /*life.cycleLifeId:            not accessible for change */
-          /*life.cycleId:                not accessible for change */
-          /*life.lifeId:                 not accessible for change */
-          /*life.outsiderId:             not accessible for change */
-          /*life.status:                 not accessible for change */
-            life.signalMethod            = validate.trim(validate.toString(req.body.signalMethod)).toUpperCase();
-            life.signalingGeneId         = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.signalingGeneId);
+          /*life.cycleLifeId:              not accessible for change */
+          /*life.cycleId:                  not accessible for change */
+          /*life.lifeId:                   not accessible for change */
+          /*life.outsiderId:               not accessible for change */
+          /*life.status:                   not accessible for change */
+            life.signalMethod              = validate.trim(validate.toString(req.body.signalMethod)).toUpperCase();
+            life.signalingGeneId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.signalingGeneId);
           /*life.signalingReferenceNumber: not accessible for change */
-          //life.loyaltyGeneId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.loyaltyGeneId);
-          /*life.loyaltyReferenceNumber: not accessible for change */
-          //life.checkinGeneId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.checkinGeneId);
-          /*life.checkinReferenceNumber: not accessible for change */
+          //life.loyaltyGeneId             = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.loyaltyGeneId);
+          /*life.loyaltyReferenceNumber:   not accessible for change */
+          //life.checkinGeneId             = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.checkinGeneId);
+          /*life.checkinReferenceNumber:   not accessible for change */
 
             return life.save();
         })
@@ -451,17 +451,17 @@ router.put('/:id/cycle/:cycleId/outsider/:outsiderId', function(req, res) {
                 throw new Blockages.NotFoundError('Cycle outsider life not found');
 
           /*outsider.outsiderId: not accessible for change */
-            outsider.givenName  = metabolism.CellGraph[cellId].CycleOutsider.extractName(metabolism, req.body.givenName);
-            outsider.familyName = metabolism.CellGraph[cellId].CycleOutsider.extractName(metabolism, req.body.familyName);
-            outsider.phone      = metabolism.CellGraph[cellId].CycleOutsider.extractPhone(metabolism, req.body.phone);
-            outsider.extension  = metabolism.CellGraph[cellId].CycleOutsider.extractExtension(metabolism, req.body.extension);
-            outsider.address1   = metabolism.CellGraph[cellId].CycleOutsider.extractAddress(metabolism, req.body.address1);
-            outsider.address2   = metabolism.CellGraph[cellId].CycleOutsider.extractAddress(metabolism, req.body.address2);
-            outsider.address3   = metabolism.CellGraph[cellId].CycleOutsider.extractAddress(metabolism, req.body.address3);
-            outsider.address4   = metabolism.CellGraph[cellId].CycleOutsider.extractAddress(metabolism, req.body.address4);
-            outsider.locality   = metabolism.CellGraph[cellId].CycleOutsider.extractLocality(metabolism, req.body.locality);
-            outsider.region     = metabolism.CellGraph[cellId].CycleOutsider.extractRegion(metabolism, req.body.region);
-            outsider.postalCode = metabolism.CellGraph[cellId].CycleOutsider.extractPostalCode(metabolism, req.body.postalCode);
+            outsider.givenName   = metabolism.CellGraph[cellId].CycleOutsider.extractName(metabolism, req.body.givenName);
+            outsider.familyName  = metabolism.CellGraph[cellId].CycleOutsider.extractName(metabolism, req.body.familyName);
+            outsider.phone       = metabolism.CellGraph[cellId].CycleOutsider.extractPhone(metabolism, req.body.phone);
+            outsider.extension   = metabolism.CellGraph[cellId].CycleOutsider.extractExtension(metabolism, req.body.extension);
+            outsider.address1    = metabolism.CellGraph[cellId].CycleOutsider.extractAddress(metabolism, req.body.address1);
+            outsider.address2    = metabolism.CellGraph[cellId].CycleOutsider.extractAddress(metabolism, req.body.address2);
+            outsider.address3    = metabolism.CellGraph[cellId].CycleOutsider.extractAddress(metabolism, req.body.address3);
+            outsider.address4    = metabolism.CellGraph[cellId].CycleOutsider.extractAddress(metabolism, req.body.address4);
+            outsider.locality    = metabolism.CellGraph[cellId].CycleOutsider.extractLocality(metabolism, req.body.locality);
+            outsider.region      = metabolism.CellGraph[cellId].CycleOutsider.extractRegion(metabolism, req.body.region);
+            outsider.postalCode  = metabolism.CellGraph[cellId].CycleOutsider.extractPostalCode(metabolism, req.body.postalCode);
 
             return outsider.save();
         })

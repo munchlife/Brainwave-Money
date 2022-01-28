@@ -1509,9 +1509,9 @@ router.post('/:id/signalPathwayForGene/:geneId', function(req, res) {
         metabolism.GeneSignalPathway
             .find({ where: {cellId: cellId, geneId: geneId} /* attributes: default */ }),
         metabolism.Gene
-            .find({ where: {geneId: geneId}                         /* attributes: default */ }),
+            .find({ where: {geneId: geneId}                 /* attributes: default */ }),
         metabolism.Cell
-            .find({ where: {cellId: cellId}                       /* attributes: default */ })
+            .find({ where: {cellId: cellId}                 /* attributes: default */ })
     ])
     .spread(function(signalPathway, gene, cell) {
         if (signalPathway)

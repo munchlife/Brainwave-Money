@@ -748,7 +748,7 @@ router.get('/:id/token/associate/cell/:cellId', function(req, res) {
 router.get('/:id/token/associate/cell/:cellId/instance/:instanceId', function(req, res) {
     debug('[GET] /life/:id/token/associate/cell/:cellId/instance/:instanceId');
     var lifeId     = req.params.id;
-    var cellId = req.params.cellId;
+    var cellId     = req.params.cellId;
     var instanceId = req.params.instanceId;
     var tokenId    = res.locals.lifePacket.tokenId;
 
@@ -1405,7 +1405,7 @@ router.post('/:id/device', function(req, res) {
 router.post('/:id/verify/genome', function(req, res) {
     debug('[' + req.method + '] /life/:id/verify/genome');
     var lifeId = req.params.id;
-    var genome    = req.body.genome;
+    var genome = req.body.genome;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));

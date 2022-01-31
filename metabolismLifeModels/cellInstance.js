@@ -134,7 +134,7 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 CellInstance.belongsTo(models.Cell,          {                           foreignKey: 'cellId' });
-                CellInstance.belongsTo(models.CellField,     {                           foreignKey: 'cellSignalId' });
+                CellInstance.belongsTo(models.CellField,     {                           foreignKey: 'cellFieldId' });
                 CellInstance.hasMany(models.CellStakeholder, { as: 'StakeholderMembers', foreignKey: 'instanceId' });
                 CellInstance.hasMany(models.CellDevice,      { as: 'Devices',            foreignKey: 'instanceId' });
                 CellInstance.hasOne(models.Address,          { as: 'Address',            foreignKey: 'instanceId' });

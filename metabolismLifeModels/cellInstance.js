@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        constructiveInterference : {
+        constructiveInterference: {
             // precision per decimal place:
             //    0.000001   degs    111mm  distance
             //    0.0000001  degs    11.1mm distance
@@ -54,7 +54,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        destructiveInterference : {
+        destructiveInterference: {
             type: DataTypes.DECIMAL(11, 8),
             allowNull: true,
             validate: {

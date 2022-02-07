@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 isUUID: {
                     args: [ 4 ],
-                    msg: 'UUID is not in a UUIDv4 valid format'
+                    msg: 'Field is not in a UUIDv4 valid format'
                 }
             }
         },
@@ -43,7 +43,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                CellField.hasMany(models.CellInstance, { as: 'Instances', foreignKey: 'cellSignalId' });
+                CellField.hasMany(models.CellInstance, { as: 'Instances', foreignKey: 'cellFieldId' });
             }
         },
         instanceMethods: {

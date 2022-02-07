@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        address1: { // street
+        address1: { // i.e. brain; chromosome #; body part i.e. torso
             type: DataTypes.STRING( ADDRESS_LINE_MAX_LENGTH ),
             allowNull: false,
             validate: {
@@ -69,51 +69,51 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        locality: { // city
+        locality: { // i.e. hypothalamus
             type: DataTypes.STRING( ADDRESS_LOCALITY_MAX_LENGTH ),
             allowNull: false,
             validate: {
                 len: {
                     args: [ 1, ADDRESS_LOCALITY_MAX_LENGTH ],
-                    msg: 'Locality (city) must be inclusively between 1 and ' + ADDRESS_LOCALITY_MAX_LENGTH + ' characters in length'
+                    msg: 'Locality must be inclusively between 1 and ' + ADDRESS_LOCALITY_MAX_LENGTH + ' characters in length'
                 }
             }
         },
-        // TODO: consider adding field (neighborhood, common name, ex. Manhattan, Gaslamp District, etc)
-        // subLocality: {
-        //     type: DataTypes.STRING(ADDRESS_LOCALITY_MAX_LENGTH),
-        //     allowNull: true,
-        //     defaultValue: null,
-        //     validate: {
-        //         len: {
-        //             args: [ 1, ADDRESS_LOCALITY_MAX_LENGTH ],
-        //             msg: 'Sub-locality (neighborhood) can be no more than ' + ADDRESS_LOCALITY_MAX_LENGTH + ' characters in length'
-        //         }
-        //     }
-        // },
+        // TODO: consider adding field
+        subLocality: { // i.e. paraventricular nucleus, supraoptic nucleus, suprachiasmatic nucleus etc
+            type: DataTypes.STRING(ADDRESS_LOCALITY_MAX_LENGTH),
+            allowNull: true,
+            defaultValue: null,
+            validate: {
+                len: {
+                    args: [ 1, ADDRESS_LOCALITY_MAX_LENGTH ],
+                    msg: 'Sub-locality can be no more than ' + ADDRESS_LOCALITY_MAX_LENGTH + ' characters in length'
+                }
+            }
+        },
         // TODO: check on size of region for abbr
-        region: { // state
+        region: { // i.e. frontal lobe, parietal lobe, temporal lobe, occipital lobe; telomeres, centromere etc; epigastrium etc
             type: DataTypes.STRING( ADDRESS_REGION_MAX_LENGTH ),
             allowNull: false,
             validate: {
                 len: {
                     args: [ 1, ADDRESS_REGION_MAX_LENGTH ],
-                    msg: 'Region (state) must be inclusively between 1 and ' + ADDRESS_REGION_MAX_LENGTH + ' characters in length'
+                    msg: 'Region must be inclusively between 1 and ' + ADDRESS_REGION_MAX_LENGTH + ' characters in length'
                 }
             }
         },
-        // TODO: consider adding field (county, ex. Hudson, Morris, Hamilton, etc)
-        // subRegion: {
-        //     type: DataTypes.STRING(ADDRESS_REGION_MAX_LENGTH),
-        //     allowNull: true,
-        //     defaultValue: null,
-        //     validate: {
-        //         len: {
-        //             args: [ 1, ADDRESS_REGION_MAX_LENGTH ],
-        //             msg: 'Sub-region (county) can be no more than ' + ADDRESS_REGION_MAX_LENGTH + ' characters in length'
-        //         }
-        //     }
-        // },
+        // TODO: consider adding field
+        subRegion: { // i.e. lateral part, polar part, orbital part, medial part; i.e. sub telomere 
+            type: DataTypes.STRING(ADDRESS_REGION_MAX_LENGTH),
+            allowNull: true,
+            defaultValue: null,
+            validate: {
+                len: {
+                    args: [ 1, ADDRESS_REGION_MAX_LENGTH ],
+                    msg: 'Sub-region can be no more than ' + ADDRESS_REGION_MAX_LENGTH + ' characters in length'
+                }
+            }
+        },
         postalCode: {
             type: DataTypes.STRING( ADDRESS_POSTALCODE_MAX_LENGTH ),
             allowNull: false,

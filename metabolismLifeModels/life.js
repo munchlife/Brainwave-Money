@@ -3,16 +3,16 @@
 // life.js (model)
 
 var bcrypt = require('bcryptjs');
-var CountryCodes = require('../data/countryCodes');
+var CountryCodes = require('../metabolismTypes/countryCodes');
 
 var LIFE_PHONE_MAX_LENGTH = 15;
 var LIFE_EMAIL_MAX_LENGTH = 255;
 var LIFE_RECEIPT_EMAIL_MAX_LENGTH = 255;
 // var LIFE_PASSWORD_MIN_LENGTH = 6;
 // var LIFE_PASSWORD_MAX_LENGTH = 30;
-var LIFE_VOICEPRINT_HASH_MAX_LENGTH = 100;
-var LIFE_GENOME_MIN_LENGTH = 4;
-var LIFE_GENOME_MAX_LENGTH = 6;
+var LIFE_EEG_HASH_MAX_LENGTH = 100;
+var LIFE_GENOME_MIN_LENGTH = 319324; 
+var LIFE_GENOME_MAX_LENGTH = 297600000000;
 var LIFE_GENOME_FIELD_MAX_LENGTH = 100;
 var REFERRAL_CODE_MAX_LENGTH = 7;
 var LIFE_NAME_MAX_LENGTH = 255;
@@ -89,11 +89,11 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             defaultValue: false
         },
-        voiceprint: {
+        eeg: {
             type: DataTypes.VIRTUAL,
             set: function(value) {
-                this.setDataValue('voiceprint', value);
-                this.setDataValue('voiceprintHash', Life.generateHash(value));
+                this.setDataValue('eeg', value);
+                this.setDataValue('eegHash', Life.generateHash(value));
             },
             validate: {
                 // len: {
@@ -112,15 +112,15 @@ module.exports = function(sequelize, DataTypes) {
                 // }
             }
         },
-        voiceprintHash: {
-            type: DataTypes.STRING( LIFE_VOICEPRINT_HASH_MAX_LENGTH ),
+        eegHash: {
+            type: DataTypes.STRING( LIFE_EEG_HASH_MAX_LENGTH ),
             allowNull: false
         },
-        voiceprintExpiration: {
+        eegExpiration: {
             type: DataTypes.DATE,
             allowNull: false
         },
-        genome: {
+        genome: { // genome must be entered in a binary sequence i.e. A = 00, T = 01, C = 10, G = 11
             type: DataTypes.VIRTUAL,
             set: function(value) {
                 this.setDataValue('genome', value);
@@ -177,15 +177,15 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        // TODO: add nickname to allow better addressing of consumers by stakeholder
-        // nickName: {
+        // TODO: add alias to allow better addressing of consumers by stakeholder
+        // alias: {
         //     type: DataTypes.STRING( LIFE_NAME_MAX_LENGTH ),
         //     allowNull: true,
         //     defaultValue: null,
         //     validate: {
         //         len: {
         //             args: [ 1, LIFE_NAME_MAX_LENGTH ],
-        //             msg: 'Nickname can be no more than ' + LIFE_NAME_MAX_LENGTH + ' characters in length'
+        //             msg: 'Alias can be no more than ' + LIFE_NAME_MAX_LENGTH + ' characters in length'
         //         }
         //     }
         // },
@@ -262,9 +262,9 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         instanceMethods: {
-            // Validate a voiceprint against the saved voiceprint salt/hash
-            validVoiceprint: function(voiceprint) {
-                return (new Date() <= this.voiceprintExpiration && bcrypt.compareSync(voiceprint, this.voiceprintHash));
+            // Validate a eeg against the saved eeg salt/hash
+            validEeg: function(eeg) {
+                return (new Date() <= this.eegExpiration && bcrypt.compareSync(voiceprint, this.eegHash));
             },
             // Validate a genome against the saved genome salt/hash
             validGenome: function(genome) {

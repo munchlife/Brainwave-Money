@@ -27,7 +27,7 @@ var router = module.exports = express.Router();
 // -----------------------------------------------------------------------------
 //  attributesCycleAudit     = [ 'cycleAuditId',    'cycleId', 'messageNumber', 'message', 'createdAt' ];
 var attributesCycleSequence  = [ 'cycleSequenceId', 'cycleId', 'productId', 'cycleLifeId', 'position', 'status', 'charge', 'quantity' ];
-var attributesCycleLife      = [ 'cycleLifeId',     'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'signalingGeneId', 'signalingReferenceNumber', 'loyaltyGeneId', 'loyaltyReferenceNumber', 'checkinGeneId', 'checkinReferenceNumber' ];
+var attributesCycleLife      = [ 'cycleLifeId',     'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'dictionaryGeneId', 'signalingReferenceNumber', 'genomicsGeneId', 'genomicsReferenceNumber', 'communicationsGeneId', 'communicationsReferenceNumber' ];
 var attributesOutsider       = [ 'outsiderId',      'givenName', 'familyName', 'phone', 'extension', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ];
 
 // Remove fields from metabolism.CellGraph[].Cycle: deletedAt
@@ -37,7 +37,7 @@ var cycleAttributes = [ 'cycleId', 'cellType', 'instanceId', 'deviceId', 'stakeh
 // cycleSequenceAttributes = [ 'cycleSequenceId', 'cycleId', 'productId', 'cycleLifeId', 'position', 'charge', 'quantity' ];
 
 // Remove fields from metabolism.CellGraph[].CycleLife: createdAt, updatedAt, deletedAt
-var cycleLifeAttributes = [ 'cycleLifeId', 'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'signalingGeneId', 'signalingReferenceNumber', 'loyaltyGeneId', 'loyaltyReferenceNumber', 'checkinGeneId', 'checkinReferenceNumber' ];
+var cycleLifeAttributes = [ 'cycleLifeId', 'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'dictionaryGeneId', 'signalingReferenceNumber', 'genomicsGeneId', 'genomicsReferenceNumber', 'communicationsGeneId', 'communicationsReferenceNumber' ];
 
 var includeCycle          = { model: null, as: 'Cycle',     attributes: cycleAttributes };
 //  includeCycleAudit     = { model: null, as: 'Audits',    attributes: attributesCycleAudit };
@@ -403,12 +403,12 @@ router.put('/:id/cycle/:cycleId/life/:lifeId', function(req, res) {
           /*life.outsiderId:               not accessible for change */
           /*life.status:                   not accessible for change */
             life.signalMethod              = validate.trim(validate.toString(req.body.signalMethod)).toUpperCase();
-            life.signalingGeneId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.signalingGeneId);
+            life.dictionaryGeneId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId);
           /*life.signalingReferenceNumber: not accessible for change */
-          //life.loyaltyGeneId             = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.loyaltyGeneId);
-          /*life.loyaltyReferenceNumber:   not accessible for change */
-          //life.checkinGeneId             = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.checkinGeneId);
-          /*life.checkinReferenceNumber:   not accessible for change */
+          //life.genomicsGeneId             = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsGeneId);
+          /*life.genomicsReferenceNumber:   not accessible for change */
+          //life.communicationsGeneId             = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsGeneId);
+          /*life.communicationsReferenceNumber:   not accessible for change */
 
             return life.save();
         })
@@ -617,18 +617,18 @@ router.post('/:id/cycle/:cycleId/life', function(req, res) {
                 throw new Blockages.NotFoundError('Cycle not found');
             else {
                 var newCycleLife = {
-                  /*cycleLifeId:              0,*/
-                    cycleId:                  validate.toInt(cycleId),
-                    lifeId:                   metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.lifeId),
-                  /*outsiderId:               null,*/
-                    status:                   0,
-                    signalMethod:             validate.trim(validate.toString(req.body.signalMethod)).toUpperCase(),
-                    signalingGeneId:          metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.signalingGeneId),
-                  /*signalingReferenceNumber: null,*/
-                  //loyaltyGeneId:            metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.loyaltyGeneId),
-                  /*loyaltyReferenceNumber:   null,*/
-                  //checkinGeneId:            metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.checkinGeneId),
-                  /*checkinReferenceNumber:   null*/
+                  /*cycleLifeId:                   0,*/
+                    cycleId:                       validate.toInt(cycleId),
+                    lifeId:                        metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.lifeId),
+                  /*outsiderId:                    null,*/
+                    status:                        0,
+                    signalMethod:                  validate.trim(validate.toString(req.body.signalMethod)).toUpperCase(),
+                    dictionaryGeneId:              metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId),
+                  /*signalingReferenceNumber:      null,*/
+                    genomicsGeneId:                metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsGeneId),
+                  /*genomicsReferenceNumber:       null,*/
+                    communicationsGeneId:          metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsGeneId),
+                  /*communicationsReferenceNumber: null*/
                 };
 
                 return metabolism.CellGraph[cellId].CycleLife.create(newCycleLife);
@@ -665,18 +665,18 @@ router.post('/:id/cycle/:cycleId/life/outsider', function(req, res) {
                 throw new Blockages.NotFoundError('Cycle not found');
             else {
                 var newCycleLife = {
-                  /*cycleLifeId:              0,*/
-                    cycleId:                  cycleId,
-                  /*lifeId:                   null,*/
-                    outsiderId:               null,
-                    status:                   0,
-                    signalMethod:             validate.trim(validate.toString(req.body.signalMethod)).toUpperCase(),
-                    signalingGeneId:          metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.signalingGeneId)
-                  /*signalingReferenceNumber: null,*/
-                  /*loyaltyGeneId:            null,*/
-                  /*loyaltyReferenceNumber:   null,*/
-                  /*checkinGeneId:            null,*/
-                  /*checkinReferenceNumber:   null*/
+                  /*cycleLifeId:                   0,*/
+                    cycleId:                       cycleId,
+                  /*lifeId:                        null,*/
+                    outsiderId:                    null,
+                    status:                        0,
+                    signalMethod:                  validate.trim(validate.toString(req.body.signalMethod)).toUpperCase(),
+                    dictionaryGeneId:              metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId)
+                  /*signalingReferenceNumber:      null,*/
+                  /*genomicsGeneId:                null,*/
+                  /*genomicsReferenceNumber:       null,*/
+                  /*communicationsGeneId:          null,*/
+                  /*communicationsReferenceNumber: null*/
                 };
 
                 this.newCycleLife = newCycleLife;
@@ -853,26 +853,26 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verify', function(req, res) {
                     var signals;
                     if (this.cycleLife.lifeId !== null) {
                         signals = [ metabolism.Life.find({ where: {lifeId: this.cycleLife.lifeId} }),
-                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.signalingGeneId, lifeId: this.cycleLife.lifeId} }),
-                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.signalingGeneId, cellId: cellId} })];
+                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.dictionaryGeneId, lifeId: this.cycleLife.lifeId} }),
+                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.dictionaryGeneId, cellId: cellId} })];
 
-                        // if (this.cycleLife.loyaltyGeneId) {
-                        //     signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.loyaltyGeneId, lifeId: this.cycleLife.lifeId} }));
-                        //     signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.loyaltyGeneId, cellId: cellId} }));
-                        // }
-                        // else {
-                        //     signals.push(metabolism.sequelize.Promise.resolve());
-                        //     signals.push(metabolism.sequelize.Promise.resolve());
-                        // }
+                        if (this.cycleLife.genomicsGeneId) {
+                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.genomicsGeneId, lifeId: this.cycleLife.lifeId} }));
+                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.genomicsGeneId, cellId: cellId} }));
+                        }
+                        else {
+                            signals.push(metabolism.sequelize.Promise.resolve());
+                            signals.push(metabolism.sequelize.Promise.resolve());
+                        }
 
-                        // if (this.cycleLife.checkinGeneId) {
-                        //     signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.checkinGeneId, lifeId: this.cycleLife.lifeId} }));
-                        //     signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.checkinGeneId, cellId: cellId} }));
-                        // }
-                        // else {
-                        //     signals.push(metabolism.sequelize.Promise.resolve());
-                        //     signals.push(metabolism.sequelize.Promise.resolve());
-                        // }
+                        if (this.cycleLife.communicationsGeneId) {
+                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.communicationsGeneId, lifeId: this.cycleLife.lifeId} }));
+                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.communicationsGeneId, cellId: cellId} }));
+                        }
+                        else {
+                            signals.push(metabolism.sequelize.Promise.resolve());
+                            signals.push(metabolism.sequelize.Promise.resolve());
+                        }
                     }
                     else {
                         signals = [ metabolism.CellGraph[cellId].CycleOutsider.find({ where: {cycleOutsiderId: this.cycleLife.get('outsiderId')} }) ];
@@ -880,36 +880,36 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verify', function(req, res) {
 
                     return metabolism.sequelize.Promise.all(signals);
                 })
-                .spread(function(lifeOrOutsider, lifeSignal, cellSignal) {
-                    // , lifeLoyalty, cellLoyalty, lifeCheckin, cellCheckin
+                .spread(function(lifeOrOutsider, lifeDictionary, cellDictionary, lifeGenomics, cellGenomics, lifeCommunications, cellCommunications) {
+                    
                     var cycleLifeProcessor;
 
                     if (this.cycleLife.lifeId !== null) {
                         if (!lifeOrOutsider)
                             throw new Blockages.NotFoundError('Cycle life not found');
-                        if (!lifeSignal)
+                        if (!lifeDictionary)
                             throw new Blockages.NotFoundError('Cycle life signaling signal pathway not found');
-                        if (!cellSignal)
+                        if (!cellDictionary)
                             throw new Blockages.NotFoundError('Cycle cell signaling signal pathway not found');
 
                         this.cycleLife.Life = lifeOrOutsider;
                         var signalPathways = {
-                            signaling: {
-                                life: lifeSignal,
-                                cell: cellSignal
+                            dictionary: {
+                                life: lifeDictionary,
+                                cell: cellDictionary
+                            },
+                            genomics: {
+                                life: lifeGenomics,
+                                cell: cellGenomics
+                            },
+                            communications: {
+                                life: lifeCommunications,
+                                cell: cellCommunications
                             }
-                            // loyalty: {
-                            //     life: lifeLoyalty,
-                            //     cell: cellLoyalty
-                            // },
-                            // checkin: {
-                            //     life: lifeCheckin,
-                            //     cell: cellCheckin
-                            // }
                         };
 
-                        var signalingGeneAPI = new Genes[this.cycleLife.signalingGeneId.toString()](metabolism);
-                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, signalingGeneAPI);
+                        var dictionaryGeneAPI = new Genes[this.cycleLife.dictionaryGeneId.toString()](metabolism);
+                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, dictionaryGeneAPI);
                     }
                     else {
                         if (!lifeOrOutsider)
@@ -967,9 +967,9 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/process', function(req, res) 
                         throw new Blockages.NotFoundError('Cycle life not found');
                     else if (!(cycleLife.status   === CycleType.lifeStatusType.ENUM.OPEN.status    ||
                                cycleLife.status   === CycleType.lifeStatusType.ENUM.RDYPRCS.status ||
-                               cycleLife.status   === CycleType.lifeStatusType.ENUM.PRCSSG.status))
-                            //   cycleLife.status === CycleType.lifeStatusType.ENUM.PRCSLO.status  ||
-                            //   cycleLife.status === CycleType.lifeStatusType.ENUM.PRCSCH.status))
+                               cycleLife.status   === CycleType.lifeStatusType.ENUM.PRCSDC.status))
+                               cycleLife.status === CycleType.lifeStatusType.ENUM.PRCSGN.status  ||
+                               cycleLife.status === CycleType.lifeStatusType.ENUM.PRCSCM.status))
                         throw new Blockages.BadRequestError('Incorrect cycle life status for process stage');
 
                     this.cycleLife = cycleLife;
@@ -978,26 +978,26 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/process', function(req, res) 
                     var signals;
                     if (this.cycleLife.lifeId !== null) {
                         signals = [ metabolism.Life.find({ where: {lifeId: this.cycleLife.lifeId} }),
-                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.signalingGeneId, lifeId: this.cycleLife.lifeId} }),
-                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.signalingGeneId, cellId: cellId} })];
+                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.dictionaryGeneId, lifeId: this.cycleLife.lifeId} }),
+                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.dictionaryGeneId, cellId: cellId} })];
 
-                        // if (this.cycleLife.loyaltyGeneId) {
-                        //     signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.loyaltyGeneId, lifeId: this.cycleLife.lifeId} }));
-                        //     signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.loyaltyGeneId, cellId: cellId} }));
-                        // }
-                        // else {
-                        //     signals.push(metabolism.sequelize.Promise.resolve());
-                        //     signals.push(metabolism.sequelize.Promise.resolve());
-                        // }
+                        if (this.cycleLife.genomicsGeneId) {
+                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.genomicsGeneId, lifeId: this.cycleLife.lifeId} }));
+                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.genomicsGeneId, cellId: cellId} }));
+                        }
+                        else {
+                            signals.push(metabolism.sequelize.Promise.resolve());
+                            signals.push(metabolism.sequelize.Promise.resolve());
+                        }
 
-                        // if (this.cycleLife.checkinGeneId) {
-                        //     signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.checkinGeneId, lifeId: this.cycleLife.lifeId} }));
-                        //     signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.checkinGeneId, cellId: cellId} }));
-                        // }
-                        // else {
-                        //     signals.push(metabolism.sequelize.Promise.resolve());
-                        //     signals.push(metabolism.sequelize.Promise.resolve());
-                        // }
+                        if (this.cycleLife.communicationsGeneId) {
+                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.communicationsGeneId, lifeId: this.cycleLife.lifeId} }));
+                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.communicationsGeneId, cellId: cellId} }));
+                        }
+                        else {
+                            signals.push(metabolism.sequelize.Promise.resolve());
+                            signals.push(metabolism.sequelize.Promise.resolve());
+                        }
                     }
                     else {
                         signals = [ metabolism.CellGraph[cellId].CycleOutsider.find({ where: {cycleOutsiderId: this.cycleLife.get('outsiderId')} }) ];
@@ -1005,36 +1005,36 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/process', function(req, res) 
 
                     return metabolism.sequelize.Promise.all(signals);
                 })
-                .spread(function(lifeOrOutsider, lifeSignal, cellSignal) {
-                    // , lifeLoyalty, cellLoyalty, lifeCheckin, cellCheckin
+                .spread(function(lifeOrOutsider, lifeDictionary, cellDictionary, lifeGenomics, cellGenomics, lifeCommunications, cellCommunications) {
+                    
                     var cycleLifeProcessor;
 
                     if (this.cycleLife.lifeId !== null) {
                         if (!lifeOrOutsider)
                             throw new Blockages.NotFoundError('Cycle life not found');
-                        if (!lifeSignal)
+                        if (!lifeDictionary)
                             throw new Blockages.NotFoundError('Cycle life signaling signalPathway not found');
-                        if (!cellSignal)
+                        if (!cellDictionary)
                             throw new Blockages.NotFoundError('Cycle cell signaling signalPathway not found');
 
                         this.cycleLife.Life = lifeOrOutsider;
                         var signalPathways = {
-                            signaling: {
-                                life: lifeSignal,
-                                cell: cellSignal
+                            dictionary: {
+                                life: lifeDictionary,
+                                cell: cellDictionary
+                            },
+                            genomics: {
+                                life: lifeGenomics,
+                                cell: cellGenomics
+                            },
+                            communications: {
+                                life: lifeCommunications,
+                                cell: cellCommunications
                             }
-                            // loyalty: {
-                            //     life: lifeLoyalty,
-                            //     cell: cellLoyalty
-                            // },
-                            // checkin: {
-                            //     life: lifeCheckin,
-                            //     cell: cellCheckin
-                            // }
                         };
 
-                        var signalingGeneAPI = new Genes[this.cycleLife.signalingGeneId.toString()](metabolism);
-                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, signalingGeneAPI);
+                        var dictionaryGeneAPI = new Genes[this.cycleLife.dictionaryGeneId.toString()](metabolism);
+                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, dictionaryGeneAPI);
                     }
                     else {
                         if (!lifeOrOutsider)

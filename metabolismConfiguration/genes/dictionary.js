@@ -165,7 +165,7 @@ module.exports = function() {
                 var signalPathwayData = this.signalPathwayData;
                 this.signalPathwayData = undefined;
                 for (var i = 0; i < result.words.length; i++) {
-                    if (result.accounts[i].type === 'wordID') {
+                    if (result.words[i].type === 'wordID') {
                         signalPathwayData.optional = result.words[i].id;
                         break;
                     }

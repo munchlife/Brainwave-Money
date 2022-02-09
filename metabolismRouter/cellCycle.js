@@ -888,9 +888,9 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verify', function(req, res) {
                         if (!lifeOrOutsider)
                             throw new Blockages.NotFoundError('Cycle life not found');
                         if (!lifeDictionary)
-                            throw new Blockages.NotFoundError('Cycle life signaling signal pathway not found');
+                            throw new Blockages.NotFoundError('Cycle life dictionary signal pathway not found');
                         if (!cellDictionary)
-                            throw new Blockages.NotFoundError('Cycle cell signaling signal pathway not found');
+                            throw new Blockages.NotFoundError('Cycle cell dictionary signal pathway not found');
 
                         this.cycleLife.Life = lifeOrOutsider;
                         var signalPathways = {
@@ -1013,9 +1013,9 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/process', function(req, res) 
                         if (!lifeOrOutsider)
                             throw new Blockages.NotFoundError('Cycle life not found');
                         if (!lifeDictionary)
-                            throw new Blockages.NotFoundError('Cycle life signaling signalPathway not found');
+                            throw new Blockages.NotFoundError('Cycle life dictionary signalPathway not found');
                         if (!cellDictionary)
-                            throw new Blockages.NotFoundError('Cycle cell signaling signalPathway not found');
+                            throw new Blockages.NotFoundError('Cycle cell dictionary signalPathway not found');
 
                         this.cycleLife.Life = lifeOrOutsider;
                         var signalPathways = {
@@ -1090,5 +1090,5 @@ router.delete('/:id/cycle/:cycleId/outsider/:outsiderId', function(req, res) {
 // -----------------------------------------------------------------------------
 // CATCH-ALL ROUTES (error)
 // -----------------------------------------------------------------------------
-    // No catch-all routes are here because the are covered in the signaling
+    // No catch-all routes are here because the are covered in the general
     // cell routes (cell.js)

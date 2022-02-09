@@ -7,14 +7,14 @@ var metabolism  = require('../../metabolismLifeModels/database');
 var Blockages   = require('../blockages');
 var CycleType   = require('../../metabolismTypes/cycleTypes');
 
-module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
+module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) {
 
     var self = this;
-    self.continueProcessing = true;
-    self.cellId             = cellId;
-    self.cycleLife          = cycleLife;
-    self.signalPathways     = signalPathways;
-    self.signalingGeneAPI   = signalingGeneAPI;
+    self.continueProcessing    = true;
+    self.cellId                = cellId;
+    self.cycleLife             = cycleLife;
+    self.signalPathways        = signalPathways;
+    self.dictionaryGeneAPI     = dictionaryGeneAPI;
 
     self.audit = function(messageNumber, message) {
         return metabolism.CellGraph[self.cellId].CycleAudit
@@ -22,7 +22,7 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
                 cycleId: self.cycleLife.cycleId,
                 messageNumber: messageNumber,
                 message: message
-            }, {transaction: null});
+            }, {signal: null});
     };
 
     // -------------------------------------------------------------------------
@@ -33,34 +33,34 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
             .then(function() {
 
                 // Cycle fields not checked here: signalMethod,
-                //                                signalingGeneId, signalReferenceNumber
-                //                                loyaltyGeneId, loyaltyReferenceNumber
-                //                                checkinGeneId, checkinReferenceNumber
+                //                                dictionaryGeneId, dictionaryReferenceNumber
+                //                                genomicsGeneId, genomicsReferenceNumber
+                //                                communicationsGeneId, communicationsReferenceNumber
 
                 if (self.cycleLife.Sequences.length !== 0)
                     throw new Blockages.CycleProcessError(20107, 'ERROR: attaching sequences to the cycle is not yet supported');
 
                 // Verify the required parts of the cycle life are present, and all information is valid
 
-                // Refresh signal pheromones to signal gene signalPathways
+                // Refresh signal pheromones to dictionary gene signal pathways
                 return metabolism.sequelize.Promise.all([
-                    self.signalingGeneAPI.refreshSignalPheromones(self.signalPathways.signal.life),
-                    self.signalingGeneAPI.refreshSignalPheromones(self.signalPathways.signal.cell)
+                    self.dictionaryGeneAPI.refreshSignalPheromones(self.signalPathways.signal.life),
+                    self.dictionaryGeneAPI.refreshSignalPheromones(self.signalPathways.signal.cell)
                     ]);
             })
             .then(function() {
                 return self.audit(20002, ' (LIFE PIPELINE SECTION)Open - Refreshed Signal Pheromone');
             })
             .then(function() {
-                // Verify the account of the general gene 
-                return self.signalingGeneAPI.account(self.signalPathways.signal.life);
+                // Verify the word of the dictionary gene 
+                return self.dictionaryGeneAPI.word(self.signalPathways.signal.life);
             })
-            .then(function(account) {
-                // Verify account can cover total charge of cycle
+            .then(function(word) {
+                // Verify word can cover total charge of cycle
                 if (account.chargeDegree === cellId.destructiveInterference)
                     throw new Blockages.CycleProcessError(20108, 'ERROR: account does not cover the life charge total');
 
-                return self.audit(20003, ' (LIFE PIPELINE SECTION)Open - Checked Signal Gene Balance');
+                return self.audit(20003, ' (LIFE PIPELINE SECTION)Open - Checked Dictionary Gene Balance');
             })
             .then(function() {
                 self.continueProcessing = false;
@@ -83,20 +83,20 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
     };
 
     // -------------------------------------------------------------------------
-    self.lifePipelineSectionProcessSignal = function() {
-        return self.audit(40000, ' (LIFE PIPELINE SECTION)Process Signal - Start')
+    self.lifePipelineSectionProcessDictionary = function() {
+        return self.audit(40000, ' (LIFE PIPELINE SECTION)Process Dictionary - Start')
             .then(function() {
-                // Execute the transaction of the signal gene account
+                // Execute the transaction of the dictionary gene account
                 return metabolism.sequelize.transaction(function (t2) {
-                    return self.signalingGeneAPI.send(self.signalPathways.signal, self.cycleLife.Cycle.chargeTotal);
+                    return self.dictionaryGeneAPI.entry(self.signalPathways.signal, self.cycleLife.Cycle.chargeTotal);
                 });
             })
             .then(function(result) {
-                self.cycleLife.signalReferenceNumber = result.toString();
-                return self.cycleLife.save({ fields: ['signalReferenceNumber'] });
+                self.cycleLife.dictionaryReferenceNumber = result.toString();
+                return self.cycleLife.save({ fields: ['dictionaryReferenceNumber'] });
             })
             .then(function() {
-                return self.audit(40002, ' (LIFE PIPELINE SECTION)Process Signal - Added Reference #');
+                return self.audit(40002, ' (LIFE PIPELINE SECTION)Process Word - Added Reference #');
             })
             .then(function() {
                 return metabolism.sequelize.transaction(function (t3) {
@@ -116,63 +116,63 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
                 });
             })
             .then(function() {
-                return self.audit(40003, ' (LIFE PIPELINE SECTION)Process Signal - Created Life Signal Record');
+                return self.audit(40003, ' (LIFE PIPELINE SECTION)Process Dictionary - Created Life Dictionary Record');
             })
             .then(function() {
-                return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.PRCSLO.status, 40003, ' (LIFE PIPELINE SECTION)Process Signal - Updated Status');
+                return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.PRCSGN.status, 40003, ' (LIFE PIPELINE SECTION)Process Signal - Updated Status');
             })
             .then(function() {
-                return self.audit(40001, ' (LIFE PIPELINE SECTION)Process Signal - Finished');
+                return self.audit(40001, ' (LIFE PIPELINE SECTION)Process Dictionary - Finished');
             });
     };
 
-    // // -------------------------------------------------------------------------
-    // self.lifePipelineSectionProcessLoyalty = function() {
-    //     return self.audit(50000, ' (LIFE PIPELINE SECTION)Process Loyalty - Start')
-    //         .then(function() {
-    //             // If loyalty gene exists, perform loyalty function
-    //             if (self.cycleLife.loyaltyGeneId !== null) {
-    //                 self.cycleLife.loyaltyReferenceNumber = 'LOYALTY Ref #';
-    //                 return self.cycleLife.save({ fields: ['loyaltyReferenceNumber'] })
-    //                         .then(function() {
-    //                             return self.audit(50002, ' (LIFE PIPELINE SECTION)Process Loyalty - Added Reference #');
-    //                         });
-    //             }
-    //             else
-    //                 return metabolism.sequelize.Promise.resolve();
-    //         })
-    //         .then(function() {
-    //             return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.PRCSCH.status, 50003, ' (LIFE PIPELINE SECTION)Process Loyalty - Updated Status');
-    //         })
-    //         .then(function() {
-    //             return self.audit(50001, ' (LIFE PIPELINE SECTION)Process Loyalty - Finished');
-    //         });
-    // };
+    // -------------------------------------------------------------------------
+    self.lifePipelineSectionProcessGenomics = function() {
+        return self.audit(50000, ' (LIFE PIPELINE SECTION)Process Genomics - Start')
+            .then(function() {
+                // If loyalty gene exists, perform genomics function
+                if (self.cycleLife.genomicsGeneId !== null) {
+                    self.cycleLife.genomicsReferenceNumber = 'GENOMICS Ref #';
+                    return self.cycleLife.save({ fields: ['genomicsReferenceNumber'] })
+                            .then(function() {
+                                return self.audit(50002, ' (LIFE PIPELINE SECTION)Process Genomics - Added Reference #');
+                            });
+                }
+                else
+                    return metabolism.sequelize.Promise.resolve();
+            })
+            .then(function() {
+                return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.PRCSCH.status, 50003, ' (LIFE PIPELINE SECTION)Process Genomics - Updated Status');
+            })
+            .then(function() {
+                return self.audit(50001, ' (LIFE PIPELINE SECTION)Process Genomics - Finished');
+            });
+    };
 
-    // // -------------------------------------------------------------------------
-    // self.lifePipelineSectionProcessCheckin = function() {
-    //     return self.audit(60000, ' (LIFE PIPELINE SECTION)Process Checkin - Start')
-    //         .then(function() {
-    //             self.continueProcessing = false;
+    // -------------------------------------------------------------------------
+    self.lifePipelineSectionProcessCommunications = function() {
+        return self.audit(60000, ' (LIFE PIPELINE SECTION)Process Communications - Start')
+            .then(function() {
+                self.continueProcessing = false;
 
-    //             // If check-in gene exists, perform check-in function
-    //             if (self.cycleLife.checkinGeneId !== null) {
-    //                 self.cycleLife.checkinReferenceNumber = 'CHECKIN Ref #';
-    //                 return self.cycleLife.save({ fields: ['checkinReferenceNumber'] })
-    //                         .then(function() {
-    //                             return self.audit(60002, ' (LIFE PIPELINE SECTION)Process Checkin - Added Reference #');
-    //                         });
-    //             }
-    //             else
-    //                 return metabolism.sequelize.Promise.resolve();
-    //         })
-    //         .then(function() {
-    //             return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.COMPLT.status, 60003, ' (LIFE PIPELINE SECTION)Process Checkin - Updated Status');
-    //         })
-    //         .then(function() {
-    //             return self.audit(60001, ' (LIFE PIPELINE SECTION)Process Checkin - Finished');
-    //         });
-    // };
+                // If Communications gene exists, perform Communications function
+                if (self.cycleLife.communicationsGeneId !== null) {
+                    self.cycleLife.communicationsReferenceNumber = 'CHECKIN Ref #';
+                    return self.cycleLife.save({ fields: ['communicationsReferenceNumber'] })
+                            .then(function() {
+                                return self.audit(60002, ' (LIFE PIPELINE SECTION)Process Communications - Added Reference #');
+                            });
+                }
+                else
+                    return metabolism.sequelize.Promise.resolve();
+            })
+            .then(function() {
+                return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.COMPLT.status, 60003, ' (LIFE PIPELINE SECTION)Process Communications - Updated Status');
+            })
+            .then(function() {
+                return self.audit(60001, ' (LIFE PIPELINE SECTION)Process Communications - Finished');
+            });
+    };
 
     // -------------------------------------------------------------------------
     // PROCESS
@@ -212,17 +212,17 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
                 section = self.lifePipelineSectionReadyForProcessing;
                 break;
 
-            case CycleType.lifeStatusType.ENUM.PRCSSG.status: // Process Signal
-                section = self.lifePipelineSectionProcessSignal;
+            case CycleType.lifeStatusType.ENUM.PRCSDC.status: // Process Dictionary
+                section = self.lifePipelineSectionProcessDictionary;
                 break;
 
-            // case CycleType.lifeStatusType.ENUM.PRCSLO.status: // Process Loyalty
-            //     section = self.lifePipelineSectionProcessLoyalty;
-            //     break;
+            case CycleType.lifeStatusType.ENUM.PRCSGN.status: // Process Genomics
+                section = self.lifePipelineSectionProcessGenomics;
+                break;
 
-            // case CycleType.lifeStatusType.ENUM.PRCSCH.status: // Process Checkin
-            //     section = self.lifePipelineSectionProcessCheckin;
-            //     break;
+            case CycleType.lifeStatusType.ENUM.PRCSCM.status: // Process Communications
+                section = self.lifePipelineSectionProcessCommunications;
+                break;
 
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete
                 throw new Error('Cycle Life already marked as COMPLETE');
@@ -244,9 +244,9 @@ module.exports = function(cellId, cycleLife, signalPathways, signalingGeneAPI) {
         switch (status) {
             case CycleType.lifeStatusType.ENUM.OPEN.status: // Open
             case CycleType.lifeStatusType.ENUM.RDYPRCS.status: // Ready for Processing
-            case CycleType.lifeStatusType.ENUM.PRCSSG.status: // Process Signal
-            // case CycleType.lifeStatusType.ENUM.PRCSLO.status: // Process Loyalty
-            // case CycleType.lifeStatusType.ENUM.PRCSCH.status: // Process Checkin
+            case CycleType.lifeStatusType.ENUM.PRCSDC.status: // Process Dictionary
+            // case CycleType.lifeStatusType.ENUM.PRCSGN.status: // Process Genomics
+            // case CycleType.lifeStatusType.ENUM.PRCSCM.status: // Process Communications
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete
             case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Cancelled
                 self.cycleLife.status = status;

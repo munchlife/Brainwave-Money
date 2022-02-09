@@ -6,8 +6,8 @@
 var qs = require('querystring');
 
 // Dependency packages
-var debug   = require('debug')('munch:config:gene:1006');
-var verbose = require('debug')('munch:verbose:config:gene:1006');
+var debug   = require('debug')('munch:config:gene:iMessage');
+var verbose = require('debug')('munch:verbose:config:gene:iMessage');
 var rest    = require('restling');
 
 // Local js modules

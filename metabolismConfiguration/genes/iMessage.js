@@ -1,6 +1,6 @@
 'use strict';
 
-// gene_1006.js (iMessage)
+// iMessage.js (iMessage)
 
 // Node.js native packages
 var qs = require('querystring');

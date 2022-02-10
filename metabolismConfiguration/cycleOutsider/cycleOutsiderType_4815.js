@@ -28,9 +28,9 @@ module.exports = function(cellId, cycleLife) {
             .then(function() {
 
                 // Cycle fields not checked here: signalMethod,
-                //                                signalingGeneId, signalReferenceNumber
-                //                                loyaltyGeneId, loyaltyReferenceNumber
-                //                                checkinGeneId, checkinReferenceNumber
+                //                                dictionaryGeneId, dictionaryReferenceNumber
+                //                                genomicsGeneId, genomicsReferenceNumber
+                //                                communicationsGeneId, communicationsReferenceNumber
 
                 if (self.cycleLife.Items.length !== 0)
                     throw new Error(20107, 'ERROR: attaching items to the cycle is not allowed');
@@ -55,21 +55,21 @@ module.exports = function(cellId, cycleLife) {
             });
     };
 
-    self.gpsProcessSignal = function() {
-        return self.audit(40000, ' (GPS)Process Signal - Start')
+    self.gpsProcessDictionary = function() {
+        return self.audit(40000, ' (GPS)Process Dictionary - Start')
             .then(function() {
-                self.cycleLife.signalReferenceNumber = 'PAYMENT Ref #';
-                return self.cycleLife.save({ fields: ['signalReferenceNumber'] });
+                self.cycleLife.dictionaryReferenceNumber = 'DICTIONARY Ref #';
+                return self.cycleLife.save({ fields: ['dictionaryReferenceNumber'] });
             })
             .then(function() {
-                return self.audit(40002, ' (GPS)Process Signal - Added Reference #');
+                return self.audit(40002, ' (GPS)Process Dictionary - Added Reference #');
             })
             .then(function() {
                 self.continueProcessing = false;
-                return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.COMPLT.status, 40003, ' (GPS)Process Signal - Updated Status');
+                return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.COMPLT.status, 40003, ' (GPS)Process Dictionary - Updated Status');
             })
             .then(function() {
-                return self.audit(40001, ' (GPS)Process Signal - Finished');
+                return self.audit(40001, ' (GPS)Process Dictionary - Finished');
             });
     };
 
@@ -129,7 +129,7 @@ module.exports = function(cellId, cycleLife) {
         switch (status) {
             case CycleType.lifeStatusType.ENUM.OPEN.status: // Open
             case CycleType.lifeStatusType.ENUM.RDYPRCS.status: // Ready for Processing
-            case CycleType.lifeStatusType.ENUM.PRCSPY.status: // Process Signal
+            case CycleType.lifeStatusType.ENUM.PRCSDC.status: // Process Signal
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete
             case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Cancelled
                 self.cycleLife.status = status;

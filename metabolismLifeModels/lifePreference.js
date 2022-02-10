@@ -24,10 +24,10 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 // lifeId foreign key reference handled above in field definition
-              //LifePreference.belongsTo(models.Life,    { foreignKey: 'lifeId' });
-                LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'signalingSignalPathwayId' });
-//                 LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'loyaltySignalPathwayId' });
-//                 LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'checkinSignalPathwayId' });
+                // LifePreference.belongsTo(models.Life,              { foreignKey: 'lifeId' });
+                   LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'dictionarySignalPathwayId' });
+//                 LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'genomicsSignalPathwayId' });
+//                 LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'communicationsSignalPathwayId' });
             }
         },
         instanceMethods: {

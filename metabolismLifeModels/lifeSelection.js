@@ -1,9 +1,9 @@
 'use strict';
 
-// lifePreference.js (model)
+// lifeSelection.js (model)
 
 module.exports = function(sequelize, DataTypes) {
-    var LifePreference = sequelize.define('LifePreference', {
+    var LifeSelection = sequelize.define('LifeSelection', {
         lifeId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
@@ -24,15 +24,15 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 // lifeId foreign key reference handled above in field definition
-                // LifePreference.belongsTo(models.Life,              { foreignKey: 'lifeId' });
-                   LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'dictionarySignalPathwayId' });
-//                 LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'genomicsSignalPathwayId' });
-//                 LifePreference.belongsTo(models.GeneSignalPathway, { foreignKey: 'communicationsSignalPathwayId' });
+                // LifePreference.belongsTo(models.Life,             { foreignKey: 'lifeId' });
+                   LifeSelection.belongsTo(models.GeneSignalPathway, { foreignKey: 'dictionarySignalPathwayId' });
+//                 LifeSelection.belongsTo(models.GeneSignalPathway, { foreignKey: 'genomicsSignalPathwayId' });
+//                 LifeSelection.belongsTo(models.GeneSignalPathway, { foreignKey: 'communicationsSignalPathwayId' });
             }
         },
         instanceMethods: {
         }
     });
 
-    return LifePreference;
+    return LifeSelection;
 };

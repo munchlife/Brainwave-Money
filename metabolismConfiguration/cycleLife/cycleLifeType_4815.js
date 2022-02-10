@@ -44,8 +44,8 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
 
                 // Refresh signal pheromones to dictionary gene signal pathways
                 return metabolism.sequelize.Promise.all([
-                    self.dictionaryGeneAPI.refreshSignalPheromones(self.signalPathways.signal.life),
-                    self.dictionaryGeneAPI.refreshSignalPheromones(self.signalPathways.signal.cell)
+                    self.dictionaryGeneAPI.refreshSignalPheromones(self.signalPathways.dictionary.life),
+                    self.dictionaryGeneAPI.refreshSignalPheromones(self.signalPathways.dictionary.cell)
                     ]);
             })
             .then(function() {
@@ -53,7 +53,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
             })
             .then(function() {
                 // Verify the word of the dictionary gene 
-                return self.dictionaryGeneAPI.word(self.signalPathways.signal.life);
+                return self.dictionaryGeneAPI.word(self.signalPathways.dictionary.life);
             })
             .then(function(word) {
                 // Verify word can cover total charge of cycle
@@ -88,7 +88,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
             .then(function() {
                 // Execute the transaction of the dictionary gene account
                 return metabolism.sequelize.transaction(function (t2) {
-                    return self.dictionaryGeneAPI.entry(self.signalPathways.signal, self.cycleLife.Cycle.chargeTotal);
+                    return self.dictionaryGeneAPI.entry(self.signalPathways.dictionary, self.cycleLife.Cycle.chargeTotal);
                 });
             })
             .then(function(result) {

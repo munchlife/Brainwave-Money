@@ -120,7 +120,7 @@ var attributesGeneStakeholder   = [ 'stakeholderId',   'immunities', 'geneId' ];
 var attributesGeneSignalPathway = [ 'signalPathwayId', 'geneId' ];
 var attributesLifeDevice        = [ 'deviceId',        'type', 'serialNumber', 'description' ];
 //  attributesLifeVerification  = [ 'verificationId',  'verificationType', 'code' ];
-var attributesLifePreference    = [ /*'lifeId',*/      'dictionarySignalPathwayId', 'genomicsSignalPathwayId', 'communicationsSignalPathwayId' ];
+var attributesLifeSelection     = [ /*'lifeId',*/      'dictionarySignalPathwayId', 'genomicsSignalPathwayId', 'communicationsSignalPathwayId' ];
  
 // Remove fields from metabolism.Life: eegHash, eegExpiration, deletedAt
 var lifeAttributes = [ 'lifeId', 'phone', 'phoneVerified', 'email', 'emailVerified', 'receiptEmail', 'receiptEmailVerified', 'referralCode', 'givenName', 'middleName', 'familyName', 'genomeHash', 'countryCode', 'createdAt', 'updatedAt' ];
@@ -143,10 +143,10 @@ var includeGeneStakeholder   = { model: metabolism.GeneStakeholder,   as: 'GeneS
 var includeGeneSignalPathway = { model: metabolism.GeneSignalPathway, as: 'SignalPathways',  attributes: attributesGeneSignalPathway };
 var includeLifeDevice        = { model: metabolism.LifeDevice,        as: 'Devices',         attributes: attributesLifeDevice };
 //  includeLifeVerification  = { model: metabolism.LifeVerification,  as: 'Verifications',   attributes: attributesLifeVerification };
-var includeLifePreference    = { model: metabolism.LifePreference,    as: 'Preferences',     attributes: attributesLifePreference };
+var includeLifeSelection     = { model: metabolism.LifeSelection,     as: 'Selections',     attributes: attributesLifeSelection };
 
-//  lifeIncludesAll  = [ includeAddress, includeCharge, includeCellSignal, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice, includeLifeVerification, includeLifePreference ];
-var lifeIncludesLife = [ includeAddress, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice,                          includeLifePreference ];
+//  lifeIncludesAll  = [ includeAddress, includeCharge, includeCellSignal, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice, includeLifeVerification, includeLifeSelection ];
+var lifeIncludesLife = [ includeAddress, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice, includeLifeSelection ];
 
 // -----------------------------------------------------------------------------
 // GET ROUTES
@@ -319,25 +319,25 @@ router.get('/:id/devices', function(req, res) {
         });
 });
 
-// /life/:id/preferences
-// --- retrieve set of preferences for life (:id)
-router.get('/:id/preferences', function(req, res) {
-    debug('[GET] /life/:id/preferences');
+// /life/:id/selections
+// --- retrieve set of selections for life (:id)
+router.get('/:id/selections', function(req, res) {
+    debug('[GET] /life/:id/selections');
     var lifeId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.LifePreference
+    metabolism.LifeSelection
         .find({
             where: {lifeId: lifeId},
-            attributes: attributesLifePreference
+            attributes: attributesLifeSelection
         })
-        .then(function(preference) {
-            if (!preference)
-                throw new Blockages.NotFoundError('Life preferences not found');
+        .then(function(selection) {
+            if (!selection)
+                throw new Blockages.NotFoundError('Life selections not found');
 
-            res.status(200).send(Blockages.respMsg(res, true, preference.get()));
+            res.status(200).send(Blockages.respMsg(res, true, selection.get()));
         })
         .catch(function(error) {
             res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
@@ -1501,9 +1501,9 @@ router.post('/:id/genome', function(req, res) {
         });
 });
 
-var setPreference = function(res, lifeId, signalPathwayId, geneTypeValue, preferenceField) {
+var setSelection = function(res, lifeId, signalPathwayId, geneTypeValue, selectionField) {
     metabolism.sequelize.Promise.all([
-        metabolism.LifePreference
+        metabolism.LifeSelection
             .find({
                 where: {lifeId: lifeId},
                 // attributes: default
@@ -1515,63 +1515,63 @@ var setPreference = function(res, lifeId, signalPathwayId, geneTypeValue, prefer
                 // attributes: default
             })
     ])
-    .spread(function(preference, signalPathway) {
-        if (!preference)
-            throw new Blockages.NotFoundError('Life preferences not found');
+    .spread(function(selection, signalPathway) {
+        if (!selection)
+            throw new Blockages.NotFoundError('Life selections not found');
         else if (!signalPathway)
             throw new Blockages.NotFoundError('Gene signalPathway not found');
         else if (signalPathway.Gene.geneType & geneTypeValue === 0)
             throw new Blockages.BadRequestError('Gene signalPathway is incorrect gene type');
 
-        preference.setDataValue(preferenceField, signalPathway.signalPathwayId);
+        selection.setDataValue(selectionField, signalPathway.signalPathwayId);
 
-        return preference.save();
+        return selection.save();
     })
-    .then(function(preference) {
-        res.status(200).send(Blockages.respMsg(res, true, preference));
+    .then(function(selection) {
+        res.status(200).send(Blockages.respMsg(res, true, selection));
     })
     .catch(function(error) {
         res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
     });
 };
 
-// /life/:id/preference/dictionary
-// --- set the dictionary gene signalPathway (:signalPathwayId) preference for a life (:id)
-router.post('/:id/preference/dictionary', function(req, res) {
-    debug('[POST] /life/:id/preference/dictionary');
+// /life/:id/selection/dictionary
+// --- set the dictionary gene signalPathway (:signalPathwayId) selection for a life (:id)
+router.post('/:id/selection/dictionary', function(req, res) {
+    debug('[POST] /life/:id/selection/dictionary');
     var lifeId          = req.params.id;
     var signalPathwayId = req.body.signalPathwayId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    setPreference(res, lifeId, signalPathwayId, GeneType.ENUM.DICTIONARY.value, 'dictionarySignalPathwayId');
+    setSelection(res, lifeId, signalPathwayId, GeneType.ENUM.DICTIONARY.value, 'dictionarySignalPathwayId');
 });
 
-// /life/:id/preference/genomics
-// --- set the genomics gene signalPathway (:signalPathwayId) preference for a life (:id)
-router.post('/:id/preference/genomics', function(req, res) {
-    debug('[POST] /life/:id/preference/genomics');
+// /life/:id/selection/genomics
+// --- set the genomics gene signalPathway (:signalPathwayId) selection for a life (:id)
+router.post('/:id/selection/genomics', function(req, res) {
+    debug('[POST] /life/:id/selection/genomics');
     var lifeId          = req.params.id;
     var signalPathwayId = req.body.signalPathwayId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    setPreference(res, lifeId, signalPathwayId, GeneType.ENUM.GENOMICS.value, 'genomicsSignalPathwayId');
+    setSelection(res, lifeId, signalPathwayId, GeneType.ENUM.GENOMICS.value, 'genomicsSignalPathwayId');
 });
 
-// /life/:id/preference/communications
-// --- set the communications gene signalPathway (:signalPathwayId) preference for a life (:id)
-router.post('/:id/preference/communications', function(req, res) {
-    debug('[POST] /life/:id/preference/communications');
+// /life/:id/selection/communications
+// --- set the communications gene signalPathway (:signalPathwayId) selection for a life (:id)
+router.post('/:id/selection/communications', function(req, res) {
+    debug('[POST] /life/:id/selection/communications');
     var lifeId          = req.params.id;
     var signalPathwayId = req.body.signalPathwayId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    setPreference(res, lifeId, signalPathwayId, GeneType.ENUM.COMMUNICATIONS.value, 'communicationsSignalPathwayId');
+    setSelection(res, lifeId, signalPathwayId, GeneType.ENUM.COMMUNICATIONS.value, 'communicationsSignalPathwayId');
 });
 
 // /life/:id/signalPathwayForGene/:geneId
@@ -1743,91 +1743,91 @@ router.delete('/:id/device/:deviceId', function(req, res) {
         });
 });
 
-var removePreference = function(res, lifeId, preferenceField) {
-    metabolism.LifePreference
+var removeSelection = function(res, lifeId, selectionField) {
+    metabolism.LifeSelection
         .find({
             where: {lifeId: lifeId},
             // attributes: default
         })
-        .then(function(preferences) {
-            if (!preferences)
-                throw new Blockages.NotFoundError('Life preferences not found');
+        .then(function(selections) {
+            if (!selections)
+                throw new Blockages.NotFoundError('Life selections not found');
 
-            preferences[ preferenceField ] = null;
-            return preferences.save();
+            selections[ selectionField ] = null;
+            return selections.save();
         })
-        .then(function(preferences) {
-            res.status(200).send(Blockages.respMsg(res, true, preferences.get()));
+        .then(function(selections) {
+            res.status(200).send(Blockages.respMsg(res, true, selections.get()));
         })
         .catch(function(error) {
             res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
         });
 };
 
-// /life/:id/preference/signaling
-router.delete('/:id/preference/dictionary', function(req, res) {
-    debug('[DELETE] /life/:id/preference/dictionary');
+// /life/:id/selection/signaling
+router.delete('/:id/selection/dictionary', function(req, res) {
+    debug('[DELETE] /life/:id/selection/dictionary');
     var lifeId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    removePreference(res, lifeId, 'signalingSignalPathwayId');
+    removeSelection(res, lifeId, 'dictionarySignalPathwayId');
 });
 
-// /life/:id/preference/genomics
-router.delete('/:id/preference/genomics', function(req, res) {
-    debug('[DELETE] /life/:id/preference/genomics');
+// /life/:id/selection/genomics
+router.delete('/:id/selection/genomics', function(req, res) {
+    debug('[DELETE] /life/:id/selection/genomics');
     var lifeId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    removePreference(res, lifeId, 'genomicsSignalPathwayId');
+    removeSelection(res, lifeId, 'genomicsSignalPathwayId');
 });
 
-// /life/:id/preference/communications
-router.delete('/:id/preference/communications', function(req, res) {
-    debug('[DELETE] /life/:id/preference/communications');
+// /life/:id/selection/communications
+router.delete('/:id/selection/communications', function(req, res) {
+    debug('[DELETE] /life/:id/selection/communications');
     var lifeId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    removePreference(res, lifeId, 'signalSignalPathwayId');
+    removeSelection(res, lifeId, 'communicationsSignalPathwayId');
 });
 
-// /life/:id/preference/:signalPathwayId
-router.delete('/:id/preference/:signalPathwayId', function(req, res) {
-    debug('[DELETE] /life/:id/preference/:signalPathwayId');
+// /life/:id/selection/:signalPathwayId
+router.delete('/:id/selection/:signalPathwayId', function(req, res) {
+    debug('[DELETE] /life/:id/selection/:signalPathwayId');
     var lifeId         = req.params.id;
     var signalPathwayId = req.params.signalPathwayId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.LifePreference
+    metabolism.LifeSelection
         .find({
             where: {lifeId: lifeId}
             // attributes: default
         })
-        .then(function(preferences) {
-            if (!preferences)
-                throw new Blockages.NotFoundError('Life preferences not found');
+        .then(function(selections) {
+            if (!selections)
+                throw new Blockages.NotFoundError('Life selections not found');
 
-            if (preferences.dictionarySignalPathwayId === signalPathwayId)
-                preferences.dictionarySignalPathwayId = null;
+            if (selections.dictionarySignalPathwayId === signalPathwayId)
+                selections.dictionarySignalPathwayId = null;
 
-            if (preferences.genomicsSignalPathwayId === signalPathwayId)
-                preferences.genomicsSignalPathwayId = null;
+            if (selections.genomicsSignalPathwayId === signalPathwayId)
+                selections.genomicsSignalPathwayId = null;
 
-            if (preferences.communicationsSignalPathwayId === signalPathwayId)
-                preferences.communicationsSignalPathwayId = null;
+            if (selections.communicationsSignalPathwayId === signalPathwayId)
+                selections.communicationsSignalPathwayId = null;
 
-            return preferences.save();
+            return selections.save();
         })
-        .then(function(preferences) {
-            res.status(200).send(Blockages.respMsg(res, true, preferences.get()));
+        .then(function(selections) {
+            res.status(200).send(Blockages.respMsg(res, true, selections.get()));
         })
         .catch(function(error) {
             res.status(error.status || 500).send(Blockages.respMsg(res, false, error));

@@ -1559,16 +1559,16 @@ router.post('/:id/geneExpressionConstraints/:geneId', function(req, res) {
             throw new Blockages.NotFoundError('Cell not found');
 
         var newSignalPathway = {
-          /*signalPathwayId: 			   0,*/
-          /*signalPheromone:         	           null,*/
-          /*signalPheromoneExpiration:    	   null,*/
-          /*reinforcementSignalPheromone:          null,*/
-          /*reinforcementSignalheromoneExpiration: null,*/
-          /*optional:       			   null,*/
-          /*lifeId:         		           null,*/
-            cellId:     	 		   cell.cellId,
-            geneId:      			   gene.geneId
-        };
+          /*signalPathwayId: 			    0,*/
+          /*signalPheromone:         	            null,*/
+          /*signalPheromoneExpiration:    	    null,*/
+          /*reinforcementSignalPheromone:           null,*/
+          /*reinforcementSignalPheromoneExpiration: null,*/
+          /*optional:       			    null,*/
+          /*lifeId:         		            null,*/
+            cellId:     	 		    cell.cellId,
+            geneId:      			    gene.geneId
+        }; 
 
         return metabolism.GeneSignalPathway.create(newSignalPathway);
     })

@@ -119,7 +119,7 @@ var cellAttributes = [ 'cellId', 'verified', 'name', 'type', 'website', 'country
 // Remove fields from metabolism.CellInstance: deletedAt
 var instanceAttributes = [ 'instanceId', 'atlas', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'createdAt', 'updatedAt', 'cellId', 'fieldId' ];
 
-// Remove fields from metabolism.Life: phoneVerified, emailVerified, receiptEmail, receiptEmailVerified, referralCode, facecodeHash, facecodeExpiration, gutIdHash, createdAt, updatedAt, deletedAt
+// Remove fields from metabolism.Life: phoneVerified, emailVerified, receiptEmail, receiptEmailVerified, referralCode, eegHash, eegExpiration, genomeHash, createdAt, updatedAt, deletedAt
 var lifeAttributes = [ 'lifeId', 'phone', 'email', 'givenName', 'middleName', 'familyName', 'countryCode' ];
 
 // Remove fields from metabolism.Gene: supportEmail, supportEmailVerified, supportWebsite, supportVersion, signupUrl, authUrl, deauthUrl
@@ -266,7 +266,7 @@ router.get('/:id/phones', function(req, res) {
 
 // /cell/:id/signalPathways/:type
 // --- retrieve array of connected genes of (:type) for cell (:id)
-// TODO: gene types: signaling, loyalty, checkin
+// TODO: gene types: dictionary, genomics, communications
 router.get('/:id/signalPathways/:type', function(req, res) {
     debug('[GET] /cell/:id/signalPathways/:type');
     var cellId         = req.params.id;
@@ -288,12 +288,12 @@ router.get('/:id/signalPathways/:type', function(req, res) {
                 filteredSignalPathways = signalPathways;
             else {
                 var geneSelector;
-                if (validate.equals(geneTypeString, GeneType.ENUM.SIGNALING.text))
-                    geneSelector = GeneType.ENUM.SIGNALING.value;
-                // else if (validate.equals(geneTypeString, GeneType.ENUM.LOYALTY.text))
-                //     geneSelector = GeneType.ENUM.LOYALTY.value;
-                // else if (validate.equals(geneTypeString, GeneType.ENUM.CHECKIN.text))
-                //     geneSelector = GeneType.ENUM.CHECKIN.value;
+                if (validate.equals(geneTypeString, GeneType.ENUM.DICTIONARY.text))
+                    geneSelector = GeneType.ENUM.DICTIONARY.value;
+                else if (validate.equals(geneTypeString, GeneType.ENUM.GENOMICS.text))
+                    geneSelector = GeneType.ENUM.GENOMICS.value;
+                else if (validate.equals(geneTypeString, GeneType.ENUM.COMMUNICATIONS.text))
+                    geneSelector = GeneType.ENUM.COMMUNICATIONS.value;
                 else
                     throw new Blockages.BadRequestError('Gene type not recognized');
 

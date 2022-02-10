@@ -82,9 +82,9 @@ temp.ENUM = {
     CNCLLD:  { status: -1, abbr:'CNCLLD',  fullName: 'Cancelled'},
     OPEN:    { status:  0, abbr:'OPEN',    fullName: 'Open'},
     RDYPRCS: { status:  1, abbr:'RDYPRCS', fullName: 'Ready to Process'},
-    PRCSPY:  { status:  2, abbr:'PRCSPY',  fullName: 'Process Signal'},
- // PRCSLO:  { status:  3, abbr:'PRCSLO',  fullName: 'Process Loyalty'},
- // PRCSCH:  { status:  4, abbr:'PRCSCH',  fullName: 'Process Check-in'},
+    PRCSDC:  { status:  2, abbr:'PRCSDC',  fullName: 'Process Dictionary'},
+    PRCSGN:  { status:  3, abbr:'PRCSGN',  fullName: 'Process Genomics'},
+    PRCSCM:  { status:  4, abbr:'PRCSCM',  fullName: 'Process Communications'},
     COMPLT:  { status:  5, abbr:'COMPLT',  fullName: 'Complete'}
 };
 

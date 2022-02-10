@@ -314,16 +314,16 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `phones` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
-// CELL CHECKINS
+// CELL SIGNALS
 // -----------------------------------------------------------------------------
 // TABLE `cellSignals` -- see /models/cellSignal.js for table description
 //                          -- does not contain any seed data
 
 // Fields not set in create call:
-//      checkinId:  auto_increment
-//      field:       varchar(40)
+//      signalId:   auto_increment
+//      field:      varchar(40)
 //      atlas:      int(10) unsigned
-//      map:      int(10) unsigned
+//      map:        int(10) unsigned
 //      proximity:  int(10) unsigned
 //      deviceType: char(3)
 //      updateAt:   NOW()

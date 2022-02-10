@@ -32,8 +32,8 @@ module.exports = function(cellId, cycleLife) {
                 //                                genomicsGeneId, genomicsReferenceNumber
                 //                                communicationsGeneId, communicationsReferenceNumber
 
-                if (self.cycleLife.Items.length !== 0)
-                    throw new Error(20107, 'ERROR: attaching items to the cycle is not allowed');
+                if (self.cycleLife.Sequences.length !== 0)
+                    throw new Error(20107, 'ERROR: attaching sequences to the cycle is not allowed');
 
                 // Verify the required parts of the cycle life and guest are present, and all information is valid
 

@@ -407,12 +407,12 @@ router.get('/type/search', function(req, res) {
                 filteredGenes = genes;
             else {
                 var geneSelector;
-                if (validate.equals(geneTypeString, GeneType.ENUM.SIGNALING.text))
-                    geneSelector = GeneType.ENUM.SIGNALING.value;
-                // else if (validate.equals(geneTypeString, GeneType.ENUM.LOYALTY.text))
-                //     geneSelector = GeneType.ENUM.LOYALTY.value;
-                // else if (validate.equals(geneTypeString, GeneType.ENUM.CHECKIN.text))
-                //     geneSelector = GeneType.ENUM.CHECKIN.value;
+                if (validate.equals(geneTypeString, GeneType.ENUM.DICTIONARY.text))
+                    geneSelector = GeneType.ENUM.DICTIONARY.value;
+                else if (validate.equals(geneTypeString, GeneType.ENUM.GENOMICS.text))
+                    geneSelector = GeneType.ENUM.GENOMICS.value;
+                else if (validate.equals(geneTypeString, GeneType.ENUM.COMMUNICATIONS.text))
+                    geneSelector = GeneType.ENUM.COMMUNICATIONS.value;
                 else
                     throw new Blockages.BadRequestError('Gene type not recognized');
 

@@ -33,21 +33,21 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `lifes` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
-// LIFE PREFERENCES
+// LIFE SELECTIONS
 // -----------------------------------------------------------------------------
-// TABLE `lifePreferences` -- see /models/lifePreference.js for table description
+// TABLE `lifeSelections` -- see /models/lifeSelection.js for table description
 
 // Fields not set in create call:
-//      loyaltySignalPathwayId: <foreign key>
-//      checkinSignalPathwayId: <foreign key>
-//      createAt:              NOW()
-//      updateAt:              NOW()
-//      deleteAt:              null
-.then(function() { return metabolism.LifePreference.create({ lifeId: 1, signalingSignalPathwayId: null }); })
-.then(function() { return metabolism.LifePreference.create({ lifeId: 2, signalingSignalPathwayId: null }); })
-.then(function() { return metabolism.LifePreference.create({ lifeId: 3, signalingSignalPathwayId: null }); })
-.then(function() { return metabolism.LifePreference.create({ lifeId: 4, signalingSignalPathwayId: null }); })
-.then(function() { return metabolism.LifePreference.create({ lifeId: 5, signalingSignalPathwayId: null }); })
+//      genomicsSignalPathwayId:       <foreign key>
+//      communicationsSignalPathwayId: <foreign key>
+//      createAt:                      NOW()
+//      updateAt:                      NOW()
+//      deleteAt:                      null
+.then(function() { return metabolism.LifeSelection.create({ lifeId: 1, dictionarySignalPathwayId: null }); })
+.then(function() { return metabolism.LifeSelection.create({ lifeId: 2, dictionarySignalPathwayId: null }); })
+.then(function() { return metabolism.LifeSelection.create({ lifeId: 3, dictionarySignalPathwayId: null }); })
+.then(function() { return metabolism.LifeSelection.create({ lifeId: 4, dictionarySignalPathwayId: null }); })
+.then(function() { return metabolism.LifeSelection.create({ lifeId: 5, dictionarySignalPathwayId: null }); })
 
 // -----------------------------------------------------------------------------
 // GENES
@@ -63,9 +63,11 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt:             NOW()
 //      updateAt:             NOW()
 //      deleteAt:             null
-.then(function() { return metabolism.Gene.create({ geneId: 1,    geneType: 1, geneName: 'Cash',       companyName: 'Cash',                  website: 'http://munch.life',  countryCode: 'USA' }); })
-.then(function() { return metabolism.Gene.create({ geneId: 2,    geneType: 1, geneName: 'Credit',     companyName: 'Credit',                website: 'http://munch.life',  countryCode: 'USA' }); })
-.then(function() { return metabolism.Gene.create({ geneId: 1008, geneType: 1, geneName: 'iMessage',   companyName: 'Apple',                 website: 'https://apple.com',     countryCode: 'USA' }); })
+.then(function() { return metabolism.Gene.create({ geneId: 1,    geneType: 1, geneName: 'Cash',       companyName: 'Cash',                  website: 'http://munch.life',         countryCode: 'USA' }); })
+.then(function() { return metabolism.Gene.create({ geneId: 2,    geneType: 1, geneName: 'Credit',     companyName: 'Credit',                website: 'http://munch.life',         countryCode: 'USA' }); })
+.then(function() { return metabolism.Gene.create({ geneId: 1006, geneType: 1, geneName: 'dictionary', companyName: 'DictionaryAPIDev',      website: 'https://dictionaryapi.dev', countryCode: 'USA' }); })
+.then(function() { return metabolism.Gene.create({ geneId: 1007, geneType: 2, geneName: 'uniprot',    companyName: 'UniProt',               website: 'https://uniprot.com',       countryCode: 'USA' }); })
+.then(function() { return metabolism.Gene.create({ geneId: 1008, geneType: 3, geneName: 'iMessage',   companyName: 'Apple',                 website: 'https://apple.com',         countryCode: 'USA' }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `genes` AUTO_INCREMENT = 1007', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
@@ -84,8 +86,6 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 .then(function() { return metabolism.GeneSetting.create({ geneId: 2,    host: null,                       apiHost: null,                          sandboxHost: null,                           scope: null,                                    authenticatePath: null,                     refreshPath: null,              balancePath: null,                  sendPath: null }); })
 .then(function() { return metabolism.GeneSetting.create({ geneId: 1008, host: 'https://apple.com',        apiHost: 'http://localhost:44055/api',  sandboxHost: null,                           scope: 'account|messages|attachments|send',     authenticatePath: null,                     refreshPath: null,              balancePath: null,                  sendPath: '/message/:person/:message' }); })
 
-
-
 // -----------------------------------------------------------------------------
 // GENE STAFF
 // -----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.GeneStakeholder.create({ stakeholderId: 1, immunities: 1, lifeId: 1, geneId: 1002 }); })
+.then(function() { return metabolism.GeneStakeholder.create({ stakeholderId:    1, immunities: 1, lifeId: 1, geneId: 1008 }); })
 // .then(function() { return metabolism.GeneStakeholder.create({ stakeholderId: 2, immunities: 1, lifeId: 1, geneId: 1001 }); })
 // .then(function() { return metabolism.GeneStakeholder.create({ stakeholderId: 3, immunities: 1, lifeId: 2, geneId: 1000 }); })
 // .then(function() { return metabolism.GeneStakeholder.create({ stakeholderId: 4, immunities: 1, lifeId: 3, geneId: 1000 }); })
@@ -112,7 +112,7 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.Cell.create({ cellId: 1, name: 'Munch Restaurant', type : 4815, website: 'http://www.munchmode.com', countryCode: 'USA' }); })
+.then(function() { return metabolism.Cell.create({ cellId: 1, name: 'Remote Neural Monitoring', type: 4815, website: 'http://metabolism.munch.life', countryCode: 'USA' }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `cells` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------

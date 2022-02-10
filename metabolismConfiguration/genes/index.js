@@ -9,9 +9,9 @@ var GeneConnections = module.exports = {};
 GeneConnections['dictionary'] = require('./dictionary'); // iMessage
 
 -----------------------------------------------------------------------------
-GENOMICS GENES
+// GENOMICS GENES
 GeneConnections['genomics'] = require('./uniprot'); // UniProt
 
 -----------------------------------------------------------------------------
-COMMUNICATIONS GENES
+// COMMUNICATIONS GENES
 GeneConnections['iMessage'] = require('./iMessage'); // iMessage

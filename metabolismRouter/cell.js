@@ -1531,9 +1531,9 @@ router.post('/:id/signalPathwayForGene/:geneId', function(req, res) {
 });
 
 // /cell/:id/allowPaymentGene/:geneId
-// --- add a signalPathway for a cell (:id) of an existing signaling gene (:geneId)
-router.post('/:id/allowPaymentGene/:geneId', function(req, res) {
-    debug('[POST] /cell/:id/allowPaymentGene/:geneId');
+// --- add a signalPathway for a cell (:id) of an existing dictionary gene (:geneId)
+router.post('/:id/geneExpressionConstraints/:geneId', function(req, res) {
+    debug('[POST] /cell/:id/geneExpressionConstraints/:geneId');
     var cellId  = req.params.id;
     var geneId  = req.params.geneId;
 
@@ -1553,8 +1553,8 @@ router.post('/:id/allowPaymentGene/:geneId', function(req, res) {
             throw new Blockages.ConflictError('Gene signalPathway already exists');
         else if (!gene)
             throw new Blockages.NotFoundError('Gene not found');
-        else if (gene.geneType & GeneType.ENUM.SIGNALING.value === 0)
-            throw new Blockages.BadRequestError('Gene is not a signaling gene');
+        else if (gene.geneType & GeneType.ENUM.DICTIONARY.value === 0)
+            throw new Blockages.BadRequestError('Gene is not a dictionary gene');
         else if (!cell)
             throw new Blockages.NotFoundError('Cell not found');
 

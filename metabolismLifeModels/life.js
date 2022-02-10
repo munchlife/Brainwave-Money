@@ -237,7 +237,7 @@ module.exports = function(sequelize, DataTypes) {
                 Life.hasMany(models.Phone,               { as: 'Phones',          foreignKey: 'lifeId' });
                 Life.hasMany(models.LifeSignal,          { as: 'Sender',          foreignKey: 'lifeSenderId' });
                 Life.hasMany(models.LifeSignal,          { as: 'Receiver',        foreignKey: 'lifeReceiverId' });
-                Life.hasOne(models.LifePreference,       { as: 'Preferences',     foreignKey: 'lifeId', onDelete: 'cascade' });
+                Life.hasOne(models.LifeSelection,        { as: 'Selections',      foreignKey: 'lifeId', onDelete: 'cascade' });
             },
             // Generate a hash for the given data (voiceprint or genome)
             generateHash: function(data) {

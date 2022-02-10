@@ -5,13 +5,13 @@
 var GeneConnections = module.exports = {};
 
 // -----------------------------------------------------------------------------
-// SIGNALING GENES
-GeneConnections['1008'] = require('./gene_1008'); // iMessage
+// DICTIONARY GENES
+GeneConnections['dictionary'] = require('./dictionary'); // iMessage
 
-// -----------------------------------------------------------------------------
-// LOYALTY GENES
-// ?
+-----------------------------------------------------------------------------
+GENOMICS GENES
+GeneConnections['genomics'] = require('./uniprot'); // UniProt
 
-// -----------------------------------------------------------------------------
-// CHECKIN GENES
-// ?
+-----------------------------------------------------------------------------
+COMMUNICATIONS GENES
+GeneConnections['iMessage'] = require('./iMessage'); // iMessage

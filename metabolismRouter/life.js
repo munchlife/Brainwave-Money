@@ -1815,14 +1815,14 @@ router.delete('/:id/preference/:signalPathwayId', function(req, res) {
             if (!preferences)
                 throw new Blockages.NotFoundError('Life preferences not found');
 
-            if (preferences.signalingSignalPathwayId === signalPathwayId)
-                preferences.signalingSignalPathwayId = null;
+            if (preferences.dictionarySignalPathwayId === signalPathwayId)
+                preferences.dictionarySignalPathwayId = null;
 
-            // if (preferences.loyaltySignalPathwayId === signalPathwayId)
-            //     preferences.loyaltySignalPathwayId = null;
+            if (preferences.genomicsSignalPathwayId === signalPathwayId)
+                preferences.genomicsSignalPathwayId = null;
 
-            // if (preferences.signalSignalPathwayId === signalPathwayId)
-            //     preferences.signalSignalPathwayId = null;
+            if (preferences.communicationsSignalPathwayId === signalPathwayId)
+                preferences.communicationsSignalPathwayId = null;
 
             return preferences.save();
         })

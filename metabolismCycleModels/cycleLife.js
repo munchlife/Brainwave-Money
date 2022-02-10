@@ -43,7 +43,7 @@ module.exports = function(sequelize, DataTypes, cellId) {
                 }
             }
         },
-        signalingGeneId: {
+        dictionaryGeneId: {
             type: DataTypes.BIGINT.UNSIGNED,
             allowNull: true,
             defaultValue: null,
@@ -51,12 +51,12 @@ module.exports = function(sequelize, DataTypes, cellId) {
             // referencesKey: 'geneId'
             // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
         },
-        signalingReferenceNumber: {
+        dictionaryReferenceNumber: {
             type: DataTypes.STRING(255),
             allowNull: true,
             defaultValue: null
         }
-//         loyaltyGeneId: {
+//         genomicsGeneId: {
 //             type: DataTypes.BIGINT.UNSIGNED,
 //             allowNull: true,
 //             defaultValue: null,
@@ -64,12 +64,12 @@ module.exports = function(sequelize, DataTypes, cellId) {
 //             // referencesKey: 'geneId'
 //             // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
 //         },
-//         loyaltyReferenceNumber: {
+//         genomicsReferenceNumber: {
 //             type: DataTypes.STRING(255),
 //             allowNull: true,
 //             defaultValue: null
 //         },
-//         checkinGeneId: {
+//         communicationsGeneId: {
 //             type: DataTypes.BIGINT.UNSIGNED,
 //             allowNull: true,
 //             defaultValue: null,
@@ -77,7 +77,7 @@ module.exports = function(sequelize, DataTypes, cellId) {
 //             // referencesKey: 'geneId'
 //             // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
 //         },
-//         checkinReferenceNumber: {
+//         communicationsReferenceNumber: {
 //             type: DataTypes.STRING(255),
 //             allowNull: true,
 //             defaultValue: null

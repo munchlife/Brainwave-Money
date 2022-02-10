@@ -130,7 +130,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
     self.lifePipelineSectionProcessGenomics = function() {
         return self.audit(50000, ' (LIFE PIPELINE SECTION)Process Genomics - Start')
             .then(function() {
-                // If loyalty gene exists, perform genomics function
+                // If genomics gene exists, perform genomics function
                 if (self.cycleLife.genomicsGeneId !== null) {
                     self.cycleLife.genomicsReferenceNumber = 'GENOMICS Ref #';
                     return self.cycleLife.save({ fields: ['genomicsReferenceNumber'] })

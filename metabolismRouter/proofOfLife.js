@@ -244,11 +244,11 @@ router.post('/life/registration', function(req, res) {
             // var sendMail = metabolism.sequelize.Promise.promisify(Transporter.sendMail, Transporter);
             // var mailOptions;
             // var newVerification = { lifeId: life.lifeId };
-            var newPreferences = { lifeId: life.lifeId };
+            var newSelections = { lifeId: life.lifeId };
             var executeArray = [];
 
             this.life = life;
-            executeArray.push(metabolism.LifePreference.create(newPreferences));
+            executeArray.push(metabolism.LifeSelection.create(newSelections));
             
             var genome = req.files.genome;
             if (genome != null) {

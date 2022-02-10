@@ -142,7 +142,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
                     return metabolism.sequelize.Promise.resolve();
             })
             .then(function() {
-                return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.PRCSCH.status, 50003, ' (LIFE PIPELINE SECTION)Process Genomics - Updated Status');
+                return self.updateCycleStatus(CycleType.lifeStatusType.ENUM.PRCSCM.status, 50003, ' (LIFE PIPELINE SECTION)Process Genomics - Updated Status');
             })
             .then(function() {
                 return self.audit(50001, ' (LIFE PIPELINE SECTION)Process Genomics - Finished');
@@ -157,7 +157,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
 
                 // If Communications gene exists, perform Communications function
                 if (self.cycleLife.communicationsGeneId !== null) {
-                    self.cycleLife.communicationsReferenceNumber = 'CHECKIN Ref #';
+                    self.cycleLife.communicationsReferenceNumber = 'COMMUNICATIONS Ref #';
                     return self.cycleLife.save({ fields: ['communicationsReferenceNumber'] })
                             .then(function() {
                                 return self.audit(60002, ' (LIFE PIPELINE SECTION)Process Communications - Added Reference #');
@@ -245,8 +245,8 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
             case CycleType.lifeStatusType.ENUM.OPEN.status: // Open
             case CycleType.lifeStatusType.ENUM.RDYPRCS.status: // Ready for Processing
             case CycleType.lifeStatusType.ENUM.PRCSDC.status: // Process Dictionary
-            // case CycleType.lifeStatusType.ENUM.PRCSGN.status: // Process Genomics
-            // case CycleType.lifeStatusType.ENUM.PRCSCM.status: // Process Communications
+            case CycleType.lifeStatusType.ENUM.PRCSGN.status: // Process Genomics
+            case CycleType.lifeStatusType.ENUM.PRCSCM.status: // Process Communications
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete
             case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Cancelled
                 self.cycleLife.status = status;

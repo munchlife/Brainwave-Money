@@ -397,18 +397,18 @@ router.put('/:id/cycle/:cycleId/life/:lifeId', function(req, res) {
             if (!life)
                 throw new Blockages.NotFoundError('Cycle life not found');
 
-          /*life.cycleLifeId:              not accessible for change */
-          /*life.cycleId:                  not accessible for change */
-          /*life.lifeId:                   not accessible for change */
-          /*life.outsiderId:               not accessible for change */
-          /*life.status:                   not accessible for change */
-            life.signalMethod              = validate.trim(validate.toString(req.body.signalMethod)).toUpperCase();
-            life.dictionaryGeneId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId);
-          /*life.signalingReferenceNumber: not accessible for change */
-          //life.genomicsGeneId             = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsGeneId);
-          /*life.genomicsReferenceNumber:   not accessible for change */
-          //life.communicationsGeneId             = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsGeneId);
-          /*life.communicationsReferenceNumber:   not accessible for change */
+          /*life.cycleLifeId:                   not accessible for change */
+          /*life.cycleId:                       not accessible for change */
+          /*life.lifeId:                        not accessible for change */
+          /*life.outsiderId:                    not accessible for change */
+          /*life.status:                        not accessible for change */
+            life.signalMethod                   = validate.trim(validate.toString(req.body.signalMethod)).toUpperCase();
+            life.dictionaryGeneId               = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId);
+          /*life.dictionaryReferenceNumber:     not accessible for change */
+          //life.genomicsGeneId                 = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsGeneId);
+          /*life.genomicsReferenceNumber:       not accessible for change */
+          //life.communicationsGeneId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsGeneId);
+          /*life.communicationsReferenceNumber: not accessible for change */
 
             return life.save();
         })
@@ -624,7 +624,7 @@ router.post('/:id/cycle/:cycleId/life', function(req, res) {
                     status:                        0,
                     signalMethod:                  validate.trim(validate.toString(req.body.signalMethod)).toUpperCase(),
                     dictionaryGeneId:              metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId),
-                  /*signalingReferenceNumber:      null,*/
+                  /*dictionaryReferenceNumber:     null,*/
                     genomicsGeneId:                metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsGeneId),
                   /*genomicsReferenceNumber:       null,*/
                     communicationsGeneId:          metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsGeneId),

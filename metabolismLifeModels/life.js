@@ -140,6 +140,16 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING( LIFE_GENOME_FIELD_MAX_LENGTH ),
             allowNull: false
         },
+        species: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            allowNull: false,
+            validate: {
+                isIn: {
+                    args: [[ 4815 ]],
+                    msg: 'Cell type is not in the approved set of category numbers'
+                }
+            }
+        },
         referralCode: {
             type: DataTypes.STRING( REFERRAL_CODE_MAX_LENGTH ),
             allowNull: false,

@@ -31,7 +31,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        type : {
+        type: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             validate: {

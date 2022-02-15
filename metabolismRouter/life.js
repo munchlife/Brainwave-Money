@@ -123,7 +123,7 @@ var attributesLifeDevice        = [ 'deviceId',        'type', 'serialNumber', '
 var attributesLifeSelection     = [ /*'lifeId',*/      'dictionarySignalPathwayId', 'genomicsSignalPathwayId', 'communicationsSignalPathwayId' ];
  
 // Remove fields from metabolism.Life: eegHash, eegExpiration, deletedAt
-var lifeAttributes = [ 'lifeId', 'phone', 'phoneVerified', 'email', 'emailVerified', 'receiptEmail', 'receiptEmailVerified', 'referralCode', 'givenName', 'middleName', 'familyName', 'genomeHash', 'countryCode', 'createdAt', 'updatedAt' ];
+var lifeAttributes = [ 'lifeId', 'phone', 'phoneVerified', 'email', 'emailVerified', 'receiptEmail', 'receiptEmailVerified', 'referralCode', 'givenName', 'middleName', 'familyName', 'species', 'genomeHash', 'countryCode', 'createdAt', 'updatedAt' ];
 
 // Remove fields from metabolism.Cell: verified, createdAt, updatedAt, deletedAt
 var includeCell = { model: metabolism.Cell, attributes: [ 'cellId', 'name', 'type', 'website', 'countryCode' ] };
@@ -143,7 +143,7 @@ var includeGeneStakeholder   = { model: metabolism.GeneStakeholder,   as: 'GeneS
 var includeGeneSignalPathway = { model: metabolism.GeneSignalPathway, as: 'SignalPathways',  attributes: attributesGeneSignalPathway };
 var includeLifeDevice        = { model: metabolism.LifeDevice,        as: 'Devices',         attributes: attributesLifeDevice };
 //  includeLifeVerification  = { model: metabolism.LifeVerification,  as: 'Verifications',   attributes: attributesLifeVerification };
-var includeLifeSelection     = { model: metabolism.LifeSelection,     as: 'Selections',     attributes: attributesLifeSelection };
+var includeLifeSelection     = { model: metabolism.LifeSelection,     as: 'Selections',      attributes: attributesLifeSelection };
 
 //  lifeIncludesAll  = [ includeAddress, includeCharge, includeCellSignal, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice, includeLifeVerification, includeLifeSelection ];
 var lifeIncludesLife = [ includeAddress, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice, includeLifeSelection ];

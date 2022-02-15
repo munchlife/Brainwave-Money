@@ -912,6 +912,7 @@ router.put('/:id', function(req, res) {
       /*life.eeg:                  not accessible for change */
       /*life.eegExpiration:        not accessible for change */
       /*life.genome:               not accessible for change */
+        life.species               = validate.trim(validate.toString(req.body.type));
       /*life.referralCode:         not accessible for change */
         life.givenName             = validate.trim(validate.toString(req.body.givenName));
         life.middleName            = metabolism.Life.extractMiddleName(metabolism, req.body.middleName);

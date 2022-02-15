@@ -231,6 +231,7 @@ router.post('/life/registration', function(req, res) {
                 eeg:                  '',
                 eegExpiration:        new Date(),
                 genome:               req.files.genome,
+                species:              validate.trim(validate.toString(req.body.species)),
                 referralCode:         RandomString.generate(7),
                 givenName:            validate.trim(validate.toString(req.body.givenName)),
                 middleName:           metabolism.Life.extractMiddleName(metabolism, req.body.middleName),
@@ -493,7 +494,7 @@ router.post('/verify/email/:code', authenticateGenome, function(req, res) {
  *  produced in the execution of this endpoint.
  *
  * @apiParam (body) {String} identifer <desc>
- * @apiParam (body) {String} genome       <desc>
+ * @apiParam (body) {String} genome    <desc>
  *
  * @apiSuccess (200) {String} token <desc>
  *

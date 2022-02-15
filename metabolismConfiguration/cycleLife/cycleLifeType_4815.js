@@ -57,8 +57,8 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
             })
             .then(function(word) {
                 // Verify word can cover total charge of cycle
-                if (account.chargeDegree === cellId.destructiveInterference)
-                    throw new Blockages.CycleProcessError(20108, 'ERROR: account does not cover the life charge total');
+                if (word.chargeDegree === cellId.destructiveInterference)
+                    throw new Blockages.CycleProcessError(20108, 'ERROR: word does not cover the life charge total');
 
                 return self.audit(20003, ' (LIFE PIPELINE SECTION)Open - Checked Dictionary Gene Balance');
             })

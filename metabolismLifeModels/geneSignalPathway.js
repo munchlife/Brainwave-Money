@@ -79,11 +79,11 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.VIRTUAL
         }
     }, {
-        // timestamps: true,               // defaulted globally
+        // timestamps: true,             // defaulted globally
         // createdAt:  true,
         // updatedAt:  true,
-        paranoid: true,                    // adds deletedAt timestamp (won't actually delete entries)
-        // freezeTableName: true,          // defaulted globally
+        paranoid: true,                  // adds deletedAt timestamp (won't actually delete entries)
+        // freezeTableName: true,        // defaulted globally
         tableName: 'geneSignalPathways', // force table name to this value
         validate: {
         },

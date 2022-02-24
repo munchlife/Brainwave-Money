@@ -22,7 +22,7 @@ if (env === 'development') {
 }
 
 // -----------------------------------------------------------------------------
-// SYNC DATABASE/START SERVER
+// SYNC METABOLISM/START SERVER
 // -----------------------------------------------------------------------------
 // sync with the metabolism
 debug('* Sync\'ing with the metabolism ...');

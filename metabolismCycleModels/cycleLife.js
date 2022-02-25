@@ -33,13 +33,13 @@ module.exports = function(sequelize, DataTypes, cellId) {
             validate: {
             }
         },
-        generalMethod: {
+        signalMethod: {
             type: DataTypes.CHAR(4),
             allowNull: false,
             validate: {
                 isIn: {
-                    args: [ CycleType.generalMethodType.abbrs ],
-                    msg: 'Payment method is invalid'
+                    args: [ CycleType.signalMethodType.abbrs ],
+                    msg: 'Signal method is invalid'
                 }
             }
         },
@@ -55,33 +55,33 @@ module.exports = function(sequelize, DataTypes, cellId) {
             type: DataTypes.STRING(255),
             allowNull: true,
             defaultValue: null
+        },
+        genomicsGeneId: {
+            type: DataTypes.BIGINT.UNSIGNED,
+            allowNull: true,
+            defaultValue: null,
+            // reference: 'genes',
+            // referencesKey: 'geneId'
+            // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
+        },
+        genomicsReferenceNumber: {
+            type: DataTypes.STRING(255),
+            allowNull: true,
+            defaultValue: null
+        },
+        communicationsGeneId: {
+            type: DataTypes.BIGINT.UNSIGNED,
+            allowNull: true,
+            defaultValue: null,
+            // reference: 'genes',
+            // referencesKey: 'geneId'
+            // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
+        },
+        communicationsReferenceNumber: {
+            type: DataTypes.STRING(255),
+            allowNull: true,
+            defaultValue: null
         }
-//         genomicsGeneId: {
-//             type: DataTypes.BIGINT.UNSIGNED,
-//             allowNull: true,
-//             defaultValue: null,
-//             // reference: 'genes',
-//             // referencesKey: 'geneId'
-//             // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
-//         },
-//         genomicsReferenceNumber: {
-//             type: DataTypes.STRING(255),
-//             allowNull: true,
-//             defaultValue: null
-//         },
-//         communicationsGeneId: {
-//             type: DataTypes.BIGINT.UNSIGNED,
-//             allowNull: true,
-//             defaultValue: null,
-//             // reference: 'genes',
-//             // referencesKey: 'geneId'
-//             // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
-//         },
-//         communicationsReferenceNumber: {
-//             type: DataTypes.STRING(255),
-//             allowNull: true,
-//             defaultValue: null
-//         }
     }, {
         // timestamps: true,                   // defaulted globally
         // createdAt:  true,

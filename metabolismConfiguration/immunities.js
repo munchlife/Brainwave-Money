@@ -50,41 +50,41 @@ Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, 
 // -----------------------------------------------------------------------------
 // CELL
 // -----------------------------------------------------------------------------
-// Immunities.verifyNoRejectionFromCell = function(cellId, instanceId, authLevelRequired, lifeAccess, geneAccess, lifePacket) {
-//     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
-//         return Immunities.Denied;
+Immunities.verifyNoRejectionFromCell = function(cellId, instanceId, authLevelRequired, lifeAccess, geneAccess, lifePacket) {
+    if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
+        return Immunities.Denied;
 
-//     cellId = Number(cellId);
-//     if (instanceId !== null)
-//         instanceId = Number(instanceId);
-//     authLevelRequired = Number(authLevelRequired);
+    cellId = Number(cellId);
+    if (instanceId !== null)
+        instanceId = Number(instanceId);
+    authLevelRequired = Number(authLevelRequired);
 
-//     // TODO: make sure immunity levels are correctly being allocated
-//     if (lifePacket.stakeholderMember &&
-//         cellId === lifePacket.stakeholderMember.cellId &&
-//         authLevelRequired >= lifePacket.stakeholderMember.immunities) {
-//         // cell endpoint with cell level stakeholder
-//         if (instanceId === null && lifePacket.stakeholderMember.instanceId === null)
-//             return Immunities.OwnerAccess;
-//         // instance endpoint with cell level stakeholder
-//         else if (instanceId !== null && lifePacket.stakeholderMember.instanceId === null)
-//             return Immunities.CellAccess;
-//         // cell endpoint with instance level stakeholder
-//         else if (instanceId === null || lifePacket.stakeholderMember.instanceId !== null)
-//             return Immunities.CellInstanceAccess;
-//         // instance endpoint with instance level stakeholder
-//         else if (instanceId === lifePacket.stakeholderMember.instanceId)
-//             return Immunities.OwnerAccess;
-//         else
-//             return Immunities.Denied;
-//     }
-//     else if (!!lifeAccess && lifePacket.stakeholderMember === null)
-//         return Immunities.LifeAccess;
-//     else if (!!geneAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.geneId)
-//         return Immunities.GeneAccess;
-//     else
-//         return Immunities.Denied;
-// };
+    // TODO: make sure immunity levels are correctly being allocated
+    if (lifePacket.stakeholderMember &&
+        cellId === lifePacket.stakeholderMember.cellId &&
+        authLevelRequired >= lifePacket.stakeholderMember.immunities) {
+        // cell endpoint with cell level stakeholder
+        if (instanceId === null && lifePacket.stakeholderMember.instanceId === null)
+            return Immunities.OwnerAccess;
+        // instance endpoint with cell level stakeholder
+        else if (instanceId !== null && lifePacket.stakeholderMember.instanceId === null)
+            return Immunities.CellAccess;
+        // cell endpoint with instance level stakeholder
+        else if (instanceId === null || lifePacket.stakeholderMember.instanceId !== null)
+            return Immunities.CellInstanceAccess;
+        // instance endpoint with instance level stakeholder
+        else if (instanceId === lifePacket.stakeholderMember.instanceId)
+            return Immunities.OwnerAccess;
+        else
+            return Immunities.Denied;
+    }
+    else if (!!lifeAccess && lifePacket.stakeholderMember === null)
+        return Immunities.LifeAccess;
+    else if (!!geneAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.geneId)
+        return Immunities.GeneAccess;
+    else
+        return Immunities.Denied;
+};
 
 Immunities.verifyNoRejectionFromCell = function(cellId, authLevelRequired, lifeAccess, instanceAccess, geneAccess, lifePacket) {
     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))

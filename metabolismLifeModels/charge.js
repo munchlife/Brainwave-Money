@@ -14,15 +14,15 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             validate: {
                 isInt: {
-                    msg: 'Charge value must be a dollar amount' // TODO: vary error message based on country
+                    msg: 'Charge value must be an interference degree' // TODO: vary error message based on country
                 },
                 min: {
                     args: 1,
                     msg: 'Charge value must be at least 1'
                 },
                 max: {
-                    args: 20,
-                    msg: 'Charge value can be no more than 20'
+                    args: 90,
+                    msg: 'Charge value can be no more than 90'
                 }
             }
         }

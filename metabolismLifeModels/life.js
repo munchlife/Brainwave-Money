@@ -238,7 +238,7 @@ module.exports = function(sequelize, DataTypes) {
                 Life.hasMany(models.Token,               { as: 'Tokens',          foreignKey: 'lifeId' });
                 Life.hasMany(models.Charge,              { as: 'Charges',         foreignKey: 'lifeId' });
                 Life.hasMany(models.CellStakeholder,     { as: 'CellStakeholder', foreignKey: 'lifeId' });
-                Life.hasMany(models.CellSignal,          { as: 'Signals',         foreignKey: 'lifeId' });
+                Life.hasMany(models.CellCheckin,         { as: 'Checkins',        foreignKey: 'lifeId' });
                 Life.hasMany(models.LifeDevice,          { as: 'Devices',         foreignKey: 'lifeId' });
                 Life.hasMany(models.LifeVerification,    { as: 'Verifications',   foreignKey: 'lifeId' });
                 Life.hasMany(models.GeneStakeholder,     { as: 'GeneStakeholder', foreignKey: 'lifeId' });

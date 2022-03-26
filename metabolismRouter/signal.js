@@ -23,7 +23,7 @@ var router = module.exports = express.Router();
 router.use(Middlewares.tokenAuth);
 
 // -----------------------------------------------------------------------------
-// GET CELL SIGNALS
+// GET CELL FIELDS
 // -----------------------------------------------------------------------------
 // /fields
 // --- retrieve array of all active cell fields (UUIDs)
@@ -48,14 +48,14 @@ router.get('/fields', function(req, res) {
 });
 
 // -----------------------------------------------------------------------------
-// GET MAPS
+// GET CHECKINS
 // -----------------------------------------------------------------------------
-// /signal/:field/atlas/:atlas
-// --- retrieve the current list of life for the instance with identification (:field, :atlas)
-router.get('/signal/:field/atlas/:atlas', function(req, res) {
-    debug('[GET] /signal/:field/atlas/:atlas');
+// /signal/:field/major/:major
+// --- retrieve the current list of life for the instance with identification (:field, :major)
+router.get('/signal/:field/major/:major', function(req, res) {
+    debug('[GET] /signal/:field/major/:major');
     var field = req.params.field;
-    var atlas = req.params.atlas;
+    var major = req.params.major;
 
     // TODO: Use Immunities.verifyNoRejectionFromCell() function to verify access
 
@@ -63,7 +63,7 @@ router.get('/signal/:field/atlas/:atlas', function(req, res) {
         .findAll({
             where: {
                 field: field,
-                atlas: atlas
+                major: major
             }
         })
         .then(function(signals) {
@@ -74,13 +74,13 @@ router.get('/signal/:field/atlas/:atlas', function(req, res) {
         });
 });
 
-// /signal/:field/atlas/:atlas/map/:map
-// --- retrieve the current list of life for the device at instance with identification (:field, :atlas, :map)
-router.get('/signal/:field/atlas/:atlas/map/:map', function(req, res) {
-    debug('[GET] /signal/:field/atlas/:atlas/map/:map');
+// /signal/:field/major/:major/minor/:minor
+// --- retrieve the current list of life for the device at instance with identification (:field, :major, :minor)
+router.get('/signal/:field/major/:major/minor/:minor', function(req, res) {
+    debug('[GET] /signal/:field/major/:major/minor/:minor');
     var field = req.params.field;
-    var atlas = req.params.atlas;
-    var map   = req.params.map;
+    var major = req.params.major;
+    var minor = req.params.minor;
 
     // TODO: Use Immunities.verifyNoRejectionFromCell() function to verify access
 
@@ -88,8 +88,8 @@ router.get('/signal/:field/atlas/:atlas/map/:map', function(req, res) {
         .findAll({
             where: {
                 field: field,
-                atlas: atlas,
-                map:   map
+                major: major,
+                minor: minor
             }
         })
         .then(function(signals) {
@@ -101,17 +101,17 @@ router.get('/signal/:field/atlas/:atlas/map/:map', function(req, res) {
 });
 
 // -----------------------------------------------------------------------------
-// MAP OVER DISTANCE
+// CHECKIN OVER DISTANCE
 // -----------------------------------------------------------------------------
-// /distance/:id/signalForCellSignal/:field/atlas/:atlas/map/:map/proximity/:proximity
-// --- add life to signal list for instance associated to inputs (:field, :atlas, :map)
-router.put('/distance/:id/signal/:field/atlas/:atlas/map/:map/proximity/:proximity', function(req, res) {
-    debug('[PUT] /distance/:id/signal/:field/atlas/:atlas/map/:map/proximity/:proximity');
+// /distance/:id/signalForCellSignal/:field/major/:major/minor/:minor/proximity/:proximity
+// --- add life to signal list for instance associated to inputs (:field, :major, :minor)
+router.put('/distance/:id/signal/:field/major/:major/minor/:minor/proximity/:proximity', function(req, res) {
+    debug('[PUT] /distance/:id/signal/:field/major/:major/minor/:minor/proximity/:proximity');
     var deviceType = 'Distance'; // Bluetooth Low Energy (Distance)/iBeacon
     var lifeId     = req.params.id;
     var field      = validate.trim(validate.toString(req.params.field));
-    var atlas      = validate.toInt(req.params.atlas);
-    var map        = validate.toInt(req.params.map);
+    var major      = validate.toInt(req.params.major);
+    var minor      = validate.toInt(req.params.minor);
     var proximity  = validate.toInt(req.params.proximity);
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
@@ -122,8 +122,8 @@ router.put('/distance/:id/signal/:field/atlas/:atlas/map/:map/proximity/:proximi
         .findOrInitialize({
             where: {
                 field:  field,
-                atlas:  atlas,
-                map:    map,
+                major:  major,
+                minor:  minor,
                 lifeId: res.locals.lifePacket.life.lifeId
             },
             defaults: {
@@ -153,17 +153,17 @@ router.put('/distance/:id/signal/:field/atlas/:atlas/map/:map/proximity/:proximi
 });
 
 // -----------------------------------------------------------------------------
-// MAP OVER CONTACT
+// CHECKIN OVER CONTACT
 // -----------------------------------------------------------------------------
-// /contact/:id/signalForCellSignal/:field/atlas/:atlas/map/:map/proximity/:proximity
-// --- add life to signal list for instance associated to inputs (:field, :atlas, :map)
-router.put('/contact/:id/signal/:field/atlas/:atlas/map/:map/proximity/:proximity', function(req, res) {
-    debug('[PUT] /contact/:id/signal/:field/atlas/:atlas/map/:map/proximity/:proximity');
+// /contact/:id/signalForCellSignal/:field/major/:major/minor/:minor/proximity/:proximity
+// --- add life to signal list for instance associated to inputs (:field, :major, :minor)
+router.put('/contact/:id/signal/:field/major/:major/minor/:minor/proximity/:proximity', function(req, res) {
+    debug('[PUT] /contact/:id/signal/:field/major/:major/minor/:minor/proximity/:proximity');
     var deviceType = 'Contact'; // Near Field Communication (Contact)
     var contactId  = req.params.id;
     var field      = req.params.field;
-    var atlas      = req.params.atlas;
-    var map        = req.params.map;
+    var major      = req.params.major;
+    var minor      = req.params.minor;
     var proximity  = req.params.proximity;
 
     // TODO: Use Immunities.verifyNoRejectionFromLife() function to verify access; 
@@ -186,8 +186,8 @@ router.put('/contact/:id/signal/:field/atlas/:atlas/map/:map/proximity/:proximit
                 .findOrInitialize({
                     where: {
                         field:  field,
-                        atlas:  atlas,
-                        map:    map,
+                        major:  major,
+                        minor:  minor,
                         lifeId: device.lifeId
                     },
                     defaults: {

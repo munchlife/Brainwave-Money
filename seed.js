@@ -134,8 +134,8 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.CellInstance.create({ instanceId: 1, atlas: 1, constructiveInterference: null, destructiveInterference: null, name: 'Climate Engineering Instance 1', cellType: null, website: null, countryCode: null, cellId: 1, fieldId: 1 }); })
-.then(function() { return metabolism.CellInstance.create({ instanceId: 2, atlas: 2, constructiveInterference: null, destructiveInterference: null, name: 'Climate Engineering Instance 2', cellType: null, website: null, countryCode: null, cellId: 1, fieldId: 1 }); })
+.then(function() { return metabolism.CellInstance.create({ instanceId: 1, major: 1, constructiveInterference: null, destructiveInterference: null, name: 'Climate Engineering Instance 1', cellType: null, website: null, countryCode: null, cellId: 1, fieldId: 1 }); })
+.then(function() { return metabolism.CellInstance.create({ instanceId: 2, major: 2, constructiveInterference: null, destructiveInterference: null, name: 'Climate Engineering Instance 2', cellType: null, website: null, countryCode: null, cellId: 1, fieldId: 1 }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `cellInstances` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
@@ -163,7 +163,7 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.CellDevice.create({ deviceId: 1, map:0, type: 'IOS', serialNumber: '1', description: 'Example description for this device', acceptsCash: true, acceptsCredit: true, instanceId: 2 }); })
+.then(function() { return metabolism.CellDevice.create({ deviceId: 1, minor:0, type: 'IOS', serialNumber: '1', description: 'Example description for this device', acceptsCash: true, acceptsCredit: true, instanceId: 2 }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `cellDevices` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
@@ -322,8 +322,8 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 // Fields not set in create call:
 //      signalId:   auto_increment
 //      field:      varchar(40)
-//      atlas:      int(10) unsigned
-//      map:        int(10) unsigned
+//      major:      int(10) unsigned
+//      minor:      int(10) unsigned
 //      proximity:  int(10) unsigned
 //      deviceType: char(3)
 //      updateAt:   NOW()
@@ -346,10 +346,10 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 .then(function() { return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 1', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 .then(function() { return metabolism.Cell.create({ name: 'Climate Engineering Task Force', type: 4815, website: null, countryCode: 'USA' }); })
-.then(function() { return metabolism.CellInstance.create({ atlas: 1000, constructiveInterference: null, destructiveInterference: null, cellType: null, website: null, countryCode: null, cellId: 1000, fieldId: 1 }); })
+.then(function() { return metabolism.CellInstance.create({ major: 1000, constructiveInterference: null, destructiveInterference: null, cellType: null, website: null, countryCode: null, cellId: 1000, fieldId: 1 }); })
 .then(function() { return metabolism.CellStakeholder.create({ immunities: 1, lifeId: 1, cellId: 1000, instanceId: null }); })
 .then(function() { return metabolism.CellStakeholder.create({ immunities: 2, lifeId: 5, cellId: 1000, instanceId: null }); })
-.then(function() { return metabolism.CellDevice.create({ map:1, type: 'IOS', serialNumber: '2', description: 'Demo device', acceptsCash: false, acceptsCredit: false, instanceId: 1000 }); })
+.then(function() { return metabolism.CellDevice.create({ minor:1, type: 'IOS', serialNumber: '2', description: 'Demo device', acceptsCash: false, acceptsCredit: false, instanceId: 1000 }); })
 // .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1000 }); })
 // .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1001 }); })
 // .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1002 }); })
@@ -359,6 +359,6 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 // .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1006 }); })
 .then(function() { return metabolism.Address.create({ name: '$$_locale', address1: '?', locality: 'New York', region: 'NY', postalCode: '10001', instanceId: 1000 }); })
 .then(function() { return metabolism.Phone.create({ name: 'Main', number: '+16465048132', instanceId: 1000, }); })
-.then(function() { return metabolism.CellSignal.create({ field: '7B740F59-AF69-4C1E-BB0D-58050CA06A06', atlas: 1000, map: 1, proximity: 1, deviceType: 'HAM', lifeId: 5 }); });
+.then(function() { return metabolism.CellSignal.create({ field: '7B740F59-AF69-4C1E-BB0D-58050CA06A06', major: 1000, minor: 1, proximity: 1, deviceType: 'HAM', lifeId: 5 }); });
 
 };

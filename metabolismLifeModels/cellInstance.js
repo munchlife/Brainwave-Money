@@ -21,15 +21,15 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             validate: {
                 isInt: {
-                    msg: 'Beacon major value must be an integer'
+                    msg: 'Field major value must be an integer'
                 },
                 min: {
                     args: 0,
-                    msg: 'Beacon major value must be a positive number'
+                    msg: 'Field major value must be a positive number'
                 },
                 max: {
                     args: INSTANCE_FIELD_MAJOR_MAX,
-                    msg: 'Beacon major value must be less than or equal to ' + INSTANCE_FIELD_MAJOR_MAX
+                    msg: 'Field major value must be less than or equal to ' + INSTANCE_FIELD_MAJOR_MAX
                 }
             }
         },

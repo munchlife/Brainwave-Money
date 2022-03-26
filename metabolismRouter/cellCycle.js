@@ -965,9 +965,9 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/process', function(req, res) 
                     // TODO: add cycleOutsiders to the cycleLife object(s) thru associate()
                     if (!cycleLife)
                         throw new Blockages.NotFoundError('Cycle life not found');
-                    else if (!(cycleLife.status   === CycleType.lifeStatusType.ENUM.OPEN.status    ||
-                               cycleLife.status   === CycleType.lifeStatusType.ENUM.RDYPRCS.status ||
-                               cycleLife.status   === CycleType.lifeStatusType.ENUM.PRCSDC.status))
+                    else if (!(cycleLife.status === CycleType.lifeStatusType.ENUM.OPEN.status    ||
+                               cycleLife.status === CycleType.lifeStatusType.ENUM.RDYPRCS.status ||
+                               cycleLife.status === CycleType.lifeStatusType.ENUM.PRCSDC.status))
                                cycleLife.status === CycleType.lifeStatusType.ENUM.PRCSGN.status  ||
                                cycleLife.status === CycleType.lifeStatusType.ENUM.PRCSCM.status))
                         throw new Blockages.BadRequestError('Incorrect cycle life status for process stage');

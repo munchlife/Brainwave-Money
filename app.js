@@ -65,7 +65,7 @@ app.use(apiVersion + '/life',     require(routePath + '/life'));
 app.use(apiVersion + '/cell',     require(routePath + '/cell'));
 app.use(apiVersion + '/gene',     require(routePath + '/gene'));
 app.use(apiVersion + '/charge',   require(routePath + '/charge'));
-app.use(apiVersion,               require(routePath + '/signal'));
+app.use(apiVersion,               require(routePath + '/checkin'));
 
 // -----------------------------------------------------------------------------
 // INTERVALS
@@ -73,23 +73,23 @@ app.use(apiVersion,               require(routePath + '/signal'));
 app.locals.timer = {};
 
 // TODO: consider using node-cron or node-schedule modules
-// TODO: use redis to handle signals and tokens; interval will be needed when verifying accounts
+// TODO: use redis to handle checkins and tokens; interval will be needed when verifying accounts
 
-// --- clear any stale signals (older than 10 minutes) from the metabolism graph every 10 seconds
-app.locals.timer.signal = setInterval(function() {
+// --- clear any stale checkin (older than 10 minutes) from the metabolism graph every 10 seconds
+app.locals.timer.checkin = setInterval(function() {
     var staleMinutes = 10;
     var staleDate    = new Date(new Date().getTime() - (staleMinutes*60*1000));
 
-    metabolism.CellSignal
+    metabolism.CellCheckin
         .destroy({
             where: { updatedAt: {lt: staleDate} }
         })
         .then(function(totalDestroyed) {
             // nothing to do if everything is successful
-            verbose('Stale signals removed: ' + totalDestroyed);
+            verbose('Stale checkins removed: ' + totalDestroyed);
         })
         .catch(function(error) {
-            debug('Destory signals failed: ' + error);
+            debug('Destroy checkins failed: ' + error);
         });
 }, 10*1000); // 10 secs
 

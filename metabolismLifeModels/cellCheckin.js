@@ -4,7 +4,7 @@
 
 var CheckinDeviceType = require('../metabolismTypes/checkinDeviceTypes');
 
-var CHECKIN_FIELD_MAJOR_MAX      = 65535;
+var CHECKIN_FIELD_MAJOR_MAX     = 65535;
 var CHECKIN_FIELD_MINOR_MAX     = 65535;
 var CHECKIN_FIELD_PROXIMITY_MAX = 128;
 

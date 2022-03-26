@@ -106,7 +106,7 @@ app.locals.timer.verification = setInterval(function() {
 //             verbose('Expired verifications removed: ' + totalDestroyed);
 //         })
 //         .catch(function(error) {
-//             debug('Destory verifications failed: ' + error);
+//             debug('Destroy verifications failed: ' + error);
 //         });
 }, 1*1000); // 1 sec
 

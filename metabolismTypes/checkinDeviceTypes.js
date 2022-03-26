@@ -4,7 +4,7 @@
 
 var checkinDeviceTypes = module.exports = {};
 
-signalDeviceTypes.ENUM = {
+checkinDeviceTypes.ENUM = {
     ELF: { abbr: 'ELF', fullName: 'Extremely Low-Frequency Device' },
  // BLE: { abbr: 'BLE', fullName: 'Bluetooth Low Energy Device' },
  // NFC: { abbr: 'NFC', fullName: 'NFC Stand-alone Device' },

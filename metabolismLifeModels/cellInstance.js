@@ -7,7 +7,7 @@ var charges = require('electric-field-demo');
 
 var INSTANCE_NAME_MAX_LENGTH = 255;
 var INSTANCE_WEBSITE_MAX_LENGTH = 255;
-var INSTANCE_BEACON_ATLAS_MAX = 65535;
+var INSTANCE_FIELD_MAJOR_MAX = 65535;
 
 module.exports = function(sequelize, DataTypes) {
     var CellInstance = sequelize.define('CellInstance', {
@@ -16,20 +16,20 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true,
             autoIncrement: true
         },
-        atlas: {
+        major: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             validate: {
                 isInt: {
-                    msg: 'Beacon atlas value must be an integer'
+                    msg: 'Beacon major value must be an integer'
                 },
                 min: {
                     args: 0,
-                    msg: 'Beacon atlas value must be a positive number'
+                    msg: 'Beacon major value must be a positive number'
                 },
                 max: {
-                    args: INSTANCE_BEACON_ATLAS_MAX,
-                    msg: 'Beacon atlas value must be less than or equal to ' + INSTANCE_BEACON_ATLAS_MAX
+                    args: INSTANCE_FIELD_MAJOR_MAX,
+                    msg: 'Beacon major value must be less than or equal to ' + INSTANCE_FIELD_MAJOR_MAX
                 }
             }
         },
@@ -178,10 +178,10 @@ module.exports = function(sequelize, DataTypes) {
         },
         instanceMethods: {
             calculateCellFieldId: function() {
-                return Math.floor(this.instanceId / INSTANCE_BEACON_ATLAS_MAX) + 1;
+                return Math.floor(this.instanceId / INSTANCE_FIELD_MAJOR_MAX) + 1;
             },
-            calculateAndSetAtlas: function() {
-                this.atlas = this.instanceId % INSTANCE_BEACON_ATLAS_MAX;
+            calculateAndSetMajor: function() {
+                this.major = this.instanceId % INSTANCE_FIELD_MAJOR_MAX;
             },
             calculateConstructiveInterference: function() {
                 return charges.renderCharges(this.instanceId.eegFrequencyPing.constructiveInterference === charges.x);

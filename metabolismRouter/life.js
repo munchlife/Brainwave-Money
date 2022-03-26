@@ -113,7 +113,7 @@ router.use(Middlewares.tokenAuth);
 // -----------------------------------------------------------------------------
 var attributesAddress           = [ 'addressId',       'name', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ];
 //  attributesCharge            = [ 'chargeId',        'value', 'chargeCellId' ];
-//  attributesCellSignal        = [ 'signalId',        'field', 'atlas', 'map', 'proximity', 'deviceType' ];
+//  attributesCellCheckin       = [ 'checkinId',       'field', 'major', 'minor', 'proximity', 'deviceType' ];
 var attributesCellStakeholder   = [ 'stakeholderId',   'immunities', 'cellId', 'instanceId' ];
 var attributesPhone             = [ 'phoneId',         'name', 'number', 'extension' ];
 var attributesGeneStakeholder   = [ 'stakeholderId',   'immunities', 'geneId' ];
@@ -129,14 +129,14 @@ var lifeAttributes = [ 'lifeId', 'phone', 'phoneVerified', 'email', 'emailVerifi
 var includeCell = { model: metabolism.Cell, attributes: [ 'cellId', 'name', 'type', 'website', 'countryCode' ] };
 
 // Remove fields from metabolism.CellInstance: createdAt, updatedAt, deletedAt, cellId
-var includeInstance = { model: metabolism.CellInstance, attributes: [ 'instanceId', 'atlas', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'fieldId' ] };
+var includeInstance = { model: metabolism.CellInstance, attributes: [ 'instanceId', 'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'fieldId' ] };
 
 // Remove fields from metabolism.Gene: supportEmail, supportEmailVerified, supportWebsite, supportVersion
 var includeGene = { model: metabolism.Gene, attributes: [ 'geneId', 'geneType', 'geneName', 'companyName', 'website', 'countryCode' ] };
 
 var includeAddress           = { model: metabolism.Address,           as: 'Addresses',       attributes: attributesAddress };
 //  includeCharge            = { model: metabolism.Charge,            as: 'Charges',         attributes: attributesCharge };
-//  includeCellSignal        = { model: metabolism.CellSignal,        as: 'Signals',         attributes: attributesCellSignal };
+//  includeCellCheckin       = { model: metabolism.CellCheckin,       as: 'Checkins',        attributes: attributesCellCheckin };
 var includeCellStakeholder   = { model: metabolism.CellStakeholder,   as: 'CellStakeholder', attributes: attributesCellStakeholder };
 var includePhone             = { model: metabolism.Phone,             as: 'Phones',          attributes: attributesPhone };
 var includeGeneStakeholder   = { model: metabolism.GeneStakeholder,   as: 'GeneStakeholder', attributes: attributesGeneStakeholder };
@@ -145,7 +145,7 @@ var includeLifeDevice        = { model: metabolism.LifeDevice,        as: 'Devic
 //  includeLifeVerification  = { model: metabolism.LifeVerification,  as: 'Verifications',   attributes: attributesLifeVerification };
 var includeLifeSelection     = { model: metabolism.LifeSelection,     as: 'Selections',      attributes: attributesLifeSelection };
 
-//  lifeIncludesAll  = [ includeAddress, includeCharge, includeCellSignal, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice, includeLifeVerification, includeLifeSelection ];
+//  lifeIncludesAll  = [ includeAddress, includeCharge, includeCellCheckin, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice, includeLifeVerification, includeLifeSelection ];
 var lifeIncludesLife = [ includeAddress, includeCellStakeholder, includePhone, includeGeneStakeholder, includeGeneSignalPathway, includeLifeDevice, includeLifeSelection ];
 
 // -----------------------------------------------------------------------------

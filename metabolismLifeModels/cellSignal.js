@@ -1,16 +1,16 @@
 'use strict';
 
-// cellSignal.js (model)
+// cellCheckin.js (model)
 
-var SignalDeviceType = require('../metabolismTypes/signalDeviceTypes');
+var CheckinDeviceType = require('../metabolismTypes/checkinDeviceTypes');
 
-var SIGNAL_BEACON_ATLAS_MAX = 65535;
-var SIGNAL_BEACON_MAP_MAX = 65535;
-var SIGNAL_BEACON_PROXIMITY_MAX = 128;
+var CHECKIN_FIELD_MAJOR_MAX      = 65535;
+var CHECKIN_FIELD_MINOR_MAX     = 65535;
+var CHECKIN_FIELD_PROXIMITY_MAX = 128;
 
 module.exports = function(sequelize, DataTypes) {
-    var CellSignal = sequelize.define('CellSignal', {
-        signalId: {
+    var CellCheckin = sequelize.define('CellCheckin', {
+        checkinId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
@@ -25,37 +25,37 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        atlas: {
+        major: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             validate: {
                 isInt: {
-                    msg: 'Beacon atlas value must be an integer'
+                    msg: 'Field major value must be an integer'
                 },
                 min: {
                     args: 0,
-                    msg: 'Beacon atlas value must be a positive number'
+                    msg: 'Field major value must be a positive number'
                 },
                 max: {
-                    args: SIGNAL_BEACON_ATLAS_MAX,
-                    msg: 'Beacon atlas value must be less than or equal to ' + SIGNAL_BEACON_ATLAS_MAX
+                    args: CHECKIN_FIELD_MAJOR_MAX,
+                    msg: 'Field major value must be less than or equal to ' + CHECKIN_FIELD_MAJOR_MAX
                 }
             }
         },
-        map: {
+        minor: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             validate: {
                 isInt: {
-                    msg: 'Beacon map value must be an integer'
+                    msg: 'Field minor value must be an integer'
                 },
                 min: {
                     args: 0,
-                    msg: 'Beacon map value must be a positive number'
+                    msg: 'Field minor value must be a positive number'
                 },
                 max: {
-                    args: SIGNAL_BEACON_MAP_MAX,
-                    msg: 'Beacon map value must be less than or equal to ' + SIGNAL_BEACON_MAP_MAX
+                    args: CHECKIN_FIELD_MINOR_MAX,
+                    msg: 'Field minor value must be less than or equal to ' + CHECKIN_FIELD_MINOR_MAX
                 }
             }
         },
@@ -64,15 +64,15 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             validate : {
                 isInt: {
-                    msg: 'Beacon proximity value must be an integer'
+                    msg: 'Field proximity value must be an integer'
                 },
                 min: {
                     args: 0,
-                    msg: 'Beacon proximity value must be a positive number'
+                    msg: 'Field proximity value must be a positive number'
                 },
                 max: {
-                    args: SIGNAL_BEACON_PROXIMITY_MAX,
-                    msg: 'Beacon proximity value must be less than or equal to ' + SIGNAL_BEACON_PROXIMITY_MAX
+                    args: CHECKIN_FIELD_PROXIMITY_MAX,
+                    msg: 'Field proximity value must be less than or equal to ' + CHECKIN_FIELD_PROXIMITY_MAX
                 }
             }
         },
@@ -82,28 +82,28 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 isIn: {
                     args: [ SignalDeviceType.abbrs ],
-                    msg: 'Signal device type is invalid'
+                    msg: 'Checkin device type is invalid'
                 }
             }
         }
-        // The signal time is auto-generated: 'updatedAt'
+        // The checkin time is auto-generated: 'updatedAt'
     }, {
-        // timestamps: true,           // defaulted globally
+        // timestamps: true,       // defaulted globally
         createdAt: false,
         // updatedAt:  true,
-        paranoid: false,               // adds deletedAt timestamp (won't actually delete entries)
-        // freezeTableName: true,      // defaulted globally
-        tableName: 'cellSignals', // force table name to this value
+        paranoid: false,           // adds deletedAt timestamp (won't actually delete entries)
+        // freezeTableName: true,  // defaulted globally
+        tableName: 'cellCheckins', // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                CellSignal.belongsTo(models.Life, { foreignKey: 'lifeId' });
+                CellCheckin.belongsTo(models.Life, { foreignKey: 'lifeId' });
             }
         },
         instanceMethods: {
         }
     });
 
-    return CellSignal;
+    return CellCheckin;
 };

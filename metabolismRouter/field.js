@@ -107,7 +107,7 @@ router.get('/checkin/:field/major/:major/minor/:minor', function(req, res) {
 // --- add life to checkin list for instance associated to inputs (:field, :major, :minor)
 router.put('/distance/:id/checkin/:field/major/:major/minor/:minor/proximity/:proximity', function(req, res) {
     debug('[PUT] /distance/:id/checkin/:field/major/:major/minor/:minor/proximity/:proximity');
-    var deviceType = 'Distance'; // Bluetooth Low Energy (Distance)/iBeacon
+    var deviceType = 'Distance'; // Extremely Low-Frequency (Distance)
     var lifeId     = req.params.id;
     var field      = validate.trim(validate.toString(req.params.field));
     var major      = validate.toInt(req.params.major);

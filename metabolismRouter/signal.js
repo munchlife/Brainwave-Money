@@ -50,41 +50,41 @@ router.get('/fields', function(req, res) {
 // -----------------------------------------------------------------------------
 // GET CHECKINS
 // -----------------------------------------------------------------------------
-// /signal/:field/major/:major
+// /checkin/:field/major/:major
 // --- retrieve the current list of life for the instance with identification (:field, :major)
-router.get('/signal/:field/major/:major', function(req, res) {
-    debug('[GET] /signal/:field/major/:major');
+router.get('/checkin/:field/major/:major', function(req, res) {
+    debug('[GET] /checkin/:field/major/:major');
     var field = req.params.field;
     var major = req.params.major;
 
     // TODO: Use Immunities.verifyNoRejectionFromCell() function to verify access
 
-    metabolism.CellSignal
+    metabolism.CellCheckin
         .findAll({
             where: {
                 field: field,
                 major: major
             }
         })
-        .then(function(signals) {
-            res.status(200).send(Blockages.respMsg(res, true, signals));
+        .then(function(checkins) {
+            res.status(200).send(Blockages.respMsg(res, true, checkins));
         })
         .catch(function(error) {
             res.status(500).send(Blockages.respMsg(res, false, error));
         });
 });
 
-// /signal/:field/major/:major/minor/:minor
+// /checkin/:field/major/:major/minor/:minor
 // --- retrieve the current list of life for the device at instance with identification (:field, :major, :minor)
-router.get('/signal/:field/major/:major/minor/:minor', function(req, res) {
-    debug('[GET] /signal/:field/major/:major/minor/:minor');
+router.get('/checkin/:field/major/:major/minor/:minor', function(req, res) {
+    debug('[GET] /checkin/:field/major/:major/minor/:minor');
     var field = req.params.field;
     var major = req.params.major;
     var minor = req.params.minor;
 
     // TODO: Use Immunities.verifyNoRejectionFromCell() function to verify access
 
-    metabolism.CellSignal
+    metabolism.CellCheckin
         .findAll({
             where: {
                 field: field,
@@ -92,8 +92,8 @@ router.get('/signal/:field/major/:major/minor/:minor', function(req, res) {
                 minor: minor
             }
         })
-        .then(function(signals) {
-            res.status(200).send(Blockages.respMsg(res, true, signals));
+        .then(function(checkins) {
+            res.status(200).send(Blockages.respMsg(res, true, checkins));
         })
         .catch(function(error) {
             res.status(500).send(Blockages.respMsg(res, false, error));
@@ -103,10 +103,10 @@ router.get('/signal/:field/major/:major/minor/:minor', function(req, res) {
 // -----------------------------------------------------------------------------
 // CHECKIN OVER DISTANCE
 // -----------------------------------------------------------------------------
-// /distance/:id/signalForCellSignal/:field/major/:major/minor/:minor/proximity/:proximity
-// --- add life to signal list for instance associated to inputs (:field, :major, :minor)
-router.put('/distance/:id/signal/:field/major/:major/minor/:minor/proximity/:proximity', function(req, res) {
-    debug('[PUT] /distance/:id/signal/:field/major/:major/minor/:minor/proximity/:proximity');
+// /distance/:id/checkin/:field/major/:major/minor/:minor/proximity/:proximity
+// --- add life to checkin list for instance associated to inputs (:field, :major, :minor)
+router.put('/distance/:id/checkin/:field/major/:major/minor/:minor/proximity/:proximity', function(req, res) {
+    debug('[PUT] /distance/:id/checkin/:field/major/:major/minor/:minor/proximity/:proximity');
     var deviceType = 'Distance'; // Bluetooth Low Energy (Distance)/iBeacon
     var lifeId     = req.params.id;
     var field      = validate.trim(validate.toString(req.params.field));
@@ -117,7 +117,7 @@ router.put('/distance/:id/signal/:field/major/:major/minor/:minor/proximity/:pro
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellSignal
+    metabolism.CellCheckin
         // .findOrCreate({
         .findOrInitialize({
             where: {
@@ -131,18 +131,18 @@ router.put('/distance/:id/signal/:field/major/:major/minor/:minor/proximity/:pro
                 deviceType: deviceType
             }
         }).bind({})
-        .spread(function(signal, created) {
+        .spread(function(checkin, created) {
             this.created = created;
 
             if (!created) {
-                signal.deviceType = deviceType;
-                signal.proximity  = proximity;
+                checkin.deviceType = deviceType;
+                checkin.proximity  = proximity;
             }
 
-            return signal.save();
+            return checkin.save();
         })
-        .then(function(signal) {
-            res.status((this.created) ? 201 : 200).send(Blockages.respMsg(res, true, signal.get()));
+        .then(function(checkin) {
+            res.status((this.created) ? 201 : 200).send(Blockages.respMsg(res, true, checkin.get()));
         })
         .catch(metabolism.Sequelize.ValidationError, function(error) {
             res.status(400).send(Blockages.respMsg(res, false, error.errors[0]));
@@ -155,10 +155,10 @@ router.put('/distance/:id/signal/:field/major/:major/minor/:minor/proximity/:pro
 // -----------------------------------------------------------------------------
 // CHECKIN OVER CONTACT
 // -----------------------------------------------------------------------------
-// /contact/:id/signalForCellSignal/:field/major/:major/minor/:minor/proximity/:proximity
-// --- add life to signal list for instance associated to inputs (:field, :major, :minor)
-router.put('/contact/:id/signal/:field/major/:major/minor/:minor/proximity/:proximity', function(req, res) {
-    debug('[PUT] /contact/:id/signal/:field/major/:major/minor/:minor/proximity/:proximity');
+// /contact/:id/checkin/:field/major/:major/minor/:minor/proximity/:proximity
+// --- add life to checkin list for instance associated to inputs (:field, :major, :minor)
+router.put('/contact/:id/checkin/:field/major/:major/minor/:minor/proximity/:proximity', function(req, res) {
+    debug('[PUT] /contact/:id/checkin/:field/major/:major/minor/:minor/proximity/:proximity');
     var deviceType = 'Contact'; // Near Field Communication (Contact)
     var contactId  = req.params.id;
     var field      = req.params.field;
@@ -181,7 +181,7 @@ router.put('/contact/:id/signal/:field/major/:major/minor/:minor/proximity/:prox
             if (!device)
                 throw new Blockages.NotFoundError('Life device not found');
 
-            return metabolism.CellSignal
+            return metabolism.CellCheckin
                 // .findOrCreate({
                 .findOrInitialize({
                     where: {
@@ -196,18 +196,18 @@ router.put('/contact/:id/signal/:field/major/:major/minor/:minor/proximity/:prox
                     }
                 });
         })
-        .spread(function(signal, created) {
+        .spread(function(checkin, created) {
             this.created = created;
 
             if (!created) {
-                signal.deviceType = deviceType;
-                signal.proximity  = proximity;
+                checkin.deviceType = deviceType;
+                checkin.proximity  = proximity;
             }
 
-            return signal.save();
+            return checkin.save();
         })
-        .then(function(signal) {
-            res.status((this.created) ? 201 : 200).send(Blockages.respMsg(res, true, signal.get()));
+        .then(function(checkin) {
+            res.status((this.created) ? 201 : 200).send(Blockages.respMsg(res, true, checkin.get()));
         })
         .catch(metabolism.Sequelize.ValidationError, function(error) {
             res.status(400).send(Blockages.respMsg(res, false, error.errors[0]));

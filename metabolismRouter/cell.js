@@ -107,8 +107,8 @@ router.use(Middlewares.tokenAuth);
 // -----------------------------------------------------------------------------
 // Removed from all attribute lists: createdAt, updatedAt, deletedAt
 var attributesAddress           = [ 'addressId',       'name', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ]; // Removed: lifeId, cellId, instanceId, geneId, chargeCellId, chargeInstanceId
-var attributesCellDevice        = [ 'deviceId',        'map', 'type', 'serialNumber', 'description', 'acceptsCash', 'acceptsCredit', 'instanceId' ];
-var attributesCellInstance      = [ 'instanceId',      'atlas', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'fieldId' ]; // Removed: cellId
+var attributesCellDevice        = [ 'deviceId',        'minor', 'type', 'serialNumber', 'description', 'acceptsCash', 'acceptsCredit', 'instanceId' ];
+var attributesCellInstance      = [ 'instanceId',      'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'fieldId' ]; // Removed: cellId
 var attributesCellStakeholder   = [ 'stakeholderId',   'immunities', 'cellId', 'instanceId', 'lifeId' ]; // Removed: N/A
 var attributesPhone             = [ 'phoneId',         'name', 'number', 'extension' ];    // Removed: chargeInstanceId, chargeCellId, cellId, instanceId, lifeId, geneId
 var attributesGeneSignalPathway = [ 'signalPathwayId', 'signalPheromone', 'geneId' ]; // Removed: signalPheromone, signalPheromoneExpiration, reinforcementWavePheromone, reinforcementWavePheromoneExpiration, optional, cellId, lifeId
@@ -117,7 +117,7 @@ var attributesGeneSignalPathway = [ 'signalPathwayId', 'signalPheromone', 'geneI
 var cellAttributes = [ 'cellId', 'verified', 'name', 'type', 'website', 'countryCode', 'createdAt', 'updatedAt' ];
 
 // Remove fields from metabolism.CellInstance: deletedAt
-var instanceAttributes = [ 'instanceId', 'atlas', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'createdAt', 'updatedAt', 'cellId', 'fieldId' ];
+var instanceAttributes = [ 'instanceId', 'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'createdAt', 'updatedAt', 'cellId', 'fieldId' ];
 
 // Remove fields from metabolism.Life: phoneVerified, emailVerified, receiptEmail, receiptEmailVerified, referralCode, eegHash, eegExpiration, genomeHash, createdAt, updatedAt, deletedAt
 var lifeAttributes = [ 'lifeId', 'phone', 'email', 'givenName', 'middleName', 'familyName', 'countryCode' ];
@@ -1269,7 +1269,7 @@ router.post('/instance/signup', function(req, res) {
             // Create the instance record
             var newInstance = {
               /*instanceId:   		  0,*/
-                atlas:       		  0,
+                major:       		  0,
                 constructiveInterference: constructiveInterference,
                 destructiveInterference:  destructiveInterference,
               /*name:        		  null,*/
@@ -1295,7 +1295,7 @@ router.post('/instance/signup', function(req, res) {
             return field.addInstance(this.instance);
         })
         .then(function() {
-            this.instance.calculateAndSetAtlas();
+            this.instance.calculateAndSetMajor();
 
             return this.instance.save();
         })
@@ -1662,7 +1662,7 @@ router.post('/:id/instance', function(req, res) {
 
             var newInstance = {
               /*instanceId:   		   0,*/
-                atlas:        		   0,
+                major:        		   0,
                 constructiveInterference:  constructiveInterference,
                 destructiveInterference:   destructiveInterference,
               /*name:         	           null,*/
@@ -1688,7 +1688,7 @@ router.post('/:id/instance', function(req, res) {
             return field.addInstance(this.instance);
         })
         .then(function() {
-            this.instance.calculateAndSetAtlas();
+            this.instance.calculateAndSetMajor();
 
             return this.instance.save();
         })
@@ -1898,7 +1898,7 @@ router.post('/:id/instance/:instanceId/device', function(req, res) {
 
             var newDevice = {
               /*deviceId:      0,*/
-                map:           0,
+                minor:         0,
                 type:          validate.trim(validate.toString(req.body.type)).toUpperCase(),
                 serialNumber:  validate.trim(validate.toString(req.body.serialNumber)),
                 description:   metabolism.CellDevice.extractDescription(metabolism, req.body.textDescription),
@@ -1912,15 +1912,15 @@ router.post('/:id/instance/:instanceId/device', function(req, res) {
         .then(function(device) {
             this.device = device;
 
-            return metabolism.CellDevice.max('map', { where: {instanceId: device.instanceId} });
+            return metabolism.CellDevice.max('minor', { where: {instanceId: device.instanceId} });
         })
-        .then(function(mapMax) {
-            var map = 0;
+        .then(function(minorMax) {
+            var minor = 0;
             for (var i = 0; i < devices.length; i++)
-                if (map < devices[i].map)
-                    map = devices[i].map;
+                if (minor < devices[i].minor)
+                    minor = devices[i].minor;
 
-            this.device.map = mapMax + 1;
+            this.device.minor = minorMax + 1;
             return this.device.save();
         })
         .then(function(device) {

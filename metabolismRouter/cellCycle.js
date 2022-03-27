@@ -303,7 +303,7 @@ router.put('/:id/cycle/:cycleId', function(req, res) {
           /*cycle.chargeFee:             not accessible for change */
           /*cycle.chargeTax:             not accessible for change */
           /*cycle.chargeTip:             not accessible for change */
-            cycle.chargeTotal            = validate.toFloat(req.body.chargeTotal);
+            cycle.chargeTotal            = metabolism.CellGraph[cellId].Cycle.extractChargeTotal(metabolism, req.body.chargeTotal);
 
             return cycle.save();
         })
@@ -502,7 +502,7 @@ router.post('/:id/cycle', function(req, res) {
                 throw new Blockages.NotFoundError('Cell not found');
 
             // TODO: calculate the correct amounts throughout the life of the cycle
-            var subTotal           = 0;
+            // var subTotal           = 0;
             // var chargeDiscount  = 0;
             // var chargeTax       = 0;
             // var chargeFee       = 0;
@@ -523,12 +523,12 @@ router.post('/:id/cycle', function(req, res) {
                 cycleNotes:             metabolism.CellGraph[cellId].Cycle.extractCycleNotes(metabolism, req.body.notes),
                 distributedCharge:      validate.trim(validate.toString(req.body.distributedCharge)).toUpperCase(),
               /*taxPercentage:          null,*/
-                subTotal:               subTotal,
+                // subTotal:            subTotal,
                 // chargeDiscount:      chargeDiscount,
                 // chargeFee:           chargeFee,
                 // chargeTax:           chargeTax,
                 // chargeTip:           chargeTip,
-                chargeTotal:            validate.toFloat(req.body.chargeTotal)
+                chargeTotal:            metabolism.CellGraph[cellId].Cycle.extractChargeTotal(metabolism, req.body.chargeTotal)
             };
 
             return metabolism.CellGraph[cellId].Cycle.create(newCycle);

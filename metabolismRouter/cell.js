@@ -1152,7 +1152,7 @@ router.put('/:id/instance/:instanceId/device/:deviceId', function(req, res) {
                 acceptsCredit = metabolism.CellDevice.extractAcceptsCredit(metabolism, req.body.acceptsCredit);
 
           /*device.deviceId: 	 not accessible for change */
-          /*device.map: 	 not accessible for change */
+          /*device.minor: 	 not accessible for change */
             device.type          = validate.trim(validate.toString(req.body.type)).toUpperCase();
             device.serialNumber  = validate.trim(validate.toString(req.body.serialNumber));
             device.description   = metabolism.CellDevice.extractDescription(metabolism, req.body.textDescription);

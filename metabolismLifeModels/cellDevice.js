@@ -89,7 +89,7 @@ module.exports = function(sequelize, DataTypes) {
                 CellDevice.belongsTo(models.CellInstance, { foreignKey: 'instanceId' });
             },
             getMinorMax: function() {
-                return DEVICE_FIELD_MAJOR_MAX;
+                return DEVICE_FIELD_MINOR_MAX;
             },
             extractDescription: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));

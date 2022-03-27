@@ -141,7 +141,7 @@ module.exports = function(sequelize, DataTypes, cellId) {
             defaultValue: null,
             validate: {
                 isFloat: {
-                    msg: 'Price total must be a number'
+                    msg: 'Charge total must be a number'
                 }
             }
         },

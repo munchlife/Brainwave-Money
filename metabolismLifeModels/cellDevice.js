@@ -6,7 +6,7 @@ var CellDeviceType = require('../metabolismTypes/cellDeviceTypes');
 
 var DEVICE_SERIAL_NUM_MAX_LENGTH = 100;
 var DEVICE_DESCRIPTION_MAX_LENGTH = 255;
-var DEVICE_BEACON_MAP_MAX = 65535;
+var DEVICE_FIELD_MINOR_MAX = 65535;
 
 module.exports = function(sequelize, DataTypes) {
     var CellDevice = sequelize.define('CellDevice', {
@@ -15,20 +15,20 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true,
             autoIncrement: true
         },
-        map: {
+        minor: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             validate: {
                 isInt: {
-                    msg: 'Beacon map value must be an integer'
+                    msg: 'Field minor value must be an integer'
                 },
                 min: {
                     args: 0,
-                    msg: 'Beacon map value must be a positive number'
+                    msg: 'Field minor value must be a positive number'
                 },
                 max: {
-                    args: DEVICE_BEACON_MAP_MAX,
-                    msg: 'Beacon map value must be less than or equal to ' + DEVICE_BEACON_MAP_MAX
+                    args: DEVICE_FIELD_MINOR_MAX,
+                    msg: 'Field minor value must be less than or equal to ' + DEVICE_FIELD_MINOR_MAX
                 }
             }
         },
@@ -88,8 +88,8 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 CellDevice.belongsTo(models.CellInstance, { foreignKey: 'instanceId' });
             },
-            getMapMax: function() {
-                return DEVICE_BEACON_MAP_MAX;
+            getMinorMax: function() {
+                return DEVICE_FIELD_MAJOR_MAX;
             },
             extractDescription: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));

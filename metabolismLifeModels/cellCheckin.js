@@ -81,7 +81,7 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             validate: {
                 isIn: {
-                    args: [ SignalDeviceType.abbrs ],
+                    args: [ CheckinDeviceType.abbrs ],
                     msg: 'Checkin device type is invalid'
                 }
             }

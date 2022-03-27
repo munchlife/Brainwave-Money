@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,               // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,     // defaulted globally
-        tableName: 'lifePreferences', // force table name to this value
+        tableName: 'lifeSelections', // force table name to this value
         validate: {
         },
         classMethods: {

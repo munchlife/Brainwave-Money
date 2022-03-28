@@ -514,8 +514,8 @@ router.put('/:id/address/:addressId', function(req, res) {
           /*address.cellId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
           /*address.geneId:           not accessible for change */
-          /*address.bountyCellId:     not accessible for change */
-          /*address.bountyInstanceId: not accessible for change */
+          /*address.chargeCellId:     not accessible for change */
+          /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
         })
@@ -560,8 +560,8 @@ router.put('/:id/phone/:phoneId', function(req, res) {
           /*phone.cellId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
           /*phone.geneId:           not accessible for change */
-          /*phone.bountyCellId:     not accessible for change */
-          /*phone.bountyInstanceId: not accessible for change */
+          /*phone.chargeCellId:     not accessible for change */
+          /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
         })
@@ -741,8 +741,8 @@ router.post('/:id/address', function(req, res) {
               /*cellId:           null,*/
               /*instanceId:       null,*/
                 geneId:           gene.geneId,
-              /*bountyCellId:     null,*/
-              /*bountyInstanceId: null*/
+              /*chargeCellId:     null,*/
+              /*chargeInstanceId: null*/
             };
 
             return metabolism.Address.create(newAddress);
@@ -785,8 +785,8 @@ router.post('/:id/phone', function(req, res) {
               /*cellId:           null,*/
               /*instanceId:       null,*/
                 geneId:           gene.geneId
-              /*bountyCellId:     null,*/
-              /*bountyInstanceId: null*/
+              /*chargeCellId:     null,*/
+              /*chargeInstanceId: null*/
             };
 
             return metabolism.Phone.create(newPhone);

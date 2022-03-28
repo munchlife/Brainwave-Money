@@ -230,26 +230,26 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 // -----------------------------------------------------------------------------
 // BOUNTIES
 // -----------------------------------------------------------------------------
-// TABLE `bounties` -- see /models/bounty.js for table description
+// TABLE `bounties` -- see /models/charge.js for table description
 //                  -- does not contain any seed data
 
 // Fields not set in create call:
-//      bountyId:         auto_increment
+//      chargeId:         auto_increment
 //      value:            int(10) unsigned
 //      createAt:         NOW()
 //      updateAt:         NOW()
 //      deletedAt:        null
 //      lifeId:           <foreign key>
-//      bountyCellId: <foreign key>
+//      chargeCellId: <foreign key>
 
 // -----------------------------------------------------------------------------
-// BOUNTY CELLS
+// CHARGE CELLS
 // -----------------------------------------------------------------------------
-// TABLE `bountyCells` -- see /models/bountyCell.js for table description
+// TABLE `chargeCells` -- see /models/chargeCell.js for table description
 //                         -- does not contain any seed data
 
 // Fields not set in create call:
-//      bountyCellId: auto_increment
+//      chargeCellId: auto_increment
 //      name:             varchar(255)
 //      type:             bigint(20) unsigned
 //      website:          varchar(255)
@@ -259,14 +259,14 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      deletedAt:        null
 
 // -----------------------------------------------------------------------------
-// BOUNTY LOCATIONS
+// CHARGE INSTANCES
 // -----------------------------------------------------------------------------
-// TABLE `bountyInstances` -- see /models/bountyInstance.js for table description
+// TABLE `chargeInstances` -- see /models/chargeInstance.js for table description
 //                         -- does not contain any seed data
 
 // Fields not set in create call:
-//      bountyInstanceId: auto_increment
-//      constructiveInterference:              decimal(10,8)
+//      chargeInstanceId: auto_increment
+//      constructiveInterference:             decimal(10,8)
 //      destructiveInterference:              decimal(11,8)
 //      name:             varchar(255)
 //      website:          varchar(255)
@@ -275,7 +275,7 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt:         NOW()
 //      updateAt:         NOW()
 //      deletedAt:        null
-//      bountyCellId: <foreign key>
+//      chargeCellId: <foreign key>
 
 // -----------------------------------------------------------------------------
 // ADDRESSES

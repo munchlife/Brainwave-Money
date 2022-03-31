@@ -16,6 +16,49 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true,
             autoIncrement: true
         },
+        frequency: {
+            type: DataTypes.DECIMAL(10, 8),
+            allowNull: true,
+            validate: {
+                isFloat: {
+                    msg: 'Cell signal frequency value must be a number'
+                },
+                min: {
+                    args: 0.0,
+                    msg: 'Cell signal frequency value must be greater than or equal to 0hz'
+                },
+                max: {
+                    args: 150.0,
+                    msg: 'Cell signal frequency value must be less than or equal to 150hz'
+                }
+            }
+        },
+//         bandType: {
+//             type: DataTypes.BIGINT.UNSIGNED,
+//             allowNull: true,
+//             defaultValue: null,
+//             validate: {
+//                 isIn: {
+//                     args: [[ DELTA, THETA, ALPHA, BETA, LOW GAMMA, HIGH GAMMA ]],
+//                     msg: 'Cell signal frequency is not in the valid set of band types'
+//                 }
+//             }
+//         },
+        waveform: {
+            type: DataTypes.BLOB,
+            allowNull: false,
+            defaultValue: null,
+        },
+        timestep: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: null,
+            validate: {
+                isDate: {
+                    msg: 'Waveform timestep must be a date'
+                } 
+            }  
+        },
         major: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,

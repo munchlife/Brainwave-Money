@@ -123,7 +123,7 @@ var attributesLifeDevice        = [ 'deviceId',        'type', 'serialNumber', '
 var attributesLifeSelection     = [ /*'lifeId',*/      'dictionarySignalPathwayId', 'genomicsSignalPathwayId', 'communicationsSignalPathwayId' ];
  
 // Remove fields from metabolism.Life: eegHash, eegExpiration, deletedAt
-var lifeAttributes = [ 'lifeId', 'phone', 'phoneVerified', 'email', 'emailVerified', 'receiptEmail', 'receiptEmailVerified', 'referralCode', 'givenName', 'middleName', 'familyName', 'species', 'genomeHash', 'countryCode', 'createdAt', 'updatedAt' ];
+var lifeAttributes = [ 'lifeId', 'phone', 'phoneVerified', 'email', 'emailVerified', 'receiptEmail', 'receiptEmailVerified', 'referralCode', 'givenName', 'middleName', 'familyName', 'species', 'sex', 'genomeHash', 'countryCode', 'createdAt', 'updatedAt' ];
 
 // Remove fields from metabolism.Cell: verified, createdAt, updatedAt, deletedAt
 var includeCell = { model: metabolism.Cell, attributes: [ 'cellId', 'name', 'type', 'website', 'countryCode' ] };
@@ -913,6 +913,7 @@ router.put('/:id', function(req, res) {
       /*life.eegExpiration:        not accessible for change */
       /*life.genome:               not accessible for change */
         life.species               = validate.trim(validate.toString(req.body.type));
+        life.sex                   = validate.trim(validate.toString(req.body.type)); // can go from MALE to MARTIAN and female to MARTIAN but not male to female or female to male
       /*life.referralCode:         not accessible for change */
         life.givenName             = validate.trim(validate.toString(req.body.givenName));
         life.middleName            = metabolism.Life.extractMiddleName(metabolism, req.body.middleName);

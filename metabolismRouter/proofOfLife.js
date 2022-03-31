@@ -232,6 +232,7 @@ router.post('/life/registration', function(req, res) {
                 eegExpiration:        new Date(),
                 genome:               req.files.genome,
                 species:              validate.trim(validate.toString(req.body.species)),
+                sex:                  validate.trim(validate.toString(req.body.sex)),
                 referralCode:         RandomString.generate(7),
                 givenName:            validate.trim(validate.toString(req.body.givenName)),
                 middleName:           metabolism.Life.extractMiddleName(metabolism, req.body.middleName),

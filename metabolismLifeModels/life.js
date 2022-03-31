@@ -155,7 +155,7 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             validate: {
                 isIn: {
-                    args: [[ MALE, FEMALE ]],
+                    args: [[ MALE, FEMALE, MARTIAN ]],
                     msg: 'Life sex is not in the valid set of sexes'
                 }
             }

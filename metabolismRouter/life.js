@@ -913,7 +913,7 @@ router.put('/:id', function(req, res) {
       /*life.eegExpiration:        not accessible for change */
       /*life.genome:               not accessible for change */
         life.species               = validate.trim(validate.toString(req.body.type));
-        life.sex                   = validate.trim(validate.toString(req.body.type)); // can go from MALE to MARTIAN and female to MARTIAN but not male to female or female to male
+      /*life.sex                   not accessible for change */
       /*life.referralCode:         not accessible for change */
         life.givenName             = validate.trim(validate.toString(req.body.givenName));
         life.middleName            = metabolism.Life.extractMiddleName(metabolism, req.body.middleName);

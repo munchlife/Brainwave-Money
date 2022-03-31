@@ -39,7 +39,7 @@ module.exports = function(sequelize, DataTypes) {
             //    0.0000001  degs    11.1mm distance
             //    0.00000001 degs    1.11mm distance
             type: DataTypes.DECIMAL(10, 8),
-            allowNull: true,
+            allowNull: false,
             validate: {
                 isFloat: {
                     msg: 'Instance constructive interference value must be a number'
@@ -56,7 +56,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         destructiveInterference: {
             type: DataTypes.DECIMAL(11, 8),
-            allowNull: true,
+            allowNull: false,
             validate: {
                 isFloat: {
                     msg: 'Instance destructive interference value must be a number'
@@ -124,17 +124,14 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,                 // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,       // defaulted globally
-        tableName: 'cellInstances', // force table name to this value
+        tableName: 'cellInstances',     // force table name to this value
         validate: {
-            validateCoordinates: function() {
-                if ((this.constructiveInterference === null) !== (this.destructiveInterference === null))
-                    throw new Error('Instance requires either both constructiveInterferenceitude and destructiveInterferencegitude are set or neither');
-            }
         },
         classMethods: {
             associate: function(models) {
                 CellInstance.belongsTo(models.Cell,          {                           foreignKey: 'cellId' });
-                CellInstance.belongsTo(models.CellField,     {                           foreignKey: 'cellFieldId' });
+                CellInstance.belongsTo(models.CellField,     {                           foreignKey: 'fieldId' });
+                CellInstance.hasOne(models.CellSignal,       { as: 'CellSignal',         foreignKey: 'signalId' });
                 CellInstance.hasMany(models.CellStakeholder, { as: 'StakeholderMembers', foreignKey: 'instanceId' });
                 CellInstance.hasMany(models.CellDevice,      { as: 'Devices',            foreignKey: 'instanceId' });
                 CellInstance.hasOne(models.Address,          { as: 'Address',            foreignKey: 'instanceId' });
@@ -183,12 +180,10 @@ module.exports = function(sequelize, DataTypes) {
             calculateAndSetMajor: function() {
                 this.major = this.instanceId % INSTANCE_FIELD_MAJOR_MAX;
             },
-            calculateConstructiveInterference: function() {
-                return charges.renderCharges(this.instanceId.eegFrequencyPing.constructiveInterference === charges.x);
-            },
-            calculateDestructiveInterference: function() {
-                return charges.renderCharges(this.instanceId.eegFrequencyPing.destructiveInterference === charges.y);
-        }
+            calculateCellSignalWaveform: function() { // TODO: determine waveform derivation formula
+            },    
+            calculateInstanceInterference: function() { // TODO: determine phase difference formula using ionospheric resonance signal as comparison
+            }
         }
     });
 

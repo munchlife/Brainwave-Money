@@ -150,6 +150,16 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
+        sex: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            allowNull: false,
+            validate: {
+                isIn: {
+                    args: [[ MALE, FEMALE ]],
+                    msg: 'Life sex is not in the valid set of sexes'
+                }
+            }
+        },
         referralCode: {
             type: DataTypes.STRING( REFERRAL_CODE_MAX_LENGTH ),
             allowNull: false,
@@ -187,7 +197,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        // TODO: add alias to allow better addressing of consumers by stakeholder
+        // TODO: add alias to allow better addressing of life by stakeholders
         // alias: {
         //     type: DataTypes.STRING( LIFE_NAME_MAX_LENGTH ),
         //     allowNull: true,

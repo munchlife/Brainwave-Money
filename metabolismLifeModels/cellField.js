@@ -44,6 +44,7 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 CellField.hasMany(models.CellInstance, { as: 'Instances', foreignKey: 'cellFieldId' });
+                CellField.hasMany(models.CellSignal,   { as: 'Signals',   foreignKey: 'signalId' });
             }
         },
         instanceMethods: {

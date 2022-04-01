@@ -169,7 +169,7 @@ module.exports = function(sequelize, DataTypes) {
         // freezeTableName: true,       // defaulted globally
         tableName: 'cellInstances',     // force table name to this value
         validate: {
-            validateCoordinates: function() {
+            validateInterference: function() {
                 if ((this.constructiveInterference === null) !== (this.destructiveInterference === null))
                     throw new Error('Instance requires either both constructive interference and destructive interference are set or neither');
             }   

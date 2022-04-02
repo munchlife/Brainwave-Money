@@ -38,7 +38,7 @@ metabolism.sequelize.sync({ force: forceSync })
     })
     .then(function() {
         debug('* Creating cell specific graph ...');
-        return require('../config/cellGraph').sync();
+        return require('../metabolismConfiguration/cellGraph').sync();
     })
     .then(function() {
         if (env !== 'production') {

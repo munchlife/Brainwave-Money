@@ -1,10 +1,10 @@
 'use strict';
 
-// CellElectroencephelogram.js (model)
+// electromagnetism.js (model)
 
 module.exports = function(sequelize, DataTypes) {
-    var CellElectroencephelogram = sequelize.define('CellElectroencephelogram', {
-        electroencephelogramId: {
+    var Electromagnetism = sequelize.define('Electromagnetism', {
+        electromagnetismId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
@@ -14,15 +14,15 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: true,
             validate: {
                 isFloat: {
-                    msg: 'Cell electroencephelogram frequency value must be a number'
+                    msg: 'Electromagnetism frequency value must be a number'
                 },
                 min: {
                     args: 0.0,
-                    msg: 'Cell electroencephelogram frequency value must be greater than or equal to 0hz'
+                    msg: 'Electromagnetism frequency value must be greater than or equal to 0hz'
                 },
                 max: {
                     args: 150.0,
-                    msg: 'Cell electroencephelogram frequency value must be less than or equal to 150hz'
+                    msg: 'Electromagnetism frequency value must be less than or equal to 150hz'
                 }
             }
         },
@@ -32,8 +32,8 @@ module.exports = function(sequelize, DataTypes) {
 //             defaultValue: null,
 //             validate: {
 //                 isIn: {
-//                     args: [[ DELTA, THETA, ALPHA, BETA, LOW GAMMA, HIGH GAMMA ]],
-//                     msg: 'Cell electroencephelogram frequency is not in the valid set of band types'
+//                     args: [[ DELTA, THETA, ALPHA, BETA, LOW GAMMA, HIGH GAMMA, ELF, VLF ]],
+//                     msg: 'Electromagnetism frequency is not in the valid set of band types'
 //                 }
 //             }
 //         },
@@ -58,12 +58,13 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,                 // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,       // defaulted globally
-        tableName: 'CellElectroencephelograms',       // force table name to this value
+        tableName: 'Electromagnetism',  // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                CellElectroencephelogram.belongsTo(models.CellField,     {                           foreignKey: 'cellFieldId' });
+                Electromagnetism.belongsTo(models.CellField,       {                           foreignKey: 'electromagnetismId' });
+                Electromagnetism.belongsTo(models.IonosphereField, {                           foreignKey: 'electromagnetismId' });
             },
             extractFrequency: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.toFloat(value);
@@ -91,5 +92,5 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
-    return CellElectroencephelogram;
+    return Electromagnetism;
 };

@@ -176,13 +176,13 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                CellInstance.belongsTo(models.Cell,                  {                                 foreignKey: 'cellId' });
-                CellInstance.belongsTo(models.CellField,             {                                 foreignKey: 'fieldId' });
-                CellInstance.hasOne(models.CellElectroencephelogram, { as: 'CellElectroencephelogram', foreignKey: 'selectroencephelogramId' });
-                CellInstance.hasMany(models.CellStakeholder,         { as: 'StakeholderMembers',       foreignKey: 'instanceId' });
-                CellInstance.hasMany(models.CellDevice,              { as: 'Devices',                  foreignKey: 'instanceId' });
-                CellInstance.hasOne(models.Address,                  { as: 'Address',                  foreignKey: 'instanceId' });
-                CellInstance.hasMany(models.Phone,                   { as: 'Phones',                   foreignKey: 'instanceId' });
+                CellInstance.belongsTo(models.Cell,          {                           foreignKey: 'cellId' });
+                CellInstance.belongsTo(models.CellField,     {                           foreignKey: 'fieldId' });
+                CellInstance.hasOne(models.Electromagnetism, { as: 'Electromagnetisms',  foreignKey: 'electromagnetismId' });
+                CellInstance.hasMany(models.CellStakeholder, { as: 'StakeholderMembers', foreignKey: 'instanceId' });
+                CellInstance.hasMany(models.CellDevice,      { as: 'Devices',            foreignKey: 'instanceId' });
+                CellInstance.hasOne(models.Address,          { as: 'Address',            foreignKey: 'instanceId' });
+                CellInstance.hasMany(models.Phone,           { as: 'Phones',             foreignKey: 'instanceId' });
             },
             extractName: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));

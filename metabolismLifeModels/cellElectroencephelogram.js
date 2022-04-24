@@ -1,10 +1,10 @@
 'use strict';
 
-// cellSignal.js (model)
+// CellElectroencephelogram.js (model)
 
 module.exports = function(sequelize, DataTypes) {
-    var CellSignal = sequelize.define('CellSignal', {
-        signalId: {
+    var CellElectroencephelogram = sequelize.define('CellElectroencephelogram', {
+        electroencephelogramId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
@@ -14,15 +14,15 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: true,
             validate: {
                 isFloat: {
-                    msg: 'Cell signal frequency value must be a number'
+                    msg: 'Cell electroencephelogram frequency value must be a number'
                 },
                 min: {
                     args: 0.0,
-                    msg: 'Cell signal frequency value must be greater than or equal to 0hz'
+                    msg: 'Cell electroencephelogram frequency value must be greater than or equal to 0hz'
                 },
                 max: {
                     args: 150.0,
-                    msg: 'Cell signal frequency value must be less than or equal to 150hz'
+                    msg: 'Cell electroencephelogram frequency value must be less than or equal to 150hz'
                 }
             }
         },
@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
 //             validate: {
 //                 isIn: {
 //                     args: [[ DELTA, THETA, ALPHA, BETA, LOW GAMMA, HIGH GAMMA ]],
-//                     msg: 'Cell signal frequency is not in the valid set of band types'
+//                     msg: 'Cell electroencephelogram frequency is not in the valid set of band types'
 //                 }
 //             }
 //         },
@@ -58,12 +58,12 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,                 // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,       // defaulted globally
-        tableName: 'cellSignals',       // force table name to this value
+        tableName: 'CellElectroencephelograms',       // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                CellSignal.belongsTo(models.CellField,     {                           foreignKey: 'cellFieldId' });
+                CellElectroencephelogram.belongsTo(models.CellField,     {                           foreignKey: 'cellFieldId' });
             },
             extractFrequency: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.toFloat(value);
@@ -91,5 +91,5 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
-    return CellSignal;
+    return CellElectroencephelogram;
 };

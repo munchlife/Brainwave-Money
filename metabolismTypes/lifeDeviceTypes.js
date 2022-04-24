@@ -5,7 +5,7 @@
 var lifeDeviceTypes = module.exports = {};
 
 lifeDeviceTypes.ENUM = {
-    RPI: { abbr: 'RPI', fullName: 'Raspberry Pi Device' },
+    EEG: { abbr: 'EEG', fullName: 'EEG Device' },
  // IOS: { abbr: 'IOS', fullName: 'iOS Device' },
  // AND: { abbr: 'AND', fullName: 'Android Device' },
 };

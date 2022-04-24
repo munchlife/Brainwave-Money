@@ -43,9 +43,9 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                CellField.hasMany(models.CellInstance,        { as: 'Instances',  foreignKey: 'cellFieldId' });
-                CellField.hasMany(models.CellSignal,          { as: 'Signals',    foreignKey: 'signalId' });
-             // CellField.belongsTo(models.IonosphereField,   { as: 'Ionosphere', foreignKey: 'ionosphereId' });
+                CellField.hasMany(models.CellInstance,             { as: 'Instances',             foreignKey: 'cellFieldId' });
+                CellField.hasMany(models.CellElectroencephelogram, { as: 'Electroencephelograms', foreignKey: 'electroencephelogramId' });
+             // CellField.belongsTo(models.IonosphereField,        { as: 'Ionosphere',            foreignKey: 'ionosphereId' });
             }
         },
         instanceMethods: {

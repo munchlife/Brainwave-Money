@@ -5,7 +5,7 @@
 var cellDeviceTypes = module.exports = {};
 
 cellDeviceTypes.ENUM = {
-       ELF: { abbr: 'ELF', fullName: 'Extremely Low-Frequency Device' },
+       RPI: { abbr: 'RPI', fullName: 'Raspberry Pi Device' },
     // IOS: { abbr: 'IOS', fullName: 'iOS Device' },
     // AND: { abbr: 'AND', fullName: 'Android Device' },
     // WIN: { abbr: 'WIN', fullName: 'Windows Device' },

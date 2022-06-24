@@ -4,7 +4,7 @@
 
 Munch is an information metabolism exposing a genetic programming environment secured by an artificial immune system designed to regulate a planetarily-correct evolution of the constructive and destructive communication cycles that build up and break down the planet and its life.
 
-The digital metabolism is designed to work for any life type and allows life to network together by forming co-operative organizational "cells" (purpose-specific "brainwave alignment DAOs") that leverage digital genes (program APIs where brainwave synchronization is performed i.e. dictionaries, messengers, news) to synchronize brainwaves within and between cells. 
+The digital metabolism is designed to work for any life type and allows life to network together by forming co-operative organizational "cells" (purpose-oriented "brainwave alignment DAOs") that leverage digital genes (program APIs where brainwave synchronization is performed i.e. dictionaries, messengers, news) to synchronize brainwaves within and between cells. 
 
 The digital metabolism can be deployed by running the code on a "cell instance" that "mines" information carried in the "noosphere" (the collective set of bioelectromagnetic wavelengths transmitting consciousness) by capturing interferometric information on EEG signals through a "brainwave miner" (an EEG headset i.e. Muse S) connected to a front-end application.
 
@@ -14,15 +14,13 @@ https://academic.oup.com/nc/article/2020/1/niaa010/5856030 (What binds us? Inter
 
 https://ieeexplore.ieee.org/document/7844990 (EEG hyperscanning study of inter-brain synchrony during cooperative competitive interaction)
 
-TODO: Include reference instance(s) that pegs the "charge" functions of the digital metabolism to the ionospheric ("schumann") resonances so as to provide a clearinghouse used to obtain planetarily-sound validity of information cycles by comparing the waveform of a life or cell signal with the waveform of the ionosphere resonances.
-
 [GET] /cell/instance/interferometer?
 
 Calling the biosignal-interferometer instance function of the digital metabolism registers degrees of interference associated with a specific instance of communication signaling within a cell of communication synchronizing brainwaves through cycles of interaction with digital genes.
 
 [GET] /cell/:id/cycle/:cycleId?attribute:chargeTotal
 
-A degree of constructive or destructive interference then calculates a "charge" generated during execution of signals being sent to and from life in sequences of information cycles within a cell of likeminded communication.
+A degree of constructive or destructive interference then calculates a "charge" generated during execution of signals being sent to and from life in sequences of information cycles within a purpose-oriented cell.
 
 INITIAL APPLICATION: IMMUNE
 

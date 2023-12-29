@@ -36,16 +36,16 @@ module.exports = function(sequelize, DataTypes) {
         // freezeTableName: true, // defaulted globally
         tableName: 'tokens',      // force table name to this value
         validate: {
-            mutexCellAndGeneStakeholderIds: function() {
-                if ((this.cellStakeholderId !== null) && (this.geneStakeholderId !== null))
-                    throw new Error('Token only allows one of cellStakeholderId or geneStakeholderId be set at a time');
+            mutexCellAndServiceStakeholderIds: function() {
+                if ((this.cellStakeholderId !== null) && (this.serviceStakeholderId !== null))
+                    throw new Error('Token only allows one of cellStakeholderId or serviceStakeholderId be set at a time');
             }
         },
         classMethods: {
             associate: function(models) {
                 Token.belongsTo(models.Life,            { foreignKey: 'lifeId' });
                 Token.belongsTo(models.CellStakeholder, { foreignKey: 'cellStakeholderId' });
-                Token.belongsTo(models.GeneStakeholder, { foreignKey: 'geneStakeholderId' });
+                Token.belongsTo(models.ServiceStakeholder, { foreignKey: 'serviceStakeholderId' });
             },
             encode: function(data) {
                 return JWT.encode(data, configAuth.local.tokenSecret);
@@ -53,14 +53,14 @@ module.exports = function(sequelize, DataTypes) {
             decode: function(data) {
                 return JWT.decode(data, configAuth.local.tokenSecret);
             },
-            createAndPersistToken: function(lifeId, cellStakeholderId, geneStakeholderId) {
+            createAndPersistToken: function(lifeId, cellStakeholderId, serviceStakeholderId) {
                 // Build the token and return as response.
                 var newToken = {
                   /*tokenId:           0,*/
                     token:             '',
                     lifeId:            lifeId,
                     cellStakeholderId: cellStakeholderId,
-                    geneStakeholderId: geneStakeholderId
+                    serviceStakeholderId: serviceStakeholderId
                 };
 
                 return Token.create(newToken)
@@ -68,7 +68,7 @@ module.exports = function(sequelize, DataTypes) {
                         var decodedToken = {
                             'iss' : token.tokenId, // 'issuer'
                             'iat' : Date.now(),    // date 'issued at'
-                            'jti' : RandomString.generate(10) // random string with length 10
+                            'jti' : RandomString.servicerate(10) // random string with length 10
                         };
 
                         // Will throw an error if encoding fails

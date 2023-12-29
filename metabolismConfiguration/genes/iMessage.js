@@ -6,8 +6,8 @@
 var qs = require('querystring');
 
 // Dependency packages
-var debug   = require('debug')('munch:config:gene:iMessage');
-var verbose = require('debug')('munch:verbose:config:gene:iMessage');
+var debug   = require('debug')('munch:config:service:iMessage');
+var verbose = require('debug')('munch:verbose:config:service:iMessage');
 var rest    = require('restling');
 
 // Local js modules
@@ -44,11 +44,11 @@ module.exports = function() {
         // If only one of lifeId and cellId is not null, construct the URL.
         if ((lifeId !== null) !== (cellId !== null)) {
             if (lifeId !== null) {
-                result.callbackURL = 'https://' + host + '/life/gene/iMessage/auth/callback';
+                result.callbackURL = 'https://' + host + '/life/service/iMessage/auth/callback';
                 result.state = lifeId;
             }
             else { // cellId !== null
-                result.callbackURL = 'https://' + host + '/cell/gene/iMessage/auth/callback';
+                result.callbackURL = 'https://' + host + '/cell/service/iMessage/auth/callback';
                 result.state = cellId;
             }
         }
@@ -134,7 +134,7 @@ module.exports = function() {
                     optional:                               null
                   /*lifeId:                                 null,*/
                   /*cellId:                                 null,*/
-                  /*geneId:                                 null*/
+                  /*serviceId:                                 null*/
                 };
                 console.log(signalPathwayData)
                 //this.signalPathwayData = signalPathwayData;

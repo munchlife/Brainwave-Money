@@ -15,7 +15,7 @@ Immunities.OwnerAccess        = 1;
 Immunities.LifeAccess         = 2;
 Immunities.CellAccess         = 3;
 Immunities.CellInstanceAccess = 4;
-Immunities.GeneAccess         = 5;
+Immunities.ServiceAccess         = 5;
 
 // -----------------------------------------------------------------------------
 Immunities.createAuthInfoPacket = function(tokenId, life, stakeholderMember) {
@@ -29,7 +29,7 @@ Immunities.createAuthInfoPacket = function(tokenId, life, stakeholderMember) {
 // -----------------------------------------------------------------------------
 // LIFE
 // -----------------------------------------------------------------------------
-Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, geneAccess, lifePacket) {
+Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, serviceAccess, lifePacket) {
     if (arguments.length !== 5 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
@@ -41,8 +41,8 @@ Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, 
         return Immunities.LifeAccess;
     else if (!!cellAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.cellId)
         return Immunities.CellAccess;
-    else if (!!geneAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.geneId)
-        return Immunities.GeneAccess;
+    else if (!!serviceAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.serviceId)
+        return Immunities.ServiceAccess;
     else
         return Immunities.Denied;
 };
@@ -50,7 +50,7 @@ Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, 
 // -----------------------------------------------------------------------------
 // CELL
 // -----------------------------------------------------------------------------
-Immunities.verifyNoRejectionFromCell = function(cellId, instanceId, authLevelRequired, lifeAccess, geneAccess, lifePacket) {
+Immunities.verifyNoRejectionFromCell = function(cellId, instanceId, authLevelRequired, lifeAccess, serviceAccess, lifePacket) {
     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
@@ -80,13 +80,13 @@ Immunities.verifyNoRejectionFromCell = function(cellId, instanceId, authLevelReq
     }
     else if (!!lifeAccess && lifePacket.stakeholderMember === null)
         return Immunities.LifeAccess;
-    else if (!!geneAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.geneId)
-        return Immunities.GeneAccess;
+    else if (!!serviceAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.serviceId)
+        return Immunities.ServiceAccess;
     else
         return Immunities.Denied;
 };
 
-Immunities.verifyNoRejectionFromCell = function(cellId, authLevelRequired, lifeAccess, instanceAccess, geneAccess, lifePacket) {
+Immunities.verifyNoRejectionFromCell = function(cellId, authLevelRequired, lifeAccess, instanceAccess, serviceAccess, lifePacket) {
     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
@@ -105,13 +105,13 @@ Immunities.verifyNoRejectionFromCell = function(cellId, authLevelRequired, lifeA
     }
     else if (!!lifeAccess && lifePacket.stakeholderMember === null)
         return Immunities.LifeAccess;
-    else if (!!geneAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.geneId)
-        return Immunities.GeneAccess;
+    else if (!!serviceAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.serviceId)
+        return Immunities.ServiceAccess;
     else
         return Immunities.Denied;
 };
 
-Immunities.verifyNoRejectionFromCellInstance = function(cellId, instanceId, authLevelRequired, lifeAccess, geneAccess, lifePacket) {
+Immunities.verifyNoRejectionFromCellInstance = function(cellId, instanceId, authLevelRequired, lifeAccess, serviceAccess, lifePacket) {
     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
@@ -131,32 +131,32 @@ Immunities.verifyNoRejectionFromCellInstance = function(cellId, instanceId, auth
     }
     else if (!!lifeAccess && lifePacket.stakeholderMember === null)
         return Immunities.LifeAccess;
-    else if (!!geneAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.geneId)
-        return Immunities.GeneAccess;
+    else if (!!serviceAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.serviceId)
+        return Immunities.ServiceAccess;
     else
         return Immunities.Denied;
 };
 
 // -----------------------------------------------------------------------------
-// GENE
+// SERVICE
 // -----------------------------------------------------------------------------
-Immunities.verifyNoRejectionFromGene = function(geneId, authLevelRequired, lifeAccess, cellAccess, lifePacket) {
+Immunities.verifyNoRejectionFromService = function(serviceId, authLevelRequired, lifeAccess, cellAccess, lifePacket) {
     if (arguments.length !== 5 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
-    // Do not allow a gene stakeholder to have an authorization level of 'manager'
+    // Do not allow a service stakeholder to have an authorization level of 'manager'
     if (lifePacket.stakeholderMember && 
-        lifePacket.stakeholderMember.geneId &&
+        lifePacket.stakeholderMember.serviceId &&
         lifePacket.stakeholderMember.immunities === Immunities.AuthLevelManagerStakeholder)
         return Immunities.Denied;
 
-    geneId = Number(geneId);
+    serviceId = Number(serviceId);
     authLevelRequired = Number(authLevelRequired);
 
     if (lifePacket.stakeholderMember &&
-        geneId === lifePacket.stakeholderMember.geneId &&
+        serviceId === lifePacket.stakeholderMember.serviceId &&
         authLevelRequired >= lifePacket.stakeholderMember.immunities)
-        return Immunities.GeneAccess;
+        return Immunities.ServiceAccess;
     else if (!!lifeAccess && lifePacket.stakeholderMember === null)
         return Immunities.LifeAccess;
     else if (!!cellAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.cellId)

@@ -64,7 +64,7 @@ module.exports = function(sequelize, DataTypes) {
                 Phone.belongsTo(models.Life,           { foreignKey: 'lifeId' });
                 Phone.belongsTo(models.Cell,           { foreignKey: 'cellId' });
                 Phone.belongsTo(models.CellInstance,   { foreignKey: 'instanceId' });
-                Phone.belongsTo(models.Gene,           { foreignKey: 'geneId' });
+                Phone.belongsTo(models.Service,           { foreignKey: 'serviceId' });
                 Phone.belongsTo(models.ChargeCell,     { foreignKey: 'chargeCellId' });
                 Phone.belongsTo(models.ChargeInstance, { foreignKey: 'chargeInstanceId' });
             },

@@ -1,148 +1,148 @@
 'use strict';
 
-// geneSettings.js (model)
+// serviceSettings.js (model)
 
-var GENE_SETTINGS_URL_MAX_LENGTH = 255;
-var GENE_SETTINGS_SCOPE_MAX_LENGTH = 255;
-var GENE_SETTINGS_PATH_MAX_LENGTH = 255;
+var SERVICE_SETTINGS_URL_MAX_LENGTH = 255;
+var SERVICE_SETTINGS_SCOPE_MAX_LENGTH = 255;
+var SERVICE_SETTINGS_PATH_MAX_LENGTH = 255;
 
 module.exports = function(sequelize, DataTypes) {
-    var GeneSetting = sequelize.define('GeneSetting', {
-        geneId: {
+    var ServiceSetting = sequelize.define('ServiceSetting', {
+        serviceId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
-            // FUTURE 3.2.0 references: { model: sequelize.models.Gene, key: 'geneId' },
-            references: 'genes',
-            referencesKey: 'geneId',
+            // FUTURE 3.2.0 references: { model: sequelize.models.Service, key: 'serviceId' },
+            references: 'services',
+            referencesKey: 'serviceId',
             onDelete: 'CASCADE'
         },
         host: {
-            type: DataTypes.STRING( GENE_SETTINGS_URL_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_URL_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_URL_MAX_LENGTH ],
-                    msg: 'Gene host URL address can be no more than ' + GENE_SETTINGS_URL_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_URL_MAX_LENGTH ],
+                    msg: 'Service host URL address can be no more than ' + SERVICE_SETTINGS_URL_MAX_LENGTH + ' characters in length'
                 },
                 isUrl: {
-                    msg: 'Gene host URL must be a valid URL'
+                    msg: 'Service host URL must be a valid URL'
                 }
             }
         },
         apiHost: {
-            type: DataTypes.STRING( GENE_SETTINGS_URL_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_URL_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_URL_MAX_LENGTH ],
-                    msg: 'Gene API host URL address can be no more than ' + GENE_SETTINGS_URL_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_URL_MAX_LENGTH ],
+                    msg: 'Service API host URL address can be no more than ' + SERVICE_SETTINGS_URL_MAX_LENGTH + ' characters in length'
                 },
                 isUrl: {
-                    msg: 'Gene API host URL must be a valid URL'
+                    msg: 'Service API host URL must be a valid URL'
                 }
             }
         },
         sandboxHost: {
-            type: DataTypes.STRING( GENE_SETTINGS_URL_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_URL_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_URL_MAX_LENGTH ],
-                    msg: 'Gene sanmetabolismox host URL address can be no more than ' + GENE_SETTINGS_URL_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_URL_MAX_LENGTH ],
+                    msg: 'Service sanmetabolismox host URL address can be no more than ' + SERVICE_SETTINGS_URL_MAX_LENGTH + ' characters in length'
                 },
                 isUrl: {
-                    msg: 'Gene sanmetabolismox host URL must be a valid URL'
+                    msg: 'Service sanmetabolismox host URL must be a valid URL'
                 }
             }
         },
         scope: {
-            type: DataTypes.STRING( GENE_SETTINGS_SCOPE_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_SCOPE_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_SCOPE_MAX_LENGTH ],
-                    msg: 'OAuth2 scope can be no more than ' + GENE_SETTINGS_SCOPE_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_SCOPE_MAX_LENGTH ],
+                    msg: 'OAuth2 scope can be no more than ' + SERVICE_SETTINGS_SCOPE_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         signupPath: {
-            type: DataTypes.STRING( GENE_SETTINGS_PATH_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_PATH_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_PATH_MAX_LENGTH ],
-                    msg: 'OAuth2 signup URL path can be no more than ' + GENE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_PATH_MAX_LENGTH ],
+                    msg: 'OAuth2 signup URL path can be no more than ' + SERVICE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         authenticatePath: {
-            type: DataTypes.STRING( GENE_SETTINGS_PATH_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_PATH_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_PATH_MAX_LENGTH ],
-                    msg: 'OAuth2 authenticate URL path can be no more than ' + GENE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_PATH_MAX_LENGTH ],
+                    msg: 'OAuth2 authenticate URL path can be no more than ' + SERVICE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         refreshPath: {
-            type: DataTypes.STRING( GENE_SETTINGS_PATH_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_PATH_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_PATH_MAX_LENGTH ],
-                    msg: 'OAuth2 refresh URL path can be no more than ' + GENE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_PATH_MAX_LENGTH ],
+                    msg: 'OAuth2 refresh URL path can be no more than ' + SERVICE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         balancePath: {
-            type: DataTypes.STRING( GENE_SETTINGS_PATH_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_PATH_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_PATH_MAX_LENGTH ],
-                    msg: 'OAuth2 balance URL path can be no more than ' + GENE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_PATH_MAX_LENGTH ],
+                    msg: 'OAuth2 balance URL path can be no more than ' + SERVICE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         sendPath: {
-            type: DataTypes.STRING( GENE_SETTINGS_PATH_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_PATH_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_PATH_MAX_LENGTH ],
-                    msg: 'OAuth2 send URL path can be no more than ' + GENE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_PATH_MAX_LENGTH ],
+                    msg: 'OAuth2 send URL path can be no more than ' + SERVICE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         requestPath: {
-            type: DataTypes.STRING( GENE_SETTINGS_PATH_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_PATH_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_PATH_MAX_LENGTH ],
-                    msg: 'OAuth2 request URL path can be no more than ' + GENE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_PATH_MAX_LENGTH ],
+                    msg: 'OAuth2 request URL path can be no more than ' + SERVICE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         deauthenticatePath: {
-            type: DataTypes.STRING( GENE_SETTINGS_PATH_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SETTINGS_PATH_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SETTINGS_PATH_MAX_LENGTH ],
-                    msg: 'OAuth2 deauthorization URL path can be no more than ' + GENE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SETTINGS_PATH_MAX_LENGTH ],
+                    msg: 'OAuth2 deauthorization URL path can be no more than ' + SERVICE_SETTINGS_PATH_MAX_LENGTH + ' characters in length'
                 }
             }
         }
@@ -152,13 +152,13 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,               // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,     // defaulted globally
-        tableName: 'geneSettings', // force table name to this value
+        tableName: 'serviceSettings', // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                // geneId foreign key reference handled above in field definition
-              //GeneSetting.belongsTo(models.Setting, { foreignKey: 'geneId' });
+                // serviceId foreign key reference handled above in field definition
+              //ServiceSetting.belongsTo(models.Setting, { foreignKey: 'serviceId' });
             },
             extractHost: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value)).toLowerCase();
@@ -242,5 +242,5 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
-    return GeneSetting;
+    return ServiceSetting;
 };

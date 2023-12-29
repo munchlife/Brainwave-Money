@@ -46,8 +46,8 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 LifeSignal.belongsTo(models.Life, { as: 'Sender',       foreignKey: 'lifeSenderId' });
                 LifeSignal.belongsTo(models.Life, { as: 'Receiver',     foreignKey: 'lifeReceiverId' });
-                LifeSignal.belongsTo(models.Gene, { as: 'GeneSender',   foreignKey: 'geneSenderId' });
-                LifeSignal.belongsTo(models.Gene, { as: 'GeneReceiver', foreignKey: 'geneReceiverId' });
+                LifeSignal.belongsTo(models.Service, { as: 'ServiceSender',   foreignKey: 'serviceSenderId' });
+                LifeSignal.belongsTo(models.Service, { as: 'ServiceReceiver', foreignKey: 'serviceReceiverId' });
                 LifeSignal.belongsTo(models.Cell, {                     foreignKey: 'cellId' });
             }
         },

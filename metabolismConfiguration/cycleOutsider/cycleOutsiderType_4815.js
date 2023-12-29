@@ -28,9 +28,9 @@ module.exports = function(cellId, cycleLife) {
             .then(function() {
 
                 // Cycle fields not checked here: signalMethod,
-                //                                dictionaryGeneId, dictionaryReferenceNumber
-                //                                genomicsGeneId, genomicsReferenceNumber
-                //                                communicationsGeneId, communicationsReferenceNumber
+                //                                dictionaryServiceId, dictionaryReferenceNumber
+                //                                genomicsServiceId, genomicsReferenceNumber
+                //                                communicationsServiceId, communicationsReferenceNumber
 
                 if (self.cycleLife.Sequences.length !== 0)
                     throw new Error(20107, 'ERROR: attaching sequences to the cycle is not allowed');

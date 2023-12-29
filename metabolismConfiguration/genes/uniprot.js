@@ -6,8 +6,8 @@
 var qs = require('querystring');
 
 // Dependency packages
-var debug   = require('debug')('munch:config:gene:uniprot');
-var verbose = require('debug')('munch:verbose:config:gene:uniprot');
+var debug   = require('debug')('munch:config:service:uniprot');
+var verbose = require('debug')('munch:verbose:config:service:uniprot');
 var rest    = require('restling');
 
 // Local js modules
@@ -21,9 +21,9 @@ module.exports = function() {
     var self = this;
     self.info = {
         host:    'https://www.uniprot.org/uniprot/', // 
-        scope:   'genes', // 
+        scope:   'services', // 
         endpoints: {
-            genes:      '/<uniprotIdentifier>', // i.e. CRY1 gene = Q16526
+            services:      '/<uniprotIdentifier>', // i.e. CRY1 service = Q16526
         }
     };
 
@@ -39,11 +39,11 @@ module.exports = function() {
         // If only one of lifeId and cellId is not null, construct the URL.
         if ((lifeId !== null) !== (cellId !== null)) {
             if (lifeId !== null) {
-                result.callbackURL = 'https://' + host + '/life/gene/uniprot/auth/callback';
+                result.callbackURL = 'https://' + host + '/life/service/uniprot/auth/callback';
                 result.state = lifeId;
             }
             else { // cellId !== null
-                result.callbackURL = 'https://' + host + '/cell/gene/uniprot/auth/callback';
+                result.callbackURL = 'https://' + host + '/cell/service/uniprot/auth/callback';
                 result.state = cellId;
             }
         }
@@ -129,7 +129,7 @@ module.exports = function() {
                     optional:                               null
                   /*lifeId:                                 null,*/
                   /*cellId:                                 null,*/
-                  /*geneId:                                 null*/
+                  /*serviceId:                                 null*/
                 };
                 console.log(signalPathwayData)
                 //this.signalPathwayData = signalPathwayData;
@@ -154,7 +154,7 @@ module.exports = function() {
                 }
 
                 // Response {
-                //      accounts:  <Array> functions for a given gene ID
+                //      accounts:  <Array> functions for a given service ID
                 //      [{
                 //          id:          <String> word entry ID
                 //          functions:   <String>
@@ -162,9 +162,9 @@ module.exports = function() {
                 
                 var signalPathwayData = this.signalPathwayData;
                 this.signalPathwayData = undefined;
-                for (var i = 0; i < result.genes.length; i++) {
-                    if (result.genes[i].type === 'geneID') {
-                        signalPathwayData.optional = result.genes[i].id;
+                for (var i = 0; i < result.services.length; i++) {
+                    if (result.services[i].type === 'serviceID') {
+                        signalPathwayData.optional = result.services[i].id;
                         break;
                     }
                 }
@@ -227,8 +227,8 @@ module.exports = function() {
     };
 
     // -------------------------------------------------------------------------
-    self.genes = function(signalPathways, genes) {
-        verbose('#genes()');
+    self.services = function(signalPathways, services) {
+        verbose('#services()');
         if (signalPathways.life.optional === null)
             return Promise.reject(new Error('word entry not available'));
 
@@ -249,7 +249,7 @@ module.exports = function() {
                 transaction: {                            
                     to:                destinationId,  //    
                     function_string:   '',             //  
-                    gene_currency_iso: 'CHARGE'        // 
+                    service_currency_iso: 'CHARGE'        // 
                 }
             }
         };
@@ -262,9 +262,9 @@ module.exports = function() {
                     return Promise.reject(new Error(errMsg));
                 }
 
-                debug('#genes(): ' + JSON.stringify(result));
+                debug('#services(): ' + JSON.stringify(result));
 
-                return parseFloat(result.genes.name.function);
+                return parseFloat(result.services.name.function);
             },
             function(error) {
                 var errMsg = 'Error (obj) returned from UniProt send API call';

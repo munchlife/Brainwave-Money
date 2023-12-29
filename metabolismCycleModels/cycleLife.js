@@ -43,39 +43,39 @@ module.exports = function(sequelize, DataTypes, cellId) {
                 }
             }
         },
-        dictionaryGeneId: {
+        dictionaryServiceId: {
             type: DataTypes.BIGINT.UNSIGNED,
             allowNull: true,
             defaultValue: null,
-            // reference: 'genes',
-            // referencesKey: 'geneId'
-            // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
+            // reference: 'services',
+            // referencesKey: 'serviceId'
+            // FOREIGN KEY (`serviceId`) REFERENCES services (`serviceId`)
         },
         dictionaryReferenceNumber: {
             type: DataTypes.STRING(255),
             allowNull: true,
             defaultValue: null
         },
-        genomicsGeneId: {
+        genomicsServiceId: {
             type: DataTypes.BIGINT.UNSIGNED,
             allowNull: true,
             defaultValue: null,
-            // reference: 'genes',
-            // referencesKey: 'geneId'
-            // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
+            // reference: 'services',
+            // referencesKey: 'serviceId'
+            // FOREIGN KEY (`serviceId`) REFERENCES services (`serviceId`)
         },
         genomicsReferenceNumber: {
             type: DataTypes.STRING(255),
             allowNull: true,
             defaultValue: null
         },
-        communicationsGeneId: {
+        communicationsServiceId: {
             type: DataTypes.BIGINT.UNSIGNED,
             allowNull: true,
             defaultValue: null,
-            // reference: 'genes',
-            // referencesKey: 'geneId'
-            // FOREIGN KEY (`geneId`) REFERENCES genes (`geneId`)
+            // reference: 'services',
+            // referencesKey: 'serviceId'
+            // FOREIGN KEY (`serviceId`) REFERENCES services (`serviceId`)
         },
         communicationsReferenceNumber: {
             type: DataTypes.STRING(255),

@@ -1,6 +1,6 @@
 'use strict';
 
-// gene.js (model)
+// service.js (model)
 
 var CountryCodes = require('../metabolismTypes/countryCodes');
 
@@ -11,34 +11,34 @@ var GENE_SUPPORT_EMAIL_MAX_LENGTH = 255;
 var GENE_SUPPORT_VERSION_MAX_LENGTH = 15;
 
 module.exports = function(sequelize, DataTypes) {
-    var Gene = sequelize.define('Gene', {
-        geneId: {
+    var Service = sequelize.define('Service', {
+        serviceId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
         },
-        // TODO: verify control of gene through manual contact (phone call/snail mail/etc)
+        // TODO: verify control of service through manual contact (phone call/snail mail/etc)
         verified: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false
         },
-        geneType: {
+        serviceType: {
             type: DataTypes.BIGINT.UNSIGNED,
             allowNull: false,
             validate: {
                 isValidCombination: function(value) {
-                    // TODO: define valid combination of gene types
+                    // TODO: define valid combination of service types
                 }
             }
         },
-        geneName: {
+        serviceName: {
             type: DataTypes.STRING( GENE_NAME_MAX_LENGTH ),
             allowNull: false,
             validate: {
                 len: {
                     args: [ 1, GENE_NAME_MAX_LENGTH ],
-                    msg: 'Gene name must be inclusively between 1 and ' + GENE_NAME_MAX_LENGTH + ' characters in length'
+                    msg: 'Service name must be inclusively between 1 and ' + GENE_NAME_MAX_LENGTH + ' characters in length'
                 }
             }
         },
@@ -49,7 +49,7 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 len: {
                     args: [ 1, GENE_COMPANY_NAME_MAX_LENGTH ],
-                    msg: 'Gene company name can be no more than ' + GENE_COMPANY_NAME_MAX_LENGTH + ' characters in length'
+                    msg: 'Service company name can be no more than ' + GENE_COMPANY_NAME_MAX_LENGTH + ' characters in length'
                 }
             }
         },
@@ -60,10 +60,10 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 len: {
                     args: [ 1, GENE_URL_MAX_LENGTH ],
-                    msg: 'Gene website address can be no more than ' + GENE_URL_MAX_LENGTH + ' characters in length'
+                    msg: 'Service website address can be no more than ' + GENE_URL_MAX_LENGTH + ' characters in length'
                 },
                 isUrl: {
-                    msg: 'Gene website must be a valid URL'
+                    msg: 'Service website must be a valid URL'
                 }
             }
         },
@@ -73,7 +73,7 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 isIn: {
                     args: [ CountryCodes.abbrs ],
-                    msg: 'Gene country code is not in the approved set of countries'
+                    msg: 'Service country code is not in the approved set of countries'
                 }
             }
         },
@@ -128,16 +128,16 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,           // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true, // defaulted globally
-        tableName: 'genes',    // force table name to this value
+        tableName: 'services',    // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                Gene.hasMany(models.GeneStakeholder,   { as: 'StakeholderMembers', foreignKey: 'geneId' });
-                Gene.hasMany(models.GeneSignalPathway, { as: 'SignalPathways',     foreignKey: 'geneId' });
-                Gene.hasOne(models.Address,            { as: 'Address',            foreignKey: 'geneId' });
-                Gene.hasMany(models.Phone,             { as: 'Phones',             foreignKey: 'geneId' });
-                Gene.hasOne(models.GeneSetting,        { as: 'Settings',           foreignKey: 'geneId', onDelete: 'cascade' });
+                Service.hasMany(models.ServiceStakeholder,   { as: 'StakeholderMembers', foreignKey: 'serviceId' });
+                Service.hasMany(models.ServiceSignalPathway, { as: 'SignalPathways',     foreignKey: 'serviceId' });
+                Service.hasOne(models.Address,            { as: 'Address',            foreignKey: 'serviceId' });
+                Service.hasMany(models.Phone,             { as: 'Phones',             foreignKey: 'serviceId' });
+                Service.hasOne(models.ServiceSetting,        { as: 'Settings',           foreignKey: 'serviceId', onDelete: 'cascade' });
             },
             extractCompanyName: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));
@@ -179,5 +179,5 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
-    return Gene;
+    return Service;
 };

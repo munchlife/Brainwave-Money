@@ -33,13 +33,13 @@ var attributesAddress  = [ 'addressId',        'name', 'address1', 'address2', '
 var attributesCharge   = [ 'chargeId',         'value', 'chargeCellId' ];
 var attributesInstance = [ 'chargeInstanceId', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode' ];
 var attributesPhone    = [ 'phoneId',          'name', 'number', 'extension' ];
-var attributesGene     = [ 'geneId',           'name' ]
+var attributesService     = [ 'serviceId',           'name' ]
 
 var includeChargeInstance = { model: metabolism.ChargeInstance, as: 'Instances', attributes: attributesInstance };
 var includeCharge         = { model: metabolism.Charge,         as: 'Bounties',  attributes: attributesCharge };
 var includeAddress        = { model: metabolism.Address,        as: 'Addresses', attributes: attributesAddress };
 var includePhone          = { model: metabolism.Phone,          as: 'Phones',    attributes: attributesPhone };
-var includeGene           = { model: metabolism.Gene,           as: 'Genes',     attributes: attributesGene };
+var includeService           = { model: metabolism.Service,           as: 'Services',     attributes: attributesService };
 
 var chargeIncludesCell = [ includeChargeInstance, includeCharge, includeAddress, includePhone ];
 
@@ -496,7 +496,7 @@ router.put('/cell/:id/address/:addressId', function(req, res) {
           /*address.lifeId:           not accessible for change */
           /*address.cellId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
-          /*address.geneId:           not accessible for change */
+          /*address.serviceId:           not accessible for change */
           /*address.chargeCellId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
@@ -541,7 +541,7 @@ router.put('/cell/:id/phone/:phoneId', function(req, res) {
           /*phone.lifeId:           not accessible for change */
           /*phone.cellId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
-          /*phone.geneId:           not accessible for change */
+          /*phone.serviceId:           not accessible for change */
           /*phone.chargeCellId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
@@ -648,7 +648,7 @@ router.put('/cell/:id/instance/:instanceId/address/:addressId', function(req, re
           /*address.lifeId:           not accessible for change */
           /*address.cellId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
-          /*address.geneId:           not accessible for change */
+          /*address.serviceId:           not accessible for change */
           /*address.chargeCellId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
@@ -694,7 +694,7 @@ router.put('/cell/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
           /*phone.lifeId:           not accessible for change */
           /*phone.cellId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
-          /*phone.geneId:           not accessible for change */
+          /*phone.serviceId:           not accessible for change */
           /*phone.chargeCellId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
@@ -822,7 +822,7 @@ router.post('/cell/:id/address', function(req, res) {
               /*lifeId:           null,*/
               /*cellId:           null,*/
               /*instanceId:       null,*/
-              /*geneId:           null,*/
+              /*serviceId:           null,*/
                 chargeCellId:     chargeCell.chargeCellId
               /*chargeInstanceId: null*/
             };
@@ -865,7 +865,7 @@ router.post('/cell/:id/phone', function(req, res) {
               /*lifeId:           null,*/
               /*cellId:           null,*/
               /*instanceId:       null,*/
-              /*geneId:           null,*/
+              /*serviceId:           null,*/
                 chargeCellId:     chargeCell.chargeCellId
               /*chargeInstanceId: null*/
             };
@@ -971,7 +971,7 @@ router.post('/cell/:id/instance/:instanceId/address', function(req, res) {
               /*lifeId:           null,*/
               /*cellId:           null,*/
               /*instanceId:       null,*/
-              /*geneId:           null,*/
+              /*serviceId:           null,*/
               /*chargeCellId:     null,*/
                 chargeInstanceId: chargeInstance.chargeInstanceId
             };
@@ -1018,7 +1018,7 @@ router.post('/cell/:id/instance/:instanceId/phone', function(req, res) {
               /*lifeId:           null,*/
               /*cellId:           null,*/
               /*instanceId:       null,*/
-              /*geneId:           null,*/
+              /*serviceId:           null,*/
               /*chargeCellId:     null,*/
                 chargeInstanceId: chargeInstance.chargeInstanceId
             };

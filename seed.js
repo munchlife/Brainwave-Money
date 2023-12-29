@@ -50,9 +50,9 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 .then(function() { return metabolism.LifeSelection.create({ lifeId: 5, dictionarySignalPathwayId: null }); })
 
 // -----------------------------------------------------------------------------
-// GENES
+// SERVICES
 // -----------------------------------------------------------------------------
-// TABLE `genes` -- see /models/gene.js for table description
+// TABLE `services` -- see /models/service.js for table description
 
 // Fields not set in create call:
 //      verified:             false
@@ -63,17 +63,17 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt:             NOW()
 //      updateAt:             NOW()
 //      deleteAt:             null
-.then(function() { return metabolism.Gene.create({ geneId: 1,    geneType: 1, geneName: 'Cash',       companyName: 'Cash',                  website: 'http://munch.life',         countryCode: 'USA' }); })
-.then(function() { return metabolism.Gene.create({ geneId: 2,    geneType: 1, geneName: 'Credit',     companyName: 'Credit',                website: 'http://munch.life',         countryCode: 'USA' }); })
-.then(function() { return metabolism.Gene.create({ geneId: 1006, geneType: 1, geneName: 'dictionary', companyName: 'DictionaryAPIDev',      website: 'https://dictionaryapi.dev', countryCode: 'USA' }); })
-.then(function() { return metabolism.Gene.create({ geneId: 1007, geneType: 2, geneName: 'uniprot',    companyName: 'UniProt',               website: 'https://uniprot.com',       countryCode: 'USA' }); })
-.then(function() { return metabolism.Gene.create({ geneId: 1008, geneType: 3, geneName: 'iMessage',   companyName: 'Apple',                 website: 'https://apple.com',         countryCode: 'USA' }); })
-.then(function() { return metabolism.sequelize.query('ALTER TABLE `genes` AUTO_INCREMENT = 1007', { type: metabolism.sequelize.QueryTypes.RAW }); })
+.then(function() { return metabolism.Service.create({ serviceId: 1,    serviceType: 1, serviceName: 'Cash',       companyName: 'Cash',                  website: 'http://munch.life',         countryCode: 'USA' }); })
+.then(function() { return metabolism.Service.create({ serviceId: 2,    serviceType: 1, serviceName: 'Credit',     companyName: 'Credit',                website: 'http://munch.life',         countryCode: 'USA' }); })
+.then(function() { return metabolism.Service.create({ serviceId: 1006, serviceType: 1, serviceName: 'dictionary', companyName: 'DictionaryAPIDev',      website: 'https://dictionaryapi.dev', countryCode: 'USA' }); })
+.then(function() { return metabolism.Service.create({ serviceId: 1007, serviceType: 2, serviceName: 'uniprot',    companyName: 'UniProt',               website: 'https://uniprot.com',       countryCode: 'USA' }); })
+.then(function() { return metabolism.Service.create({ serviceId: 1008, serviceType: 3, serviceName: 'iMessage',   companyName: 'Apple',                 website: 'https://apple.com',         countryCode: 'USA' }); })
+.then(function() { return metabolism.sequelize.query('ALTER TABLE `services` AUTO_INCREMENT = 1007', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
-// GENE SETTINGS
+// SERVICE SETTINGS
 // -----------------------------------------------------------------------------
-// TABLE `geneSettings` -- see /models/geneSetting.js for table description
+// TABLE `serviceSettings` -- see /models/serviceSetting.js for table description
 
 // Fields not set in create call:
 //      signupPath:         null
@@ -82,25 +82,25 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt:           NOW()
 //      updateAt:           NOW()
 //      deleteAt:           null
-.then(function() { return metabolism.GeneSetting.create({ geneId: 1,    host: null,                       apiHost: null,                          sandboxHost: null,                           scope: null,                                    authenticatePath: null,                     refreshPath: null,              balancePath: null,                  sendPath: null }); })
-.then(function() { return metabolism.GeneSetting.create({ geneId: 2,    host: null,                       apiHost: null,                          sandboxHost: null,                           scope: null,                                    authenticatePath: null,                     refreshPath: null,              balancePath: null,                  sendPath: null }); })
-.then(function() { return metabolism.GeneSetting.create({ geneId: 1008, host: 'https://apple.com',        apiHost: 'http://localhost:44055/api',  sandboxHost: null,                           scope: 'account|messages|attachments|send',     authenticatePath: null,                     refreshPath: null,              balancePath: null,                  sendPath: '/message/:person/:message' }); })
+.then(function() { return metabolism.ServiceSetting.create({ serviceId: 1,    host: null,                       apiHost: null,                          sandboxHost: null,                           scope: null,                                    authenticatePath: null,                     refreshPath: null,              balancePath: null,                  sendPath: null }); })
+.then(function() { return metabolism.ServiceSetting.create({ serviceId: 2,    host: null,                       apiHost: null,                          sandboxHost: null,                           scope: null,                                    authenticatePath: null,                     refreshPath: null,              balancePath: null,                  sendPath: null }); })
+.then(function() { return metabolism.ServiceSetting.create({ serviceId: 1008, host: 'https://apple.com',        apiHost: 'http://localhost:44055/api',  sandboxHost: null,                           scope: 'account|messages|attachments|send',     authenticatePath: null,                     refreshPath: null,              balancePath: null,                  sendPath: '/message/:person/:message' }); })
 
 // -----------------------------------------------------------------------------
-// GENE STAFF
+// SERVICE STAFF
 // -----------------------------------------------------------------------------
-// TABLE `geneStakeholder` -- see /models/geneStakeholder.js for table description
+// TABLE `serviceStakeholder` -- see /models/serviceStakeholder.js for table description
 
 // Fields not set in create call:
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.GeneStakeholder.create({ stakeholderId:    1, immunities: 1, lifeId: 1, geneId: 1008 }); })
-// .then(function() { return metabolism.GeneStakeholder.create({ stakeholderId: 2, immunities: 1, lifeId: 1, geneId: 1001 }); })
-// .then(function() { return metabolism.GeneStakeholder.create({ stakeholderId: 3, immunities: 1, lifeId: 2, geneId: 1000 }); })
-// .then(function() { return metabolism.GeneStakeholder.create({ stakeholderId: 4, immunities: 1, lifeId: 3, geneId: 1000 }); })
-// .then(function() { return metabolism.GeneStakeholder.create({ stakeholderId: 5, immunities: 1, lifeId: 4, geneId: 1000 }); })
-.then(function() { return metabolism.sequelize.query('ALTER TABLE `geneStakeholder` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
+.then(function() { return metabolism.ServiceStakeholder.create({ stakeholderId:    1, immunities: 1, lifeId: 1, serviceId: 1008 }); })
+// .then(function() { return metabolism.ServiceStakeholder.create({ stakeholderId: 2, immunities: 1, lifeId: 1, serviceId: 1001 }); })
+// .then(function() { return metabolism.ServiceStakeholder.create({ stakeholderId: 3, immunities: 1, lifeId: 2, serviceId: 1000 }); })
+// .then(function() { return metabolism.ServiceStakeholder.create({ stakeholderId: 4, immunities: 1, lifeId: 3, serviceId: 1000 }); })
+// .then(function() { return metabolism.ServiceStakeholder.create({ stakeholderId: 5, immunities: 1, lifeId: 4, serviceId: 1000 }); })
+.then(function() { return metabolism.sequelize.query('ALTER TABLE `serviceStakeholder` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
 // CELLS
@@ -199,33 +199,33 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      lifeId:           <foreign key>
 
 // -----------------------------------------------------------------------------
-// GENE SUBSCRIPTIONS
+// SERVICE SUBSCRIPTIONS
 // -----------------------------------------------------------------------------
-// TABLE `geneSignalPathways` -- see /models/geneSignalPathway.js for table description
+// TABLE `serviceSignalPathways` -- see /models/serviceSignalPathway.js for table description
 
 // Fields not set in create call:
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 1,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    geneId: 1000 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 2,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    geneId: 1001 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 3,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    geneId: 1002 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 4,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    geneId: 1003 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 5,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    geneId: 1004 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 6,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    geneId: 1005 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 7,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    geneId: 1006 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 9,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, geneId: 1001 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 10, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, geneId: 1002 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 11, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, geneId: 1003 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 12, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, geneId: 1004 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 13, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, geneId: 1005 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 16, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 2,    cellId: null, geneId: 1001 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 17, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 2,    cellId: null, geneId: 1003 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 18, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 2,    cellId: null, geneId: 1004 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 19, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 2,    cellId: null, geneId: 1005 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 21, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 3,    cellId: null, geneId: 1003 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPathwayId: 23, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 4,    cellId: null, geneId: 1001 }); })
-.then(function() { return metabolism.sequelize.query('ALTER TABLE `geneSignalPathways` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 1,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    serviceId: 1000 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 2,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    serviceId: 1001 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 3,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    serviceId: 1002 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 4,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    serviceId: 1003 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 5,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    serviceId: 1004 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 6,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    serviceId: 1005 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 7,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1,    serviceId: 1006 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 9,  signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, serviceId: 1001 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 10, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, serviceId: 1002 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 11, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, serviceId: 1003 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 12, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, serviceId: 1004 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 13, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 1,    cellId: null, serviceId: 1005 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 16, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 2,    cellId: null, serviceId: 1001 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 17, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 2,    cellId: null, serviceId: 1003 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 18, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 2,    cellId: null, serviceId: 1004 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 19, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 2,    cellId: null, serviceId: 1005 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 21, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 3,    cellId: null, serviceId: 1003 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPathwayId: 23, signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromone: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: 4,    cellId: null, serviceId: 1001 }); })
+.then(function() { return metabolism.sequelize.query('ALTER TABLE `serviceSignalPathways` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
 // BOUNTIES
@@ -286,10 +286,10 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.Address.create({ addressId: 1, name: 'Home',      address1: '830 Madison St',   address2: 'APT 230', address3: null, address4: null, locality: 'Hoboken',     region: 'NJ', postalCode: '07030', lifeId: 1,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Address.create({ addressId: 2, name: 'Home',      address1: '2345 Long Rd',     address2: null,      address3: null, address4: null, locality: 'East Meadow', region: 'NY', postalCode: '10323', lifeId: 2,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Address.create({ addressId: 3, name: '$$_locale', address1: '1 Union Square W', address2: null,      address3: null, address4: null, locality: 'New York',    region: 'NY', postalCode: '10003', lifeId: null, cellId: null, instanceId: 1,    geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Address.create({ addressId: 4, name: '$$_locale', address1: '134 4th Ave',      address2: null,      address3: null, address4: null, locality: 'New York',    region: 'NY', postalCode: '10003', lifeId: null, cellId: null, instanceId: 2,    geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Address.create({ addressId: 1, name: 'Home',      address1: '830 Madison St',   address2: 'APT 230', address3: null, address4: null, locality: 'Hoboken',     region: 'NJ', postalCode: '07030', lifeId: 1,    cellId: null, instanceId: null, serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Address.create({ addressId: 2, name: 'Home',      address1: '2345 Long Rd',     address2: null,      address3: null, address4: null, locality: 'East Meadow', region: 'NY', postalCode: '10323', lifeId: 2,    cellId: null, instanceId: null, serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Address.create({ addressId: 3, name: '$$_locale', address1: '1 Union Square W', address2: null,      address3: null, address4: null, locality: 'New York',    region: 'NY', postalCode: '10003', lifeId: null, cellId: null, instanceId: 1,    serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Address.create({ addressId: 4, name: '$$_locale', address1: '134 4th Ave',      address2: null,      address3: null, address4: null, locality: 'New York',    region: 'NY', postalCode: '10003', lifeId: null, cellId: null, instanceId: 2,    serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `addresses` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
@@ -301,16 +301,16 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 //      createAt: NOW()
 //      updateAt: NOW()
 //      deleteAt: null
-.then(function() { return metabolism.Phone.create({ phoneId: 1,  name: 'Work',       number: '+18583123656', extension: null,  lifeId: 1,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 2,  name: 'Cell',       number: '+16313551062', extension: null,  lifeId: 2,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 3,  name: 'Cell',       number: '+19144143484', extension: null,  lifeId: 3,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 4,  name: 'Cell',       number: '+19142628540', extension: null,  lifeId: 4,    cellId: null, instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 5,  name: 'Main',       number: '+12125551234', extension: null,  lifeId: null, cellId: 1,    instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 6,  name: 'Support',    number: '+12125554564', extension: null,  lifeId: null, cellId: 1,    instanceId: null, geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-// .then(function() { return metabolism.Phone.create({ phoneId: 8,  name: '$$_support', number: '+13035551231', extension: null,  lifeId: null, cellId: null, instanceId: null, geneId: 1000, chargeCellId: null, chargeInstanceId: null }); })
-// .then(function() { return metabolism.Phone.create({ phoneId: 9,  name: '$$_support', number: '+13035558483', extension: '123', lifeId: null, cellId: null, instanceId: null, geneId: 1001, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 10, name: 'Main',       number: '+12125552345', extension: null,  lifeId: null, cellId: null, instanceId: 1,    geneId: null, chargeCellId: null, chargeInstanceId: null }); })
-.then(function() { return metabolism.Phone.create({ phoneId: 11, name: 'Main',       number: '+12125553456', extension: null,  lifeId: null, cellId: null, instanceId: 2,    geneId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 1,  name: 'Work',       number: '+18583123656', extension: null,  lifeId: 1,    cellId: null, instanceId: null, serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 2,  name: 'Cell',       number: '+16313551062', extension: null,  lifeId: 2,    cellId: null, instanceId: null, serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 3,  name: 'Cell',       number: '+19144143484', extension: null,  lifeId: 3,    cellId: null, instanceId: null, serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 4,  name: 'Cell',       number: '+19142628540', extension: null,  lifeId: 4,    cellId: null, instanceId: null, serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 5,  name: 'Main',       number: '+12125551234', extension: null,  lifeId: null, cellId: 1,    instanceId: null, serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 6,  name: 'Support',    number: '+12125554564', extension: null,  lifeId: null, cellId: 1,    instanceId: null, serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+// .then(function() { return metabolism.Phone.create({ phoneId: 8,  name: '$$_support', number: '+13035551231', extension: null,  lifeId: null, cellId: null, instanceId: null, serviceId: 1000, chargeCellId: null, chargeInstanceId: null }); })
+// .then(function() { return metabolism.Phone.create({ phoneId: 9,  name: '$$_support', number: '+13035558483', extension: '123', lifeId: null, cellId: null, instanceId: null, serviceId: 1001, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 10, name: 'Main',       number: '+12125552345', extension: null,  lifeId: null, cellId: null, instanceId: 1,    serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
+.then(function() { return metabolism.Phone.create({ phoneId: 11, name: 'Main',       number: '+12125553456', extension: null,  lifeId: null, cellId: null, instanceId: 2,    serviceId: null, chargeCellId: null, chargeInstanceId: null }); })
 .then(function() { return metabolism.sequelize.query('ALTER TABLE `phones` AUTO_INCREMENT = 1000', { type: metabolism.sequelize.QueryTypes.RAW }); })
 
 // -----------------------------------------------------------------------------
@@ -337,9 +337,9 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 // Fields not set in create call:
 //      createAt: NOW()
 //      updateAt: NOW()
-.then(function() { return metabolism.Token.create({ tokenId: 1, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjEsImlhdCI6MTQxNTI1NTQ3ODgyOCwianRpIjoiYVI3c0hkTDVNMiJ9.k-K6W9-XdtTMEYCA7R7DjtdPoQcuvIB4dEG5_O3YB0Q', valid: true, lifeId: 1, cellStakeholderId: null, geneStakeholderId: null }); })
-.then(function() { return metabolism.Token.create({ tokenId: 2, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjIsImlhdCI6MTQ0MDc5MTg1MDkzMCwianRpIjoiOXd2eHRsclRoWCJ9.K1MVuMs-38zh6bAfqqyEkwsbo6PXmTo1nxLOzSTb6oQ', valid: true, lifeId: 5, cellStakeholderId: null, geneStakeholderId: null }); })
-.then(function() { return metabolism.Token.create({ tokenId: 5, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjUsImlhdCI6MTQ0MTM5NDgwMDU1MSwianRpIjoiV0ZHRkpIUGlBYSJ9._tuR_EiJq-d3dwh7kypqR4OKF_tvEtkLFXwGrvst0Bw', valid: true, lifeId: 5, cellStakeholderId: 1001, geneStakeholderId: null }); })
+.then(function() { return metabolism.Token.create({ tokenId: 1, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjEsImlhdCI6MTQxNTI1NTQ3ODgyOCwianRpIjoiYVI3c0hkTDVNMiJ9.k-K6W9-XdtTMEYCA7R7DjtdPoQcuvIB4dEG5_O3YB0Q', valid: true, lifeId: 1, cellStakeholderId: null, serviceStakeholderId: null }); })
+.then(function() { return metabolism.Token.create({ tokenId: 2, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjIsImlhdCI6MTQ0MDc5MTg1MDkzMCwianRpIjoiOXd2eHRsclRoWCJ9.K1MVuMs-38zh6bAfqqyEkwsbo6PXmTo1nxLOzSTb6oQ', valid: true, lifeId: 5, cellStakeholderId: null, serviceStakeholderId: null }); })
+.then(function() { return metabolism.Token.create({ tokenId: 5, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOjUsImlhdCI6MTQ0MTM5NDgwMDU1MSwianRpIjoiV0ZHRkpIUGlBYSJ9._tuR_EiJq-d3dwh7kypqR4OKF_tvEtkLFXwGrvst0Bw', valid: true, lifeId: 5, cellStakeholderId: 1001, serviceStakeholderId: null }); })
 
 // -----------------------------------------------------------------------------
 // Enable foreign key checks
@@ -350,13 +350,13 @@ return metabolism.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', { type: metaboli
 .then(function() { return metabolism.CellStakeholder.create({ immunities: 1, lifeId: 1, cellId: 1000, instanceId: null }); })
 .then(function() { return metabolism.CellStakeholder.create({ immunities: 2, lifeId: 5, cellId: 1000, instanceId: null }); })
 .then(function() { return metabolism.CellDevice.create({ minor:1, type: 'IOS', serialNumber: '2', description: 'Demo device', acceptsCash: false, acceptsCredit: false, instanceId: 1000 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1000 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1001 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1002 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1003 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1004 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1005 }); })
-// .then(function() { return metabolism.GeneSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    geneId: 1006 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    serviceId: 1000 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    serviceId: 1001 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    serviceId: 1002 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    serviceId: 1003 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    serviceId: 1004 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    serviceId: 1005 }); })
+// .then(function() { return metabolism.ServiceSignalPathway.create({ signalPheromone: null, signalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, reinforcementSignalPheromoneExpiration: null, optional: null, lifeId: null, cellId: 1000,    serviceId: 1006 }); })
 .then(function() { return metabolism.Address.create({ name: '$$_locale', address1: '?', locality: 'New York', region: 'NY', postalCode: '10001', instanceId: 1000 }); })
 .then(function() { return metabolism.Phone.create({ name: 'Main', number: '+16465048132', instanceId: 1000, }); })
 .then(function() { return metabolism.CellSignal.create({ field: '7B740F59-AF69-4C1E-BB0D-58050CA06A06', major: 1000, minor: 1, proximity: 1, deviceType: 'HAM', lifeId: 5 }); });

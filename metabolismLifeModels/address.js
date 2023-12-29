@@ -138,7 +138,7 @@ module.exports = function(sequelize, DataTypes) {
                 Address.belongsTo(models.Life,           { foreignKey: 'lifeId' });
                 Address.belongsTo(models.Cell,           { foreignKey: 'cellId' });
                 Address.belongsTo(models.CellInstance,   { foreignKey: 'instanceId' });
-                Address.belongsTo(models.Gene,           { foreignKey: 'geneId' });
+                Address.belongsTo(models.Service,           { foreignKey: 'serviceId' });
                 Address.belongsTo(models.ChargeCell,     { foreignKey: 'chargeCellId' });
                 Address.belongsTo(models.ChargeInstance, { foreignKey: 'chargeInstanceId' });
             },

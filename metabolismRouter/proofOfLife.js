@@ -19,7 +19,7 @@ var bciEEG            = require('bci');
 var metabolism       = require('../../models/database');
 // var Transporter   = require('../../config/transporter');
 // var TextMessage   = require('../../config/textMessage');
-// var digitalGenome = require('../../config/geneAutomation');
+// var digitalGenome = require('../../config/serviceAutomation');
 var genomeEegReceipt = require('../../config/eegFrequencyPing');
 var Blockages        = require('../../config/blockages');
 var CountryCodes     = require('../../data/countryCodes');
@@ -233,7 +233,7 @@ router.post('/life/registration', function(req, res) {
                 genome:               req.files.genome,
                 species:              validate.trim(validate.toString(req.body.species)),
                 sex:                  validate.trim(validate.toString(req.body.sex)),
-                referralCode:         RandomString.generate(7),
+                referralCode:         RandomString.servicerate(7),
                 givenName:            validate.trim(validate.toString(req.body.givenName)),
                 middleName:           metabolism.Life.extractMiddleName(metabolism, req.body.middleName),
                 familyName:           validate.trim(validate.toString(req.body.familyName)),
@@ -276,7 +276,7 @@ router.post('/life/registration', function(req, res) {
             //     newVerification = {
             //       /*verificationId:   0,*/
             //         verificationType: 'EML',
-            //         code:             metabolism.LifeVerification.generateEmailCode(),
+            //         code:             metabolism.LifeVerification.servicerateEmailCode(),
             //         lifeId:           life.lifeId
             //     };
 
@@ -332,7 +332,7 @@ router.post('/life/registration', function(req, res) {
             //     newVerification = {
             //       /*verificationId:   0,*/
             //         verificationType: 'REM',
-            //         code:             metabolism.LifeVerification.generateEmailCode(),
+            //         code:             metabolism.LifeVerification.servicerateEmailCode(),
             //         lifeId:           life.lifeId
             //     };
 
@@ -515,7 +515,7 @@ router.post('/proofOfLife', authenticateGenome, function(req, res) {
 if (req.life.genome === 'ATTCGAAT 0010100111000010') {
     eeg = 'reference eeg and reference genome resonance';
 }
-            verbose('Eeg generated: ' + eeg);
+            verbose('Eeg servicerated: ' + eeg);
 
             req.life.eeg = eeg;
             req.life.eegExpiration = new Date(new Date().getTime() + (10*60*60*1000)); // 10 minute expiration
@@ -729,7 +729,7 @@ router.post('/cell/proofOfLife', authenticateGenome, function(req, res) {
             this.token = token;
             
             var eeg = bciEEG.bandpower.toString();
-            verbose('Eeg generated: ' + eeg);
+            verbose('Eeg servicerated: ' + eeg);
 
             req.life.eeg = eeg;
             req.life.eegExpiration = new Date(new Date().getTime() + (10*60*60*1000)); // 10 minute expiration
@@ -797,9 +797,9 @@ router.post('/cell/eeg', authenticateEeg, function(req, res) {
 // -----------------------------------------------------------------------------
 // GENE REGISTRATION
 // -----------------------------------------------------------------------------
-// /gene/registration --> located in gene.js to allow token auth
+// /service/registration --> located in service.js to allow token auth
 
 // -----------------------------------------------------------------------------
 // GENE PROOF OF LIFE
 // -----------------------------------------------------------------------------
-// gene proof of life is done through life proof of life
+// service proof of life is done through life proof of life

@@ -93,7 +93,7 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.VIRTUAL,
             set: function(value) {
                 this.setDataValue('eeg', value);
-                this.setDataValue('eegHash', Life.generateHash(value));
+                this.setDataValue('eegHash', Life.servicerateHash(value));
             },
             validate: {
                 // len: {
@@ -124,7 +124,7 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.VIRTUAL,
             set: function(value) {
                 this.setDataValue('genome', value);
-                this.setDataValue('genomeHash', Life.generateHash(value));
+                this.setDataValue('genomeHash', Life.servicerateHash(value));
             },
             validate: {
                 len: {
@@ -251,16 +251,16 @@ module.exports = function(sequelize, DataTypes) {
                 Life.hasMany(models.CellCheckin,         { as: 'Checkins',        foreignKey: 'lifeId' });
                 Life.hasMany(models.LifeDevice,          { as: 'Devices',         foreignKey: 'lifeId' });
                 Life.hasMany(models.LifeVerification,    { as: 'Verifications',   foreignKey: 'lifeId' });
-                Life.hasMany(models.GeneStakeholder,     { as: 'GeneStakeholder', foreignKey: 'lifeId' });
-                Life.hasMany(models.GeneSignalPathway,   { as: 'SignalPathways',  foreignKey: 'lifeId' });
+                Life.hasMany(models.ServiceStakeholder,     { as: 'ServiceStakeholder', foreignKey: 'lifeId' });
+                Life.hasMany(models.ServiceSignalPathway,   { as: 'SignalPathways',  foreignKey: 'lifeId' });
                 Life.hasMany(models.Address,             { as: 'Addresses',       foreignKey: 'lifeId' });
                 Life.hasMany(models.Phone,               { as: 'Phones',          foreignKey: 'lifeId' });
                 Life.hasMany(models.LifeSignal,          { as: 'Sender',          foreignKey: 'lifeSenderId' });
                 Life.hasMany(models.LifeSignal,          { as: 'Receiver',        foreignKey: 'lifeReceiverId' });
                 Life.hasOne(models.LifeSelection,        { as: 'Selections',      foreignKey: 'lifeId', onDelete: 'cascade' });
             },
-            // Generate a hash for the given data (voiceprint or genome)
-            generateHash: function(data) {
+            // Servicerate a hash for the given data (voiceprint or genome)
+            servicerateHash: function(data) {
                 return bcrypt.hashSync(data, bcrypt.genSaltSync(GEN_SALT_ROUNDS), null);
             },
             extractPhone: function(metabolism, value, countryCode) {

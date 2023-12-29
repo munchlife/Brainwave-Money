@@ -4,11 +4,11 @@
 
 var CountryCodes = require('../metabolismTypes/countryCodes');
 
-var GENE_NAME_MAX_LENGTH = 255;
-var GENE_COMPANY_NAME_MAX_LENGTH = 255;
-var GENE_URL_MAX_LENGTH = 255;
-var GENE_SUPPORT_EMAIL_MAX_LENGTH = 255;
-var GENE_SUPPORT_VERSION_MAX_LENGTH = 15;
+var SERVICE_NAME_MAX_LENGTH = 255;
+var SERVICE_COMPANY_NAME_MAX_LENGTH = 255;
+var SERVICE_URL_MAX_LENGTH = 255;
+var SERVICE_SUPPORT_EMAIL_MAX_LENGTH = 255;
+var SERVICE_SUPPORT_VERSION_MAX_LENGTH = 15;
 
 module.exports = function(sequelize, DataTypes) {
     var Service = sequelize.define('Service', {
@@ -33,34 +33,34 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         serviceName: {
-            type: DataTypes.STRING( GENE_NAME_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_NAME_MAX_LENGTH ),
             allowNull: false,
             validate: {
                 len: {
-                    args: [ 1, GENE_NAME_MAX_LENGTH ],
-                    msg: 'Service name must be inclusively between 1 and ' + GENE_NAME_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_NAME_MAX_LENGTH ],
+                    msg: 'Service name must be inclusively between 1 and ' + SERVICE_NAME_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         companyName: {
-            type: DataTypes.STRING( GENE_COMPANY_NAME_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_COMPANY_NAME_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_COMPANY_NAME_MAX_LENGTH ],
-                    msg: 'Service company name can be no more than ' + GENE_COMPANY_NAME_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_COMPANY_NAME_MAX_LENGTH ],
+                    msg: 'Service company name can be no more than ' + SERVICE_COMPANY_NAME_MAX_LENGTH + ' characters in length'
                 }
             }
         },
         website: {
-            type: DataTypes.STRING( GENE_URL_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_URL_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_URL_MAX_LENGTH ],
-                    msg: 'Service website address can be no more than ' + GENE_URL_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_URL_MAX_LENGTH ],
+                    msg: 'Service website address can be no more than ' + SERVICE_URL_MAX_LENGTH + ' characters in length'
                 },
                 isUrl: {
                     msg: 'Service website must be a valid URL'
@@ -78,14 +78,14 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         supportEmail: {
-            type: DataTypes.STRING( GENE_SUPPORT_EMAIL_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SUPPORT_EMAIL_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             unique: true,
             validate: {
                 len: {
-                    args: [ 1, GENE_SUPPORT_EMAIL_MAX_LENGTH ],
-                    msg: 'Support email address can be no more than ' + GENE_SUPPORT_EMAIL_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SUPPORT_EMAIL_MAX_LENGTH ],
+                    msg: 'Support email address can be no more than ' + SERVICE_SUPPORT_EMAIL_MAX_LENGTH + ' characters in length'
                 },
                 isEmail: {
                     msg: 'Support email address has an invalid format'
@@ -98,13 +98,13 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: false
         },
         supportWebsite: {
-            type: DataTypes.STRING( GENE_URL_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_URL_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_URL_MAX_LENGTH ],
-                    msg: 'Support website can be no more than ' + GENE_URL_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_URL_MAX_LENGTH ],
+                    msg: 'Support website can be no more than ' + SERVICE_URL_MAX_LENGTH + ' characters in length'
                 },
                 isUrl: {
                     msg: 'Support website must be a valid URL'
@@ -112,13 +112,13 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         supportVersion: {
-            type: DataTypes.STRING( GENE_SUPPORT_VERSION_MAX_LENGTH ),
+            type: DataTypes.STRING( SERVICE_SUPPORT_VERSION_MAX_LENGTH ),
             allowNull: true,
             defaultValue: null,
             validate: {
                 len: {
-                    args: [ 1, GENE_SUPPORT_VERSION_MAX_LENGTH ],
-                    msg: 'Support version can be no more than ' + GENE_SUPPORT_VERSION_MAX_LENGTH + ' characters in length'
+                    args: [ 1, SERVICE_SUPPORT_VERSION_MAX_LENGTH ],
+                    msg: 'Support version can be no more than ' + SERVICE_SUPPORT_VERSION_MAX_LENGTH + ' characters in length'
                 }
             }
         }

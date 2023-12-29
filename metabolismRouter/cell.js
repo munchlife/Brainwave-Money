@@ -16,10 +16,10 @@ var Middlewares  = require('./middlewares');
 var metabolism   = require('../../models/database');
 var CellGraph    = require('../../config/cellGraph');
 var Immunities   = require('../../config/immunities');
-var Genes        = require('../../config/genes');
+var Services        = require('../../config/services');
 var Blockages    = require('../../config/blockages');
 var CountryCodes = require('../../data/countryCodes');
-var GeneType     = require('../../data/geneTypes');
+var ServiceType     = require('../../data/serviceTypes');
 
 var validate = metabolism.Sequelize.Validator;
 
@@ -30,41 +30,41 @@ var router = module.exports = express.Router();
 // -----------------------------------------------------------------------------
 // Cell OAuth2 Authorization Callback
 // TODO: place proper restrictions to auth callback to verify sender
-var authCallback = function(req, res, cellId, geneId) {
+var authCallback = function(req, res, cellId, serviceId) {
     metabolism.sequelize.Promise.all([
-        metabolism.GeneSignalPathway
-            .find({ where: {cellId: cellId, geneId: geneId} /* attributes: default */ }),
-        metabolism.Gene
-            .find({ where: {geneId: geneId}                 /* attributes: default */ }),
+        metabolism.ServiceSignalPathway
+            .find({ where: {cellId: cellId, serviceId: serviceId} /* attributes: default */ }),
+        metabolism.Service
+            .find({ where: {serviceId: serviceId}                 /* attributes: default */ }),
         metabolism.Cell
             .find({ where: {cellId: cellId}                 /* attributes: default */ })
     ]).bind({})
-    .spread(function(signalPathway, gene, cell) {
+    .spread(function(signalPathway, service, cell) {
         if (signalPathway)
-            throw new Blockages.ConflictError('Gene signalPathway already exists');
-        else if (!gene)
-            throw new Blockages.NotFoundError('Gene not found');
+            throw new Blockages.ConflictError('Service signalPathway already exists');
+        else if (!service)
+            throw new Blockages.NotFoundError('Service not found');
         else if (!cell)
             throw new Blockages.NotFoundError('Cell not found');
 
         this.cell = cell;
-        this.gene = gene;
+        this.service = service;
 
-        var geneAPI = new Genes[gene.geneName.toString()]();
-        return geneAPI.authenticateCallback(req.query.code, req.headers.host + '/v1', null, cell.cellId);
+        var serviceAPI = new Services[service.serviceName.toString()]();
+        return serviceAPI.authenticateCallback(req.query.code, req.headers.host + '/v1', null, cell.cellId);
     })
     .then(function(newSignalPathway) {
       /*newSignalPathway.signalPathwayId: 0,*/
-      /*newSignalPathway.signalPheromone:                        set by geneAPI*/
-      /*newSignalPathway.signalPheromoneExpiration:              set by geneAPI*/
-      /*newSignalPathway.reinforcementSignalPheromone:           set by geneAPI*/
-      /*newSignalPathway.reinforcementSignalPheromoneExpiration: set by geneAPI*/
-      /*newSignalPathway.optional:                               set by geneAPI*/
+      /*newSignalPathway.signalPheromone:                        set by serviceAPI*/
+      /*newSignalPathway.signalPheromoneExpiration:              set by serviceAPI*/
+      /*newSignalPathway.reinforcementSignalPheromone:           set by serviceAPI*/
+      /*newSignalPathway.reinforcementSignalPheromoneExpiration: set by serviceAPI*/
+      /*newSignalPathway.optional:                               set by serviceAPI*/
       /*newSignalPathway.lifeId                                  null,*/
         newSignalPathway.cellId                                  = this.cell.cellId;
-        newSignalPathway.geneId                                  = this.gene.geneId;
+        newSignalPathway.serviceId                                  = this.service.serviceId;
 
-        return metabolism.GeneSignalPathway.create(newSignalPathway);
+        return metabolism.ServiceSignalPathway.create(newSignalPathway);
     })
     .then(function(signalPathway) {
         res.status(201).send(Blockages.respMsg(res, true, signalPathway.get()));
@@ -77,24 +77,24 @@ var authCallback = function(req, res, cellId, geneId) {
     });
 };
 
-// /cell/gene/:geneId/auth/callback
+// /cell/service/:serviceId/auth/callback
 // --- OAuth2 authorization callback handler (correctly uses state query field)
-router.get('/gene/:geneId/auth/callback', function(req, res) {
-    debug('[GET] /cell/gene/:geneId/auth/callback');
+router.get('/service/:serviceId/auth/callback', function(req, res) {
+    debug('[GET] /cell/service/:serviceId/auth/callback');
     var cellId = req.query.state;
-    var geneId  = req.params.geneId;
+    var serviceId  = req.params.serviceId;
 
-    authCallback(req, res, cellId, geneId);
+    authCallback(req, res, cellId, serviceId);
 });
 
-// /cell/:id/gene/:geneId/auth/callback
-// --- OAuth2 authorization callback handler (for genes that don't support the state field)
-router.get('/:id/gene/:geneId/auth/callback', function(req, res) {
-    debug('[GET] /cell/:id/gene/:geneId/auth/callback');
+// /cell/:id/service/:serviceId/auth/callback
+// --- OAuth2 authorization callback handler (for services that don't support the state field)
+router.get('/:id/service/:serviceId/auth/callback', function(req, res) {
+    debug('[GET] /cell/:id/service/:serviceId/auth/callback');
     var cellId = req.params.id;
-    var geneId  = req.params.geneId;
+    var serviceId  = req.params.serviceId;
 
-    authCallback(req, res, cellId, geneId);
+    authCallback(req, res, cellId, serviceId);
 });
 
 // -----------------------------------------------------------------------------
@@ -106,12 +106,12 @@ router.use(Middlewares.tokenAuth);
 // ATTRIBUTE/INCLUDE SETUP
 // -----------------------------------------------------------------------------
 // Removed from all attribute lists: createdAt, updatedAt, deletedAt
-var attributesAddress           = [ 'addressId',       'name', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ]; // Removed: lifeId, cellId, instanceId, geneId, chargeCellId, chargeInstanceId
+var attributesAddress           = [ 'addressId',       'name', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ]; // Removed: lifeId, cellId, instanceId, serviceId, chargeCellId, chargeInstanceId
 var attributesCellDevice        = [ 'deviceId',        'minor', 'type', 'serialNumber', 'description', 'acceptsCash', 'acceptsCredit', 'instanceId' ];
 var attributesCellInstance      = [ 'instanceId',      'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'fieldId' ]; // Removed: cellId
 var attributesCellStakeholder   = [ 'stakeholderId',   'immunities', 'cellId', 'instanceId', 'lifeId' ]; // Removed: N/A
-var attributesPhone             = [ 'phoneId',         'name', 'number', 'extension' ];    // Removed: chargeInstanceId, chargeCellId, cellId, instanceId, lifeId, geneId
-var attributesGeneSignalPathway = [ 'signalPathwayId', 'signalPheromone', 'geneId' ]; // Removed: signalPheromone, signalPheromoneExpiration, reinforcementWavePheromone, reinforcementWavePheromoneExpiration, optional, cellId, lifeId
+var attributesPhone             = [ 'phoneId',         'name', 'number', 'extension' ];    // Removed: chargeInstanceId, chargeCellId, cellId, instanceId, lifeId, serviceId
+var attributesServiceSignalPathway = [ 'signalPathwayId', 'signalPheromone', 'serviceId' ]; // Removed: signalPheromone, signalPheromoneExpiration, reinforcementWavePheromone, reinforcementWavePheromoneExpiration, optional, cellId, lifeId
 
 // Remove fields from metabolism.Cell: deletedAt
 var cellAttributes = [ 'cellId', 'verified', 'name', 'type', 'website', 'countryCode', 'createdAt', 'updatedAt' ];
@@ -122,18 +122,18 @@ var instanceAttributes = [ 'instanceId', 'major', 'constructiveInterference', 'd
 // Remove fields from metabolism.Life: phoneVerified, emailVerified, receiptEmail, receiptEmailVerified, referralCode, eegHash, eegExpiration, genomeHash, createdAt, updatedAt, deletedAt
 var lifeAttributes = [ 'lifeId', 'phone', 'email', 'givenName', 'middleName', 'familyName', 'countryCode' ];
 
-// Remove fields from metabolism.Gene: supportEmail, supportEmailVerified, supportWebsite, supportVersion, signupUrl, authUrl, deauthUrl
-var includeGene = { model: metabolism.Gene, attributes: [ 'geneId', 'geneType', 'geneName', 'companyName', 'website', 'countryCode' ] };
+// Remove fields from metabolism.Service: supportEmail, supportEmailVerified, supportWebsite, supportVersion, signupUrl, authUrl, deauthUrl
+var includeService = { model: metabolism.Service, attributes: [ 'serviceId', 'serviceType', 'serviceName', 'companyName', 'website', 'countryCode' ] };
 
 var includeAddress           = { model: metabolism.Address,           as: 'Address',            attributes: attributesAddress };
 var includeCellDevice        = { model: metabolism.CellDevice,        as: 'Devices',            attributes: attributesCellDevice };
 var includeCellInstance      = { model: metabolism.CellInstance,      as: 'Instances',          attributes: attributesCellInstance};
 var includeCellStakeholder   = { model: metabolism.CellStakeholder,   as: 'StakeholderMembers', attributes: attributesCellStakeholder };
 var includePhone             = { model: metabolism.Phone,             as: 'Phones',             attributes: attributesPhone };
-var includeGeneSignalPathway = { model: metabolism.GeneSignalPathway, as: 'SignalPathways',     attributes: attributesGeneSignalPathway };
+var includeServiceSignalPathway = { model: metabolism.ServiceSignalPathway, as: 'SignalPathways',     attributes: attributesServiceSignalPathway };
 
-//  cellIncludesAll      = [ includeAddress, includeCellInstance, includeCellStakeholder, includePhone, includeGeneSignalPathway ];
-var cellIncludesCell     = [ includeAddress, includeCellInstance, includeCellStakeholder, includePhone, includeGeneSignalPathway ];
+//  cellIncludesAll      = [ includeAddress, includeCellInstance, includeCellStakeholder, includePhone, includeServiceSignalPathway ];
+var cellIncludesCell     = [ includeAddress, includeCellInstance, includeCellStakeholder, includePhone, includeServiceSignalPathway ];
 var cellIncludesInstance = [ includeAddress, includeCellDevice,   includeCellStakeholder, includePhone ];
 
 // -----------------------------------------------------------------------------
@@ -265,40 +265,40 @@ router.get('/:id/phones', function(req, res) {
 });
 
 // /cell/:id/signalPathways/:type
-// --- retrieve array of connected genes of (:type) for cell (:id)
-// TODO: gene types: dictionary, genomics, communications
+// --- retrieve array of connected services of (:type) for cell (:id)
+// TODO: service types: dictionary, genomics, communications
 router.get('/:id/signalPathways/:type', function(req, res) {
     debug('[GET] /cell/:id/signalPathways/:type');
     var cellId         = req.params.id;
-    var geneTypeString = validate.toString(req.params.type).toLowerCase();
+    var serviceTypeString = validate.toString(req.params.type).toLowerCase();
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.GeneSignalPathway
+    metabolism.ServiceSignalPathway
         .findAll({
             where: {cellId: cellId},
-            include: includeGene,
-            attributes: attributesGeneSignalPathway
+            include: includeService,
+            attributes: attributesServiceSignalPathway
         })
         .then(function(signalPathways) {
             var filteredSignalPathways = [];
 
-            if (validate.equals(geneTypeString, GeneType.ENUM.ALL.text))
+            if (validate.equals(serviceTypeString, ServiceType.ENUM.ALL.text))
                 filteredSignalPathways = signalPathways;
             else {
-                var geneSelector;
-                if (validate.equals(geneTypeString, GeneType.ENUM.DICTIONARY.text))
-                    geneSelector = GeneType.ENUM.DICTIONARY.value;
-                else if (validate.equals(geneTypeString, GeneType.ENUM.GENOMICS.text))
-                    geneSelector = GeneType.ENUM.GENOMICS.value;
-                else if (validate.equals(geneTypeString, GeneType.ENUM.COMMUNICATIONS.text))
-                    geneSelector = GeneType.ENUM.COMMUNICATIONS.value;
+                var serviceSelector;
+                if (validate.equals(serviceTypeString, ServiceType.ENUM.DICTIONARY.text))
+                    serviceSelector = ServiceType.ENUM.DICTIONARY.value;
+                else if (validate.equals(serviceTypeString, ServiceType.ENUM.GENOMICS.text))
+                    serviceSelector = ServiceType.ENUM.GENOMICS.value;
+                else if (validate.equals(serviceTypeString, ServiceType.ENUM.COMMUNICATIONS.text))
+                    serviceSelector = ServiceType.ENUM.COMMUNICATIONS.value;
                 else
-                    throw new Blockages.BadRequestError('Gene type not recognized');
+                    throw new Blockages.BadRequestError('Service type not recognized');
 
                 for (var i = 0; i < signalPathways.length; i++) {
-                    if (signalPathways[i].Gene.geneType & geneSelector)
+                    if (signalPathways[i].Service.serviceType & serviceSelector)
                         filteredSignalPathways.push(signalPathways[i]);
                 }
             }
@@ -320,14 +320,14 @@ router.get('/:id/signalPathway/:signalPathwayId', function(req, res) {
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.GeneSignalPathway
+    metabolism.ServiceSignalPathway
         .find({
             where: {
                 signalPathwayId: signalPathwayId,
                 cellId: cellId
             },
-            include: includeGene,
-            attributes: attributesGeneSignalPathway
+            include: includeService,
+            attributes: attributesServiceSignalPathway
         })
         .then(function(signalPathway) {
             if (!signalPathway)
@@ -340,23 +340,23 @@ router.get('/:id/signalPathway/:signalPathwayId', function(req, res) {
         });
 });
 
-// /cell/:id/signalPathwayForGene/:geneId
-// --- retrieve info on signalPathway to gene (:geneId) for cell (:id)
-router.get('/:id/signalPathwayForGene/:geneId', function(req, res) {
-    debug('[GET] /cell/:id/signalPathwayForGene/:geneId');
+// /cell/:id/signalPathwayForService/:serviceId
+// --- retrieve info on signalPathway to service (:serviceId) for cell (:id)
+router.get('/:id/signalPathwayForService/:serviceId', function(req, res) {
+    debug('[GET] /cell/:id/signalPathwayForService/:serviceId');
     var cellId = req.params.id;
-    var geneId = req.params.geneId;
+    var serviceId = req.params.serviceId;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.GeneSignalPathway
+    metabolism.ServiceSignalPathway
         .find({
             where: {
-                geneId: geneId,
+                serviceId: serviceId,
                 cellId: cellId
             },
-            attributes: attributesGeneSignalPathway
+            attributes: attributesServiceSignalPathway
         })
         .then(function(signalPathway) {
             if (!signalPathway)
@@ -680,7 +680,7 @@ router.get('/:id/loadDeviceType/:type/serialNumber/:serialNumber', function(req,
 });
 
 // /cell/:id/sequencer
-// --- retrieve sequencer information (JSON data? use gene?)
+// --- retrieve sequencer information (JSON data? use service?)
 router.get('/:id/sequencer', function(req, res) {
     debug('[GET] /cell/:id/sequencer');
     var cellId  = req.params.id;
@@ -815,7 +815,7 @@ router.put('/:id/address/:addressId', function(req, res) {
           /*address.lifeId:           not accessible for change */
           /*address.cellId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
-          /*address.geneId:           not accessible for change */
+          /*address.serviceId:           not accessible for change */
           /*address.chargeCellId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
@@ -861,7 +861,7 @@ router.put('/:id/phone/:phoneId', function(req, res) {
           /*phone.lifeId:           not accessible for change */
           /*phone.cellId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
-          /*phone.geneId:           not accessible for change */
+          /*phone.serviceId:           not accessible for change */
           /*phone.chargeCellId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
@@ -878,7 +878,7 @@ router.put('/:id/phone/:phoneId', function(req, res) {
         });
 });
 
-// A route to update a gene signalPathway for a cell does not exist;
+// A route to update a service signalPathway for a cell does not exist;
 // the signalPathway should just be deleted and reregistered for updating
 
 // /cell/:id/stakeholderMember/:lifeId
@@ -1013,7 +1013,7 @@ router.put('/:id/instance/:instanceId/address/:addressId', function(req, res) {
           /*address.lifeId:           not accessible for change */
           /*address.cellId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
-          /*address.geneId: 	      not accessible for change */
+          /*address.serviceId: 	      not accessible for change */
           /*address.chargeCellId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
@@ -1060,7 +1060,7 @@ router.put('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
           /*phone.lifeId: 	    not accessible for change */
           /*phone.cellId: 	    not accessible for change */
           /*phone.instanceId: 	    not accessible for change */
-          /*phone.geneId: 	    not accessible for change */
+          /*phone.serviceId: 	    not accessible for change */
           /*phone.chargeCellId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
@@ -1318,7 +1318,7 @@ router.post('/instance/signup', function(req, res) {
                   /*lifeId:           null,*/
                   /*cellId:           null,*/
                     instanceId:       this.instance.instanceId
-                  /*geneId:           null,*/
+                  /*serviceId:           null,*/
                   /*chargeCellId:     null,*/
                   /*chargeInstanceId: null*/
                 };
@@ -1336,7 +1336,7 @@ router.post('/instance/signup', function(req, res) {
                   /*lifeId:           null,*/
                   /*cellId:           null,*/
                     instanceId:       this.instance.instanceId
-                  /*geneId:           null,*/
+                  /*serviceId:           null,*/
                   /*chargeCellId:     null,*/
                   /*chargeInstanceId: null*/
                 };
@@ -1345,7 +1345,7 @@ router.post('/instance/signup', function(req, res) {
             }
 
          // signalPathwayId, signalPheromone, signalPheromoneExpiration, reinforcementSignalPheromone, reinforcementSignalPheromoneExpiration, optional, lifeId fields are defaults
-            executeArray.push(metabolism.GeneSignalPathway.create({ cellId: this.cell.cellId, geneId: 1008 }));
+            executeArray.push(metabolism.ServiceSignalPathway.create({ cellId: this.cell.cellId, serviceId: 1008 }));
 
             return metabolism.sequelize.Promise.all(executeArray);
         })
@@ -1433,7 +1433,7 @@ router.post('/:id/address', function(req, res) {
               /*lifeId:           null,*/
                 cellId:           cell.cellId
               /*instanceId:       null,*/
-              /*geneId:           null,*/
+              /*serviceId:           null,*/
               /*chargeCellId:     null,*/
               /*chargeInstanceId: null*/
             };
@@ -1477,7 +1477,7 @@ router.post('/:id/phone', function(req, res) {
               /*lifeId:           null,*/
                 cellId:           cell.cellId
               /*instanceId:       null,*/
-              /*geneId:           null,*/
+              /*serviceId:           null,*/
               /*chargeCellId:     null,*/
               /*chargeInstanceId: null*/
             };
@@ -1495,66 +1495,66 @@ router.post('/:id/phone', function(req, res) {
         });
 });
 
-// /cell/:id/signalPathwayForGene/:geneId
-// --- add a signalPathway for a cell (:id) of an existing gene (:geneId)
-router.post('/:id/signalPathwayForGene/:geneId', function(req, res) {
-    debug('[POST] /cell/:id/signalPathwayForGene/:geneId');
+// /cell/:id/signalPathwayForService/:serviceId
+// --- add a signalPathway for a cell (:id) of an existing service (:serviceId)
+router.post('/:id/signalPathwayForService/:serviceId', function(req, res) {
+    debug('[POST] /cell/:id/signalPathwayForService/:serviceId');
     var cellId = req.params.id;
-    var geneId = req.params.geneId;
+    var serviceId = req.params.serviceId;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.sequelize.Promise.all([
-        metabolism.GeneSignalPathway
-            .find({ where: {cellId: cellId, geneId: geneId} /* attributes: default */ }),
-        metabolism.Gene
-            .find({ where: {geneId: geneId}                 /* attributes: default */ }),
+        metabolism.ServiceSignalPathway
+            .find({ where: {cellId: cellId, serviceId: serviceId} /* attributes: default */ }),
+        metabolism.Service
+            .find({ where: {serviceId: serviceId}                 /* attributes: default */ }),
         metabolism.Cell
             .find({ where: {cellId: cellId}                 /* attributes: default */ })
     ])
-    .spread(function(signalPathway, gene, cell) {
+    .spread(function(signalPathway, service, cell) {
         if (signalPathway)
-            throw new Blockages.ConflictError('Gene signalPathway already exists');
-        else if (!gene)
-            throw new Blockages.NotFoundError('Gene not found');
+            throw new Blockages.ConflictError('Service signalPathway already exists');
+        else if (!service)
+            throw new Blockages.NotFoundError('Service not found');
         else if (!cell)
             throw new Blockages.NotFoundError('Cell not found');
 
-        var geneAPI = new Genes[gene.geneId.toString()]();
+        var serviceAPI = new Services[service.serviceId.toString()]();
 
-        res.redirect(geneAPI.authenticate(req.headers.host + '/v1', null, cell.cellId));
+        res.redirect(serviceAPI.authenticate(req.headers.host + '/v1', null, cell.cellId));
     })
     .catch(function(error) {
         res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
     });
 });
 
-// /cell/:id/allowPaymentGene/:geneId
-// --- add a signalPathway for a cell (:id) of an existing dictionary gene (:geneId)
-router.post('/:id/geneExpressionConstraints/:geneId', function(req, res) {
-    debug('[POST] /cell/:id/geneExpressionConstraints/:geneId');
+// /cell/:id/allowPaymentService/:serviceId
+// --- add a signalPathway for a cell (:id) of an existing dictionary service (:serviceId)
+router.post('/:id/serviceExpressionConstraints/:serviceId', function(req, res) {
+    debug('[POST] /cell/:id/serviceExpressionConstraints/:serviceId');
     var cellId  = req.params.id;
-    var geneId  = req.params.geneId;
+    var serviceId  = req.params.serviceId;
 
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.sequelize.Promise.all([
-        metabolism.GeneSignalPathway
-            .find({ where: {cellId: cellId, geneId: geneId} /* attributes: default */ }),
-        metabolism.Gene
-            .find({ where: {geneId: geneId}                 /* attributes: default */ }),
+        metabolism.ServiceSignalPathway
+            .find({ where: {cellId: cellId, serviceId: serviceId} /* attributes: default */ }),
+        metabolism.Service
+            .find({ where: {serviceId: serviceId}                 /* attributes: default */ }),
         metabolism.Cell
             .find({ where: {cellId: cellId}                 /* attributes: default */ })
     ])
-    .spread(function(signalPathway, gene, cell) {
+    .spread(function(signalPathway, service, cell) {
         if (signalPathway)
-            throw new Blockages.ConflictError('Gene signalPathway already exists');
-        else if (!gene)
-            throw new Blockages.NotFoundError('Gene not found');
-        else if (gene.geneType & GeneType.ENUM.DICTIONARY.value === 0)
-            throw new Blockages.BadRequestError('Gene is not a dictionary gene');
+            throw new Blockages.ConflictError('Service signalPathway already exists');
+        else if (!service)
+            throw new Blockages.NotFoundError('Service not found');
+        else if (service.serviceType & ServiceType.ENUM.DICTIONARY.value === 0)
+            throw new Blockages.BadRequestError('Service is not a dictionary service');
         else if (!cell)
             throw new Blockages.NotFoundError('Cell not found');
 
@@ -1567,10 +1567,10 @@ router.post('/:id/geneExpressionConstraints/:geneId', function(req, res) {
           /*optional:       			    null,*/
           /*lifeId:         		            null,*/
             cellId:     	 		    cell.cellId,
-            geneId:      			    gene.geneId
+            serviceId:      			    service.serviceId
         }; 
 
-        return metabolism.GeneSignalPathway.create(newSignalPathway);
+        return metabolism.ServiceSignalPathway.create(newSignalPathway);
     })
     .then(function(signalPathway) {
         res.status(201).send(Blockages.respMsg(res, true, signalPathway.get()));
@@ -1741,7 +1741,7 @@ router.post('/:id/instance/:instanceId/address', function(req, res) {
               /*lifeId:           null,*/
               /*cellId:           null,*/
                 instanceId:       instance.instanceId
-              /*geneId:           null,*/
+              /*serviceId:           null,*/
               /*chargeCellId:     null,*/
               /*chargeInstanceId: null*/
             };
@@ -1789,7 +1789,7 @@ router.post('/:id/instance/:instanceId/phone', function(req, res) {
               /*lifeId:           null,*/
               /*cellId:           null,*/
                 instanceId:       instance.instanceId
-              /*geneId:           null,*/
+              /*serviceId:           null,*/
               /*chargeCellId:     null,*/
               /*chargeInstanceId: null*/
             };
@@ -2016,7 +2016,7 @@ router.delete('/:id/phone/:phoneId', function(req, res) {
 });
 
 // /cell/:id/signalPathway/:signalPathwayId
-// --- delete a signalPathway (:signalPathwayId) for a cell (:id) of an existing gene
+// --- delete a signalPathway (:signalPathwayId) for a cell (:id) of an existing service
 router.delete('/:id/signalPathway/:signalPathwayId', function(req, res) {
     debug('[DELETE] /cell/:id/signalPathway/:signalPathwayId');
     var cellId     = req.params.id;
@@ -2025,7 +2025,7 @@ router.delete('/:id/signalPathway/:signalPathwayId', function(req, res) {
     if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.GeneSignalPathway
+    metabolism.ServiceSignalPathway
         .find({
             where: {signalPathwayId: signalPathwayId,
                     cellId: cellId}

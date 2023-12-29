@@ -63,7 +63,7 @@ app.use('/',                      require(routePath + '/index'));
 app.use(apiVersion,               require(routePath + '/proofOfLife'));
 app.use(apiVersion + '/life',     require(routePath + '/life'));
 app.use(apiVersion + '/cell',     require(routePath + '/cell'));
-app.use(apiVersion + '/gene',     require(routePath + '/gene'));
+app.use(apiVersion + '/service',     require(routePath + '/service'));
 app.use(apiVersion + '/charge',   require(routePath + '/charge'));
 app.use(apiVersion,               require(routePath + '/checkin'));
 

@@ -7,14 +7,14 @@ var metabolism  = require('../../metabolismLifeModels/database');
 var Blockages   = require('../blockages');
 var CycleType   = require('../../metabolismTypes/cycleTypes');
 
-module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) {
+module.exports = function(cellId, cycleLife, signalPathways, dictionaryServiceAPI) {
 
     var self = this;
     self.continueProcessing    = true;
     self.cellId                = cellId;
     self.cycleLife             = cycleLife;
     self.signalPathways        = signalPathways;
-    self.dictionaryGeneAPI     = dictionaryGeneAPI;
+    self.dictionaryServiceAPI     = dictionaryServiceAPI;
 
     self.audit = function(messageNumber, message) {
         return metabolism.CellGraph[self.cellId].CycleAudit
@@ -33,34 +33,34 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
             .then(function() {
 
                 // Cycle fields not checked here: signalMethod,
-                //                                dictionaryGeneId, dictionaryReferenceNumber
-                //                                genomicsGeneId, genomicsReferenceNumber
-                //                                communicationsGeneId, communicationsReferenceNumber
+                //                                dictionaryServiceId, dictionaryReferenceNumber
+                //                                genomicsServiceId, genomicsReferenceNumber
+                //                                communicationsServiceId, communicationsReferenceNumber
 
                 if (self.cycleLife.Sequences.length !== 0)
                     throw new Blockages.CycleProcessError(20107, 'ERROR: attaching sequences to the cycle is not yet supported');
 
                 // Verify the required parts of the cycle life are present, and all information is valid
 
-                // Refresh signal pheromones to dictionary gene signal pathways
+                // Refresh signal pheromones to dictionary service signal pathways
                 return metabolism.sequelize.Promise.all([
-                    self.dictionaryGeneAPI.refreshSignalPheromones(self.signalPathways.dictionary.life),
-                    self.dictionaryGeneAPI.refreshSignalPheromones(self.signalPathways.dictionary.cell)
+                    self.dictionaryServiceAPI.refreshSignalPheromones(self.signalPathways.dictionary.life),
+                    self.dictionaryServiceAPI.refreshSignalPheromones(self.signalPathways.dictionary.cell)
                     ]);
             })
             .then(function() {
                 return self.audit(20002, ' (LIFE PIPELINE SECTION)Open - Refreshed Signal Pheromone');
             })
             .then(function() {
-                // Verify the word of the dictionary gene 
-                return self.dictionaryGeneAPI.word(self.signalPathways.dictionary.life);
+                // Verify the word of the dictionary service 
+                return self.dictionaryServiceAPI.word(self.signalPathways.dictionary.life);
             })
             .then(function(word) {
                 // Verify word can cover total charge of cycle
                 if (word.chargeDegree === cellId.destructiveInterference)
                     throw new Blockages.CycleProcessError(20108, 'ERROR: word does not cover the life charge total');
 
-                return self.audit(20003, ' (LIFE PIPELINE SECTION)Open - Checked Dictionary Gene Balance');
+                return self.audit(20003, ' (LIFE PIPELINE SECTION)Open - Checked Dictionary Service Balance');
             })
             .then(function() {
                 self.continueProcessing = false;
@@ -86,9 +86,9 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
     self.lifePipelineSectionProcessDictionary = function() {
         return self.audit(40000, ' (LIFE PIPELINE SECTION)Process Dictionary - Start')
             .then(function() {
-                // Execute the transaction of the dictionary gene account
+                // Execute the transaction of the dictionary service account
                 return metabolism.sequelize.transaction(function (t2) {
-                    return self.dictionaryGeneAPI.entry(self.signalPathways.dictionary, self.cycleLife.Cycle.chargeTotal);
+                    return self.dictionaryServiceAPI.entry(self.signalPathways.dictionary, self.cycleLife.Cycle.chargeTotal);
                 });
             })
             .then(function(result) {
@@ -107,8 +107,8 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
                         cycleLifeId:       self.cycleLife.cycleLifeId,
                         lifeSenderId:      self.cycleLife.lifeId,
                       /*lifeReceiverId:    null,*/
-                      /*geneSenderId:      null,*/
-                      /*geneReceiverId:    null,*/
+                      /*serviceSenderId:      null,*/
+                      /*serviceReceiverId:    null,*/
                         cellId:            self.cellId
                     };
 
@@ -130,8 +130,8 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
     self.lifePipelineSectionProcessGenomics = function() {
         return self.audit(50000, ' (LIFE PIPELINE SECTION)Process Genomics - Start')
             .then(function() {
-                // If genomics gene exists, perform genomics function
-                if (self.cycleLife.genomicsGeneId !== null) {
+                // If genomics service exists, perform genomics function
+                if (self.cycleLife.genomicsServiceId !== null) {
                     self.cycleLife.genomicsReferenceNumber = 'GENOMICS Ref #';
                     return self.cycleLife.save({ fields: ['genomicsReferenceNumber'] })
                             .then(function() {
@@ -155,8 +155,8 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryGeneAPI) 
             .then(function() {
                 self.continueProcessing = false;
 
-                // If Communications gene exists, perform Communications function
-                if (self.cycleLife.communicationsGeneId !== null) {
+                // If Communications service exists, perform Communications function
+                if (self.cycleLife.communicationsServiceId !== null) {
                     self.cycleLife.communicationsReferenceNumber = 'COMMUNICATIONS Ref #';
                     return self.cycleLife.save({ fields: ['communicationsReferenceNumber'] })
                             .then(function() {

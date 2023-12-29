@@ -1,17 +1,17 @@
 'use strict';
 
-// index.js (genes)
+// index.js (services)
 
-var GeneConnections = module.exports = {};
+var ServiceConnections = module.exports = {};
 
 // -----------------------------------------------------------------------------
-// DICTIONARY GENES
-GeneConnections['dictionary'] = require('./dictionary'); // iMessage
+// DICTIONARY SERVICES
+ServiceConnections['dictionary'] = require('./dictionary'); // iMessage
 
 -----------------------------------------------------------------------------
-// GENOMICS GENES
-GeneConnections['genomics'] = require('./uniprot'); // UniProt
+// GENOMICS SERVICES
+ServiceConnections['genomics'] = require('./uniprot'); // UniProt
 
 -----------------------------------------------------------------------------
-// COMMUNICATIONS GENES
-GeneConnections['iMessage'] = require('./iMessage'); // iMessage
+// COMMUNICATIONS SERVICES
+ServiceConnections['iMessage'] = require('./iMessage'); // iMessage

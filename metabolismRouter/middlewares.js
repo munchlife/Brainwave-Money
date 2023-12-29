@@ -100,7 +100,7 @@ Middlewares.cellImmunity = function(req, res, next) {
 };
 
 // -----------------------------------------------------------------------------
-// GENE PERMISSION AUTHORIZATION MIDDLEWARE
+// SERVICE PERMISSION AUTHORIZATION MIDDLEWARE
 // -----------------------------------------------------------------------------
 Middlewares.serviceImmunity = function(req, res, next) {
     debug('#serviceImmunity()');

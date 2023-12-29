@@ -1,12 +1,12 @@
 'use strict';
 
-// geneSignalPathway.js (model)
+// serviceSignalPathway.js (model)
 
 var SIGNAL_PATHWAY_SIGNAL_PHEROMONE_MAX_LENGTH = 255;
 var SIGNAL_PATHWAY_OPTIONAL_MAX_LENGTH = 255;
 
 module.exports = function(sequelize, DataTypes) {
-    var GeneSignalPathway = sequelize.define('GeneSignalPathway', {
+    var ServiceSignalPathway = sequelize.define('ServiceSignalPathway', {
         signalPathwayId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
@@ -84,7 +84,7 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,                  // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,        // defaulted globally
-        tableName: 'geneSignalPathways', // force table name to this value
+        tableName: 'serviceSignalPathways', // force table name to this value
         validate: {
         },
         getterMethods: {
@@ -92,9 +92,9 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                GeneSignalPathway.belongsTo(models.Life, { foreignKey: 'lifeId' });
-                GeneSignalPathway.belongsTo(models.Cell, { foreignKey: 'cellId' });
-                GeneSignalPathway.belongsTo(models.Gene, { foreignKey: 'geneId' });
+                ServiceSignalPathway.belongsTo(models.Life, { foreignKey: 'lifeId' });
+                ServiceSignalPathway.belongsTo(models.Cell, { foreignKey: 'cellId' });
+                ServiceSignalPathway.belongsTo(models.Service, { foreignKey: 'serviceId' });
             },
             extractOptional: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));
@@ -108,5 +108,5 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
-    return GeneSignalPathway;
+    return ServiceSignalPathway;
 };

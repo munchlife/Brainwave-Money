@@ -13,7 +13,7 @@ var Cycles         = require('../../config/cycle');
 var CycleOutsiders = require('../../config/cycleOutsider');
 var CycleLives     = require('../../config/cycleLife');
 var Immunities     = require('../../config/immunities');
-var Genes          = require('../../config/genes');
+var Services          = require('../../config/services');
 var Blockages      = require('../../config/blockages');
 var CycleType      = require('../../data/cycleTypes');
 
@@ -27,17 +27,17 @@ var router = module.exports = express.Router();
 // -----------------------------------------------------------------------------
 //  attributesCycleAudit     = [ 'cycleAuditId',    'cycleId', 'messageNumber', 'message', 'createdAt' ];
 var attributesCycleSequence  = [ 'cycleSequenceId', 'cycleId', 'productId', 'cycleLifeId', 'position', 'status', 'charge', 'quantity' ];
-var attributesCycleLife      = [ 'cycleLifeId',     'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'dictionaryGeneId', 'signalingReferenceNumber', 'genomicsGeneId', 'genomicsReferenceNumber', 'communicationsGeneId', 'communicationsReferenceNumber' ];
+var attributesCycleLife      = [ 'cycleLifeId',     'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'dictionaryServiceId', 'signalingReferenceNumber', 'genomicsServiceId', 'genomicsReferenceNumber', 'communicationsServiceId', 'communicationsReferenceNumber' ];
 var attributesOutsider       = [ 'outsiderId',      'givenName', 'familyName', 'phone', 'extension', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ];
 
 // Remove fields from metabolism.CellGraph[].Cycle: deletedAt
-var cycleAttributes = [ 'cycleId', 'cellType', 'instanceId', 'deviceId', 'stakeholderCreatorId', 'stakeholderDelivererId', 'originGeneId', 'deliveryMethod', 'status', 'distributedCharge', 'taxPercentage', 'subTotal', 'chargeDiscount', 'chargeFee', 'chargeTax', 'chargeTip', 'chargeTotal', 'cycleNotes', 'createdAt', 'updatedAt' ];
+var cycleAttributes = [ 'cycleId', 'cellType', 'instanceId', 'deviceId', 'stakeholderCreatorId', 'stakeholderDelivererId', 'originServiceId', 'deliveryMethod', 'status', 'distributedCharge', 'taxPercentage', 'subTotal', 'chargeDiscount', 'chargeFee', 'chargeTax', 'chargeTip', 'chargeTotal', 'cycleNotes', 'createdAt', 'updatedAt' ];
 
 // Remove fields from metabolism.CellGraph[].CycleSequence: createdAt, updatedAt, deletedAt
 // cycleSequenceAttributes = [ 'cycleSequenceId', 'cycleId', 'productId', 'cycleLifeId', 'position', 'charge', 'quantity' ];
 
 // Remove fields from metabolism.CellGraph[].CycleLife: createdAt, updatedAt, deletedAt
-var cycleLifeAttributes = [ 'cycleLifeId', 'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'dictionaryGeneId', 'signalingReferenceNumber', 'genomicsGeneId', 'genomicsReferenceNumber', 'communicationsGeneId', 'communicationsReferenceNumber' ];
+var cycleLifeAttributes = [ 'cycleLifeId', 'cycleId', 'lifeId', 'outsiderId', 'status', 'signalMethod', 'dictionaryServiceId', 'signalingReferenceNumber', 'genomicsServiceId', 'genomicsReferenceNumber', 'communicationsServiceId', 'communicationsReferenceNumber' ];
 
 var includeCycle          = { model: null, as: 'Cycle',     attributes: cycleAttributes };
 //  includeCycleAudit     = { model: null, as: 'Audits',    attributes: attributesCycleAudit };
@@ -289,7 +289,7 @@ router.put('/:id/cycle/:cycleId', function(req, res) {
           /*cycle.cellType:              not accessible for change */
           /*cycle.instanceId:            not accessible for change */
           /*cycle.deviceId:              not accessible for change */
-            cycle.originGeneId           = metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.originGeneId);
+            cycle.originServiceId           = metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.originServiceId);
             cycle.stakeholderCreatorId   = metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.stakeholderCreatorId);
             cycle.stakeholderDelivererId = metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.stakeholderDelivererId);
             cycle.deliveryMethod         = validate.trim(validate.toString(req.body.deliveryMethod)).toUpperCase();
@@ -403,11 +403,11 @@ router.put('/:id/cycle/:cycleId/life/:lifeId', function(req, res) {
           /*life.outsiderId:                    not accessible for change */
           /*life.status:                        not accessible for change */
             life.signalMethod                   = validate.trim(validate.toString(req.body.signalMethod)).toUpperCase();
-            life.dictionaryGeneId               = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId);
+            life.dictionaryServiceId               = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryServiceId);
           /*life.dictionaryReferenceNumber:     not accessible for change */
-          //life.genomicsGeneId                 = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsGeneId);
+          //life.genomicsServiceId                 = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsServiceId);
           /*life.genomicsReferenceNumber:       not accessible for change */
-          //life.communicationsGeneId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsGeneId);
+          //life.communicationsServiceId           = metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsServiceId);
           /*life.communicationsReferenceNumber: not accessible for change */
 
             return life.save();
@@ -514,7 +514,7 @@ router.post('/:id/cycle', function(req, res) {
                 cellType:               cell.type,
                 instanceId:             metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.instanceId),
                 deviceId:               metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.deviceId),
-                originGeneId:           metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.originGeneId),
+                originServiceId:           metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.originServiceId),
                 stakeholderCreatorId:   metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.stakeholderCreatorId),
                 stakeholderDelivererId: metabolism.CellGraph[cellId].Cycle.extractId(metabolism, req.body.stakeholderDelivererId),
                 deliveryMethod:         validate.trim(validate.toString(req.body.deliveryMethod)).toUpperCase(),
@@ -623,11 +623,11 @@ router.post('/:id/cycle/:cycleId/life', function(req, res) {
                   /*outsiderId:                    null,*/
                     status:                        0,
                     signalMethod:                  validate.trim(validate.toString(req.body.signalMethod)).toUpperCase(),
-                    dictionaryGeneId:              metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId),
+                    dictionaryServiceId:              metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryServiceId),
                   /*dictionaryReferenceNumber:     null,*/
-                    genomicsGeneId:                metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsGeneId),
+                    genomicsServiceId:                metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.genomicsServiceId),
                   /*genomicsReferenceNumber:       null,*/
-                    communicationsGeneId:          metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsGeneId),
+                    communicationsServiceId:          metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.communicationsServiceId),
                   /*communicationsReferenceNumber: null*/
                 };
 
@@ -671,11 +671,11 @@ router.post('/:id/cycle/:cycleId/life/outsider', function(req, res) {
                     outsiderId:                    null,
                     status:                        0,
                     signalMethod:                  validate.trim(validate.toString(req.body.signalMethod)).toUpperCase(),
-                    dictionaryGeneId:              metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryGeneId)
+                    dictionaryServiceId:              metabolism.CellGraph[cellId].CycleLife.extractId(metabolism, req.body.dictionaryServiceId)
                   /*signalingReferenceNumber:      null,*/
-                  /*genomicsGeneId:                null,*/
+                  /*genomicsServiceId:                null,*/
                   /*genomicsReferenceNumber:       null,*/
-                  /*communicationsGeneId:          null,*/
+                  /*communicationsServiceId:          null,*/
                   /*communicationsReferenceNumber: null*/
                 };
 
@@ -853,21 +853,21 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verify', function(req, res) {
                     var signals;
                     if (this.cycleLife.lifeId !== null) {
                         signals = [ metabolism.Life.find({ where: {lifeId: this.cycleLife.lifeId} }),
-                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.dictionaryGeneId, lifeId: this.cycleLife.lifeId} }),
-                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.dictionaryGeneId, cellId: cellId} })];
+                                    metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.dictionaryServiceId, lifeId: this.cycleLife.lifeId} }),
+                                    metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.dictionaryServiceId, cellId: cellId} })];
 
-                        if (this.cycleLife.genomicsGeneId) {
-                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.genomicsGeneId, lifeId: this.cycleLife.lifeId} }));
-                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.genomicsGeneId, cellId: cellId} }));
+                        if (this.cycleLife.genomicsServiceId) {
+                            signals.push(metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.genomicsServiceId, lifeId: this.cycleLife.lifeId} }));
+                            signals.push(metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.genomicsServiceId, cellId: cellId} }));
                         }
                         else {
                             signals.push(metabolism.sequelize.Promise.resolve());
                             signals.push(metabolism.sequelize.Promise.resolve());
                         }
 
-                        if (this.cycleLife.communicationsGeneId) {
-                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.communicationsGeneId, lifeId: this.cycleLife.lifeId} }));
-                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.communicationsGeneId, cellId: cellId} }));
+                        if (this.cycleLife.communicationsServiceId) {
+                            signals.push(metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.communicationsServiceId, lifeId: this.cycleLife.lifeId} }));
+                            signals.push(metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.communicationsServiceId, cellId: cellId} }));
                         }
                         else {
                             signals.push(metabolism.sequelize.Promise.resolve());
@@ -908,8 +908,8 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/verify', function(req, res) {
                             }
                         };
 
-                        var dictionaryGeneAPI = new Genes[this.cycleLife.dictionaryGeneId.toString()](metabolism);
-                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, dictionaryGeneAPI);
+                        var dictionaryServiceAPI = new Services[this.cycleLife.dictionaryServiceId.toString()](metabolism);
+                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, dictionaryServiceAPI);
                     }
                     else {
                         if (!lifeOrOutsider)
@@ -978,21 +978,21 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/process', function(req, res) 
                     var signals;
                     if (this.cycleLife.lifeId !== null) {
                         signals = [ metabolism.Life.find({ where: {lifeId: this.cycleLife.lifeId} }),
-                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.dictionaryGeneId, lifeId: this.cycleLife.lifeId} }),
-                                    metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.dictionaryGeneId, cellId: cellId} })];
+                                    metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.dictionaryServiceId, lifeId: this.cycleLife.lifeId} }),
+                                    metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.dictionaryServiceId, cellId: cellId} })];
 
-                        if (this.cycleLife.genomicsGeneId) {
-                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.genomicsGeneId, lifeId: this.cycleLife.lifeId} }));
-                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.genomicsGeneId, cellId: cellId} }));
+                        if (this.cycleLife.genomicsServiceId) {
+                            signals.push(metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.genomicsServiceId, lifeId: this.cycleLife.lifeId} }));
+                            signals.push(metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.genomicsServiceId, cellId: cellId} }));
                         }
                         else {
                             signals.push(metabolism.sequelize.Promise.resolve());
                             signals.push(metabolism.sequelize.Promise.resolve());
                         }
 
-                        if (this.cycleLife.communicationsGeneId) {
-                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.communicationsGeneId, lifeId: this.cycleLife.lifeId} }));
-                            signals.push(metabolism.GeneSignalPathway.find({ where: {geneId: this.cycleLife.communicationsGeneId, cellId: cellId} }));
+                        if (this.cycleLife.communicationsServiceId) {
+                            signals.push(metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.communicationsServiceId, lifeId: this.cycleLife.lifeId} }));
+                            signals.push(metabolism.ServiceSignalPathway.find({ where: {serviceId: this.cycleLife.communicationsServiceId, cellId: cellId} }));
                         }
                         else {
                             signals.push(metabolism.sequelize.Promise.resolve());
@@ -1033,8 +1033,8 @@ router.post('/:id/cycle/:cycleId/life/:cycleLifeId/process', function(req, res) 
                             }
                         };
 
-                        var dictionaryGeneAPI = new Genes[this.cycleLife.dictionaryGeneId.toString()](metabolism);
-                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, dictionaryGeneAPI);
+                        var dictionaryServiceAPI = new Services[this.cycleLife.dictionaryServiceId.toString()](metabolism);
+                        cycleLifeProcessor = new CycleLives[this.cycleLife.Cycle.cellType.toString()](cellId, this.cycleLife, signalPathways, dictionaryServiceAPI);
                     }
                     else {
                         if (!lifeOrOutsider)
@@ -1090,5 +1090,5 @@ router.delete('/:id/cycle/:cycleId/outsider/:outsiderId', function(req, res) {
 // -----------------------------------------------------------------------------
 // CATCH-ALL ROUTES (error)
 // -----------------------------------------------------------------------------
-    // No catch-all routes are here because the are covered in the general
+    // No catch-all routes are here because the are covered in the serviceral
     // cell routes (cell.js)

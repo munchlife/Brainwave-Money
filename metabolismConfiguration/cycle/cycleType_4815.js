@@ -42,7 +42,7 @@ module.exports = function(cellId, cycle) {
                 // if (self.cycle.stakeholderCreatorId === null)
                 //     throw new Blockages.CycleProcessError(20104, 'ERROR: stakeholderCreatorId not set');
 
-                // Cycle fields not checked here: stakeholderDelivererId, originGeneId, deliveryMethod, status
+                // Cycle fields not checked here: stakeholderDelivererId, originServiceId, deliveryMethod, status
 
                 if (self.cycle.distributedCharge !== CycleType.distributedChargeType.ENUM.SGL_LIFE.abbr)
                     throw new Blockages.CycleProcessError(20105, 'ERROR: distributedCharge invalid');

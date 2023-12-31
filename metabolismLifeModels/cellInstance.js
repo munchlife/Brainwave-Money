@@ -227,11 +227,67 @@ module.exports = function(sequelize, DataTypes) {
             calculateAndSetMajor: function() {
                 this.major = this.instanceId % INSTANCE_FIELD_MAJOR_MAX;
             },
-            calculateInstanceWaveform: function() { // TODO: determine waveform derivation formula
-            },    
-            calculateInstanceInterference: function() { // TODO: determine phase difference formula using ionospheric resonance signal as comparison
+            calculateInstanceWaveform: function() {
+                const DSP = require('dsp.js');
+
+                // Function to simulate generating a waveform within a given timestep
+                function calculateWaveformId(timestep) {
+                const sampleRate = 1000; // Define your sample rate (samples per second)
+                const signalFrequency = 5; // Define your signal frequency (Hz)
+                const amplitude = 1; // Define your amplitude
+
+                const numSamples = sampleRate * timestep; // Calculate the number of samples within the timestep
+
+                // Generate a sine wave signal within the timestep duration
+                const sineWave = new DSP.Sinewave(amplitude, signalFrequency);
+                const waveform = new Array(numSamples);
+
+                for (let i = 0; i < numSamples; i++) {
+                waveform[i] = sineWave.next();
+                }
+
+                // Process the waveform data (perform analysis, if needed)
+                // Calculate some unique identifier (waveformId) based on the waveform data
+
+                // For the sake of example, let's just return a placeholder waveformId
+                const waveformId = 'generated_waveform_id';
+
+                return waveformId;
+                }
+
+                const timestepInSeconds = 1; // Specify the timestep duration in seconds
+                const generatedWaveformId = calculateWaveformId(timestepInSeconds);
+
+                // You can do further operations or store the generated waveformId here
+                // For example:
+                this.waveform = generatedWaveformId;
+
+                return generatedWaveformId; // Return the generated waveformId
+                },   
+            calculateInstanceInterference: function() {
+                // Placeholder for ionospheric resonance signal phase angle (for example purposes)
+                const ionosphericResonancePhase = /* Define ionospheric resonance phase angle */;
+
+                // Placeholder for the waveformId phase angle obtained from the generated waveform
+                const waveformIdPhase = /* Obtain the phase angle from generated waveformId */;
+
+                // Function to calculate interference degree based on phase comparison
+                function calculateInterferenceDegree(waveformIdPhaseAngle) {
+                const phaseDifference = Math.abs(waveformIdPhaseAngle - ionosphericResonancePhase) % 180;
+
+                if (phaseDifference <= 90) {
+                return 'Constructive Interference';
+                } else {
+                return 'Destructive Interference';
+                }
             }
-        }
+
+                const interferenceDegree = calculateInterferenceDegree(waveformIdPhase);
+                // You can further process or store the interference degree here
+
+                return interferenceDegree;
+                }
+            }
     });
 
     return CellInstance;

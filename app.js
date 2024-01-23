@@ -75,6 +75,23 @@ app.locals.timer = {};
 // TODO: consider using node-cron or node-schedule modules
 // TODO: use redis to handle checkins and tokens; interval will be needed when verifying accounts
 
+// Function to make the API call for updating cell instance info
+function updateCellInstance(cellId, instanceId) {
+    // Replace this with your actual logic for updating the cell instance
+    // You may use your existing API call logic here
+    console.log('Updating cell instance:', cellId, instanceId);
+}
+
+// Interval for updating cell instance info every 1 millisecond
+app.locals.timer.updateCellInstance = setInterval(function() {
+    // Replace 'cellId' and 'instanceId' with actual values
+    var cellId = 'yourCellId';
+    var instanceId = 'yourInstanceId';
+
+    // Call the function to update cell instance
+    updateCellInstance(cellId, instanceId);
+}, 1);
+
 // --- clear any stale checkin (older than 10 minutes) from the metabolism graph every 10 seconds
 app.locals.timer.checkin = setInterval(function() {
     var staleMinutes = 10;

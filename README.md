@@ -2,11 +2,11 @@
 
 # Munch
 
-Munch is a cellular organization platform exposing a brainwave synchronization cryptocurrency designed to regulate a planetarily-correct evolution of the constructive and destructive communication cycles that build up and break down the planet and its life.
+Munch is a cellular organization platform exposing a brainwave interference cryptocurrency designed to regulate a planetarily-correct evolution of the constructive and destructive communication cycles that build up and break down the planet and its life.
 
 The digital metabolism is designed to work for any life type and allows life to network together by forming co-operative organizational "cells" (purpose-oriented "brainwave alignment DAOs") that leverage digital services (program APIs where brainwave synchronization is performed i.e. dictionaries, news, social media sites) to synchronize brainwaves within and between cells. 
 
-The digital metabolism can be deployed by running the code on a "cell instance" that "mines" information carried in the "noosphere" (the collective set of bioelectromagnetic wavelengths transmitting consciousness) by capturing interferometric information on EEG signals through a "brainwave miner" (an EEG headset i.e. Muse S) connected to a front-end application.
+The digital metabolism can "mine" information carried in the "noosphere" (the collective set of bioelectromagnetic wavelengths transmitting consciousness) by capturing interferometric information on EEG signals through a "brainwave miner" (an EEG headset i.e. Muse S) connected to a front-end application.
 
 https://www.nature.com/articles/s41598-017-04464-4 (Brain-to-brain entrainment: EEG interbrain synchronization while speaking and listening)
 
@@ -26,4 +26,4 @@ INITIAL APPLICATION: IMMUNE
 
 IMMUNE uses the biosignal-interferometry functionality of the cellular organization platform along with a dictionary service to assign an interference score to word definitions that involve cycles of interaction between relevant stakeholder roles assigned to a registered life's cell/cell type. As brainwaves are brought into alignment or misaligment when reflecting on a given word definition being cycled in communication cell stakeholders earn degrees constructive interference (credit) or destructive interference (debt) the objective being to become immune or exempt from destructive interference patterns for any given word definition thus optimizing the biolectric polarity of the word definition which then corresponds to the generation of an actual humoral immunity (literally defined as exemption from a specific cycle of oxidative stress) that gets encrypted into the body's immune system. 
 
-© 2023 Munch 
+© 2024 Munch 

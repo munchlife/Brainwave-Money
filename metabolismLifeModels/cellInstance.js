@@ -131,7 +131,7 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: null,
             validate: {
                 isIn: {
-                    args: [[ 4815 ]],
+                    args: [[ 0780 ]],
                     msg: 'Instance type is not in the approved set of category numbers'
                 }
             }

@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             validate: {
                 isIn: {
-                    args: [[ 4815 ]],
+                    args: [[ 0780 ]],
                     msg: 'Cell type is not in the approved set of category numbers'
                 }
             }

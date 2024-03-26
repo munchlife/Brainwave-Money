@@ -48,7 +48,7 @@ module.exports = function(sequelize, DataTypes) {
                 LifeSignal.belongsTo(models.Life, { as: 'Receiver',     foreignKey: 'lifeReceiverId' });
                 LifeSignal.belongsTo(models.Service, { as: 'ServiceSender',   foreignKey: 'serviceSenderId' });
                 LifeSignal.belongsTo(models.Service, { as: 'ServiceReceiver', foreignKey: 'serviceReceiverId' });
-                LifeSignal.belongsTo(models.Cell, {                     foreignKey: 'cellId' });
+                LifeSignal.belongsTo(models.Brainwave, {                     foreignKey: 'brainwaveId' });
             }
         },
         instanceMethods: {

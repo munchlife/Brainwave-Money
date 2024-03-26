@@ -7,17 +7,17 @@ var metabolism  = require('../../metabolismLifeModels/database');
 var Blockages   = require('../blockages');
 var CycleType   = require('../../metabolismTypes/cycleTypes');
 
-module.exports = function(cellId, cycleLife, signalPathways, dictionaryServiceAPI) {
+module.exports = function(brainwaveId, cycleLife, signalPathways, dictionaryServiceAPI) {
 
     var self = this;
     self.continueProcessing    = true;
-    self.cellId                = cellId;
+    self.brainwaveId                = brainwaveId;
     self.cycleLife             = cycleLife;
     self.signalPathways        = signalPathways;
     self.dictionaryServiceAPI     = dictionaryServiceAPI;
 
     self.audit = function(messageNumber, message) {
-        return metabolism.CellGraph[self.cellId].CycleAudit
+        return metabolism.BrainwaveGraph[self.brainwaveId].CycleAudit
             .create({
                 cycleId: self.cycleLife.cycleId,
                 messageNumber: messageNumber,
@@ -45,7 +45,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryServiceAP
                 // Refresh signal pheromones to dictionary service signal pathways
                 return metabolism.sequelize.Promise.all([
                     self.dictionaryServiceAPI.refreshSignalPheromones(self.signalPathways.dictionary.life),
-                    self.dictionaryServiceAPI.refreshSignalPheromones(self.signalPathways.dictionary.cell)
+                    self.dictionaryServiceAPI.refreshSignalPheromones(self.signalPathways.dictionary.brainwave)
                     ]);
             })
             .then(function() {
@@ -57,7 +57,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryServiceAP
             })
             .then(function(word) {
                 // Verify word can cover total charge of cycle
-                if (word.chargeDegree === cellId.destructiveInterference)
+                if (word.chargeDegree === brainwaveId.destructiveInterference)
                     throw new Blockages.CycleProcessError(20108, 'ERROR: word does not cover the life charge total');
 
                 return self.audit(20003, ' (LIFE PIPELINE SECTION)Open - Checked Dictionary Service Balance');
@@ -109,7 +109,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryServiceAP
                       /*lifeReceiverId:    null,*/
                       /*serviceSenderId:      null,*/
                       /*serviceReceiverId:    null,*/
-                        cellId:            self.cellId
+                        brainwaveId:            self.brainwaveId
                     };
 
                     return metabolism.LifeSignal.create(newLifeSignal);
@@ -227,7 +227,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryServiceAP
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete
                 throw new Error('Cycle Life already marked as COMPLETE');
 
-            case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Cancelled
+            case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Canbrainwaveed
                 throw new Error('Cannot process cycle marked as CANCELLED');
 
             default: // UNKNOWN STATUS
@@ -248,7 +248,7 @@ module.exports = function(cellId, cycleLife, signalPathways, dictionaryServiceAP
             case CycleType.lifeStatusType.ENUM.PRCSGN.status: // Process Genomics
             case CycleType.lifeStatusType.ENUM.PRCSCM.status: // Process Communications
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete
-            case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Cancelled
+            case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Canbrainwaveed
                 self.cycleLife.status = status;
                 break;
 

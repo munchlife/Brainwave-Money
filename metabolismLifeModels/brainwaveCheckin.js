@@ -1,6 +1,6 @@
 'use strict';
 
-// cellCheckin.js (model)
+// brainwaveCheckin.js (model)
 
 var CheckinDeviceType = require('../metabolismTypes/checkinDeviceTypes');
 
@@ -9,7 +9,7 @@ var CHECKIN_FIELD_MINOR_MAX     = 65535;
 var CHECKIN_FIELD_PROXIMITY_MAX = 128;
 
 module.exports = function(sequelize, DataTypes) {
-    var CellCheckin = sequelize.define('CellCheckin', {
+    var BrainwaveCheckin = sequelize.define('BrainwaveCheckin', {
         checkinId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
@@ -93,17 +93,17 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: false,           // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,  // defaulted globally
-        tableName: 'cellCheckins', // force table name to this value
+        tableName: 'brainwaveCheckins', // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                CellCheckin.belongsTo(models.Life, { foreignKey: 'lifeId' });
+                BrainwaveCheckin.belongsTo(models.Life, { foreignKey: 'lifeId' });
             }
         },
         instanceMethods: {
         }
     });
 
-    return CellCheckin;
+    return BrainwaveCheckin;
 };

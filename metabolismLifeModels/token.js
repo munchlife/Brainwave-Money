@@ -36,15 +36,15 @@ module.exports = function(sequelize, DataTypes) {
         // freezeTableName: true, // defaulted globally
         tableName: 'tokens',      // force table name to this value
         validate: {
-            mutexCellAndServiceStakeholderIds: function() {
-                if ((this.cellStakeholderId !== null) && (this.serviceStakeholderId !== null))
-                    throw new Error('Token only allows one of cellStakeholderId or serviceStakeholderId be set at a time');
+            mutexBrainwaveAndServiceStakeholderIds: function() {
+                if ((this.brainwaveStakeholderId !== null) && (this.serviceStakeholderId !== null))
+                    throw new Error('Token only allows one of brainwaveStakeholderId or serviceStakeholderId be set at a time');
             }
         },
         classMethods: {
             associate: function(models) {
                 Token.belongsTo(models.Life,            { foreignKey: 'lifeId' });
-                Token.belongsTo(models.CellStakeholder, { foreignKey: 'cellStakeholderId' });
+                Token.belongsTo(models.BrainwaveStakeholder, { foreignKey: 'brainwaveStakeholderId' });
                 Token.belongsTo(models.ServiceStakeholder, { foreignKey: 'serviceStakeholderId' });
             },
             encode: function(data) {
@@ -53,13 +53,13 @@ module.exports = function(sequelize, DataTypes) {
             decode: function(data) {
                 return JWT.decode(data, configAuth.local.tokenSecret);
             },
-            createAndPersistToken: function(lifeId, cellStakeholderId, serviceStakeholderId) {
+            createAndPersistToken: function(lifeId, brainwaveStakeholderId, serviceStakeholderId) {
                 // Build the token and return as response.
                 var newToken = {
                   /*tokenId:           0,*/
                     token:             '',
                     lifeId:            lifeId,
-                    cellStakeholderId: cellStakeholderId,
+                    brainwaveStakeholderId: brainwaveStakeholderId,
                     serviceStakeholderId: serviceStakeholderId
                 };
 

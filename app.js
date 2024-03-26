@@ -62,7 +62,7 @@ app.use(Middlewares.formParsing);
 app.use('/',                      require(routePath + '/index'));
 app.use(apiVersion,               require(routePath + '/proofOfLife'));
 app.use(apiVersion + '/life',     require(routePath + '/life'));
-app.use(apiVersion + '/cell',     require(routePath + '/cell'));
+app.use(apiVersion + '/brainwave',     require(routePath + '/brainwave'));
 app.use(apiVersion + '/service',     require(routePath + '/service'));
 app.use(apiVersion + '/charge',   require(routePath + '/charge'));
 app.use(apiVersion,               require(routePath + '/checkin'));
@@ -75,21 +75,21 @@ app.locals.timer = {};
 // TODO: consider using node-cron or node-schedule modules
 // TODO: use redis to handle checkins and tokens; interval will be needed when verifying accounts
 
-// Function to make the API call for updating cell instance info
-function updateCellInstance(cellId, instanceId) {
-    // Replace this with your actual logic for updating the cell instance
+// Function to make the API call for updating brainwave instance info
+function updateBrainwaveInstance(brainwaveId, instanceId) {
+    // Replace this with your actual logic for updating the brainwave instance
     // You may use your existing API call logic here
-    console.log('Updating cell instance:', cellId, instanceId);
+    console.log('Updating brainwave instance:', brainwaveId, instanceId);
 }
 
-// Interval for updating cell instance info every 1 millisecond
-app.locals.timer.updateCellInstance = setInterval(function() {
-    // Replace 'cellId' and 'instanceId' with actual values
-    var cellId = 'yourCellId';
+// Interval for updating brainwave instance info every 1 millisecond
+app.locals.timer.updateBrainwaveInstance = setInterval(function() {
+    // Replace 'brainwaveId' and 'instanceId' with actual values
+    var brainwaveId = 'yourBrainwaveId';
     var instanceId = 'yourInstanceId';
 
-    // Call the function to update cell instance
-    updateCellInstance(cellId, instanceId);
+    // Call the function to update brainwave instance
+    updateBrainwaveInstance(brainwaveId, instanceId);
 }, 1);
 
 // --- clear any stale checkin (older than 10 minutes) from the metabolism graph every 10 seconds
@@ -97,7 +97,7 @@ app.locals.timer.checkin = setInterval(function() {
     var staleMinutes = 10;
     var staleDate    = new Date(new Date().getTime() - (staleMinutes*60*1000));
 
-    metabolism.CellCheckin
+    metabolism.BrainwaveCheckin
         .destroy({
             where: { updatedAt: {lt: staleDate} }
         })

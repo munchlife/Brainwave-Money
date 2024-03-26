@@ -93,7 +93,7 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 ServiceSignalPathway.belongsTo(models.Life, { foreignKey: 'lifeId' });
-                ServiceSignalPathway.belongsTo(models.Cell, { foreignKey: 'cellId' });
+                ServiceSignalPathway.belongsTo(models.Brainwave, { foreignKey: 'brainwaveId' });
                 ServiceSignalPathway.belongsTo(models.Service, { foreignKey: 'serviceId' });
             },
             extractOptional: function(metabolism, value) {

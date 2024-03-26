@@ -1,11 +1,11 @@
 'use strict';
 
-// cellStakeholder.js (model)
+// brainwaveStakeholder.js (model)
 
 var STAKEHOLDER_IMMUNITIES_MAX = 256;
 
 module.exports = function(sequelize, DataTypes) {
-    var CellStakeholder = sequelize.define('CellStakeholder', {
+    var BrainwaveStakeholder = sequelize.define('BrainwaveStakeholder', {
         stakeholderId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
@@ -16,15 +16,15 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             validate: {
                 isInt: {
-                    msg: 'Cell stakeholder immunities value must be an integer'
+                    msg: 'Brainwave stakeholder immunities value must be an integer'
                 },
                 min: {
                     args: 0,
-                    msg: 'Cell stakeholder immunities value must be a positive number'
+                    msg: 'Brainwave stakeholder immunities value must be a positive number'
                 },
                 max: {
                     args: STAKEHOLDER_IMMUNITIES_MAX,
-                    msg: 'Cell stakeholder immunities value must be less than or equal to ' + STAKEHOLDER_IMMUNITIES_MAX
+                    msg: 'Brainwave stakeholder immunities value must be less than or equal to ' + STAKEHOLDER_IMMUNITIES_MAX
                 }
             }
         }
@@ -34,20 +34,20 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,             // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,   // defaulted globally
-        tableName: 'cellStakeholder', // force table name to this value
+        tableName: 'brainwaveStakeholder', // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                CellStakeholder.belongsTo(models.Life,         {               foreignKey: 'lifeId' });
-                CellStakeholder.belongsTo(models.Cell,         {               foreignKey: 'cellId' });
-                CellStakeholder.belongsTo(models.CellInstance, {               foreignKey: 'instanceId' });
-                CellStakeholder.hasMany(models.Token,          { as: 'Tokens', foreignKey: 'cellStakeholderId' });
+                BrainwaveStakeholder.belongsTo(models.Life,         {               foreignKey: 'lifeId' });
+                BrainwaveStakeholder.belongsTo(models.Brainwave,         {               foreignKey: 'brainwaveId' });
+                BrainwaveStakeholder.belongsTo(models.BrainwaveInstance, {               foreignKey: 'instanceId' });
+                BrainwaveStakeholder.hasMany(models.Token,          { as: 'Tokens', foreignKey: 'brainwaveStakeholderId' });
             }
         },
         instanceMethods: {
         }
     });
 
-    return CellStakeholder;
+    return BrainwaveStakeholder;
 };

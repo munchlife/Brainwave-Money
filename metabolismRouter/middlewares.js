@@ -91,10 +91,10 @@ Middlewares.lifeImmunity = function(req, res, next) {
 };
 
 // -----------------------------------------------------------------------------
-// CELL PERMISSION AUTHORIZATION MIDDLEWARE
+// BRAINWAVE PERMISSION AUTHORIZATION MIDDLEWARE
 // -----------------------------------------------------------------------------
-Middlewares.cellImmunity = function(req, res, next) {
-    debug('#cellImmunity()');
+Middlewares.brainwaveImmunity = function(req, res, next) {
+    debug('#brainwaveImmunity()');
 
     next();
 };

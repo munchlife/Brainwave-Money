@@ -136,10 +136,10 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 Address.belongsTo(models.Life,           { foreignKey: 'lifeId' });
-                Address.belongsTo(models.Cell,           { foreignKey: 'cellId' });
-                Address.belongsTo(models.CellInstance,   { foreignKey: 'instanceId' });
+                Address.belongsTo(models.Brainwave,           { foreignKey: 'brainwaveId' });
+                Address.belongsTo(models.BrainwaveInstance,   { foreignKey: 'instanceId' });
                 Address.belongsTo(models.Service,           { foreignKey: 'serviceId' });
-                Address.belongsTo(models.ChargeCell,     { foreignKey: 'chargeCellId' });
+                Address.belongsTo(models.ChargeBrainwave,     { foreignKey: 'chargeBrainwaveId' });
                 Address.belongsTo(models.ChargeInstance, { foreignKey: 'chargeInstanceId' });
             },
             extractName: function(metabolism, value) {

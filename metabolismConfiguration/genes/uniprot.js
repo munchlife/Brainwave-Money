@@ -31,20 +31,20 @@ module.exports = function() {
 
     // Munch Development account (sandbox) --- life: 'demo-developers@munchmode.com', password: 'under0ver999^'
 
-    // cell@munchmode.com My$ecur6pw!
+    // brainwave@munchmode.com My$ecur6pw!
 
-    self.constructCallbackInfo = function(host, lifeId, cellId) {
+    self.constructCallbackInfo = function(host, lifeId, brainwaveId) {
         var result = { callbackURL: null, state: null };
 
-        // If only one of lifeId and cellId is not null, construct the URL.
-        if ((lifeId !== null) !== (cellId !== null)) {
+        // If only one of lifeId and brainwaveId is not null, construct the URL.
+        if ((lifeId !== null) !== (brainwaveId !== null)) {
             if (lifeId !== null) {
                 result.callbackURL = 'https://' + host + '/life/service/uniprot/auth/callback';
                 result.state = lifeId;
             }
-            else { // cellId !== null
-                result.callbackURL = 'https://' + host + '/cell/service/uniprot/auth/callback';
-                result.state = cellId;
+            else { // brainwaveId !== null
+                result.callbackURL = 'https://' + host + '/brainwave/service/uniprot/auth/callback';
+                result.state = brainwaveId;
             }
         }
         // If both are null or not null, throw an error.
@@ -61,10 +61,10 @@ module.exports = function() {
     };
 
     // -------------------------------------------------------------------------
-    self.authenticate = function(host, lifeId, cellId) {
+    self.authenticate = function(host, lifeId, brainwaveId) {
         verbose('#authenticate()');
 
-        var redirectInfo = self.constructCallbackInfo(host, lifeId, cellId);
+        var redirectInfo = self.constructCallbackInfo(host, lifeId, brainwaveId);
         if (redirectInfo instanceof Error) {
             debug('Error in constructCallbackInfo');
             throw redirectInfo;
@@ -85,10 +85,10 @@ module.exports = function() {
     };
 
     // -------------------------------------------------------------------------
-    self.authenticateCallback = function(code, host, lifeId, cellId) {
+    self.authenticateCallback = function(code, host, lifeId, brainwaveId) {
         verbose('#authenticateCallback()');
 
-        var redirectInfo = self.constructCallbackInfo(host, lifeId, cellId);
+        var redirectInfo = self.constructCallbackInfo(host, lifeId, brainwaveId);
         if (redirectInfo instanceof Error) {
             debug('Error in constructCallbackInfo');
             return Promise.reject(redirectInfo);
@@ -128,7 +128,7 @@ module.exports = function() {
                     reinforcementSignalPheromoneExpiration: null,
                     optional:                               null
                   /*lifeId:                                 null,*/
-                  /*cellId:                                 null,*/
+                  /*brainwaveId:                                 null,*/
                   /*serviceId:                                 null*/
                 };
                 console.log(signalPathwayData)
@@ -235,8 +235,8 @@ module.exports = function() {
         var url = 'https://' + self.info.apiHost + self.info.endpoints.send;
         var destinationId;
 
-        if (signalPathways.cell.signalPheromone !== null)
-            destinationId = signalPathways.cell.optional;
+        if (signalPathways.brainwave.signalPheromone !== null)
+            destinationId = signalPathways.brainwave.optional;
         else
             destinationId = 'fieldId';
 

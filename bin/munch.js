@@ -37,8 +37,8 @@ metabolism.sequelize.sync({ force: forceSync })
         }
     })
     .then(function() {
-        debug('* Creating cell specific graph ...');
-        return require('../metabolismConfiguration/cellGraph').sync();
+        debug('* Creating brainwave specific graph ...');
+        return require('../metabolismConfiguration/brainwaveGraph').sync();
     })
     .then(function() {
         if (env !== 'production') {

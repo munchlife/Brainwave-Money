@@ -7,17 +7,17 @@ var metabolism = require('../../metabolismLifeModels/database');
 var Blockages  = require('../blockages');
 var CycleType  = require('../../metabolismTypes/cycleTypes');
 
-module.exports = function(cellId, cycle) {
+module.exports = function(brainwaveId, cycle) {
 
     var validate = metabolism.Sequelize.Validator;
 
     var self = this;
     self.continueProcessing = true;
-    self.cellId             = cellId;
+    self.brainwaveId             = brainwaveId;
     self.cycle              = cycle;
 
     self.audit = function(messageNumber, message) {
-        return metabolism.CellGraph[self.cellId].CycleAudit
+        return metabolism.BrainwaveGraph[self.brainwaveId].CycleAudit
             .create({
                 cycleId: self.cycle.cycleId,
                 messageNumber: messageNumber,
@@ -29,8 +29,8 @@ module.exports = function(cellId, cycle) {
     self.psOpen = function() {
         return self.audit(20000, ' (PS)Open - Start')
             .then(function() {
-                if (validate.toInt(self.cycle.cellType) !== 4815)
-                    throw new Blockages.CycleProcessError(20101, 'ERROR: cellType invalid');
+                if (validate.toInt(self.cycle.brainwaveType) !== 4815)
+                    throw new Blockages.CycleProcessError(20101, 'ERROR: brainwaveType invalid');
 
                 if (self.cycle.instanceId === null)
                     throw new Blockages.CycleProcessError(20102, 'ERROR: instanceId not set');
@@ -38,7 +38,7 @@ module.exports = function(cellId, cycle) {
                 if (self.cycle.deviceId === null)
                     throw new Blockages.CycleProcessError(20103, 'ERROR: deviceId not set');
 
-                // TODO: consider bringing in later when multi-login support is in cell app
+                // TODO: consider bringing in later when multi-login support is in brainwave app
                 // if (self.cycle.stakeholderCreatorId === null)
                 //     throw new Blockages.CycleProcessError(20104, 'ERROR: stakeholderCreatorId not set');
 
@@ -140,7 +140,7 @@ module.exports = function(cellId, cycle) {
             case CycleType.cycleStatusType.ENUM.COMPLT.status: // Complete
                 throw new Error('Cycle already marked as COMPLETE');
 
-            case CycleType.cycleStatusType.ENUM.CNCLLD.status: // Cancelled
+            case CycleType.cycleStatusType.ENUM.CNCLLD.status: // Canbrainwaveed
                 throw new Error('Cannot process cycle marked as CANCELLED');
 
             default: // UNKNOWN STATUS
@@ -157,12 +157,12 @@ module.exports = function(cellId, cycle) {
             case CycleType.cycleStatusType.ENUM.RDYPRCS.status: // Ready for Processing
             case CycleType.cycleStatusType.ENUM.PRCSNG.status: // Processing
             case CycleType.cycleStatusType.ENUM.COMPLT.status: // Complete
-            case CycleType.cycleStatusType.ENUM.CNCLLD.status: // Cancelled
+            case CycleType.cycleStatusType.ENUM.CNCLLD.status: // Canbrainwaveed
                 self.cycle.status = status;
                 break;
 
             default: // UNKNOWN STATUS
-                throw new Error('Cell cycle type \'4815\' does not support this status');
+                throw new Error('Brainwave cycle type \'4815\' does not support this status');
         }
 
         return self.cycle.save({ fields: ['status'] })

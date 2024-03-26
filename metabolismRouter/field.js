@@ -1,6 +1,6 @@
 'use strict';
 
-// signal.js (routes)
+// field.js (routes)
 
 // Dependency packages
 var debug   = require('debug')('munch:routes:Field');
@@ -23,17 +23,17 @@ var router = module.exports = express.Router();
 router.use(Middlewares.tokenAuth);
 
 // -----------------------------------------------------------------------------
-// GET CELL FIELDS
+// GET BRAINWAVE FIELDS
 // -----------------------------------------------------------------------------
 // /fields
-// --- retrieve array of all active cell fields (UUIDs)
+// --- retrieve array of all active brainwave fields (UUIDs)
 router.get('/fields', function(req, res) {
     debug('[GET] /fields');
     // No immunity level necessary for this route; all are allowed access
     // after token has been verified.
 
     // TODO: implement use of 'active' column
-    metabolism.CellField
+    metabolism.BrainwaveField
         .findAll()
         .then(function(fields) {
             verbose('    fields = ' + fields);
@@ -57,9 +57,9 @@ router.get('/checkin/:field/major/:major', function(req, res) {
     var field = req.params.field;
     var major = req.params.major;
 
-    // TODO: Use Immunities.verifyNoRejectionFromCell() function to verify access
+    // TODO: Use Immunities.verifyNoRejectionFromBrainwave() function to verify access
 
-    metabolism.CellCheckin
+    metabolism.BrainwaveCheckin
         .findAll({
             where: {
                 field: field,
@@ -82,9 +82,9 @@ router.get('/checkin/:field/major/:major/minor/:minor', function(req, res) {
     var major = req.params.major;
     var minor = req.params.minor;
 
-    // TODO: Use Immunities.verifyNoRejectionFromCell() function to verify access
+    // TODO: Use Immunities.verifyNoRejectionFromBrainwave() function to verify access
 
-    metabolism.CellCheckin
+    metabolism.BrainwaveCheckin
         .findAll({
             where: {
                 field: field,
@@ -117,7 +117,7 @@ router.put('/distance/:id/checkin/:field/major/:major/minor/:minor/proximity/:pr
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellCheckin
+    metabolism.BrainwaveCheckin
         // .findOrCreate({
         .findOrInitialize({
             where: {
@@ -167,7 +167,7 @@ router.put('/contact/:id/checkin/:field/major/:major/minor/:minor/proximity/:pro
     var proximity  = req.params.proximity;
 
     // TODO: Use Immunities.verifyNoRejectionFromLife() function to verify access; 
-    //       not sent from life app, comes from cell device/app
+    //       not sent from life app, comes from brainwave device/app
 
     metabolism.LifeDevice
         .find({
@@ -181,7 +181,7 @@ router.put('/contact/:id/checkin/:field/major/:major/minor/:minor/proximity/:pro
             if (!device)
                 throw new Blockages.NotFoundError('Life device not found');
 
-            return metabolism.CellCheckin
+            return metabolism.BrainwaveCheckin
                 // .findOrCreate({
                 .findOrInitialize({
                     where: {

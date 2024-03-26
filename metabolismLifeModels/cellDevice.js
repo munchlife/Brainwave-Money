@@ -1,15 +1,15 @@
 'use strict';
 
-// cellDevice.js (model)
+// brainwaveDevice.js (model)
 
-var CellDeviceType = require('../metabolismTypes/cellDeviceTypes');
+var BrainwaveDeviceType = require('../metabolismTypes/brainwaveDeviceTypes');
 
 var DEVICE_SERIAL_NUM_MAX_LENGTH = 100;
 var DEVICE_DESCRIPTION_MAX_LENGTH = 255;
 var DEVICE_FIELD_MINOR_MAX = 65535;
 
 module.exports = function(sequelize, DataTypes) {
-    var CellDevice = sequelize.define('CellDevice', {
+    var BrainwaveDevice = sequelize.define('BrainwaveDevice', {
         deviceId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
@@ -38,8 +38,8 @@ module.exports = function(sequelize, DataTypes) {
             unique: 'deviceIndex',
             validate: {
                 isIn: {
-                    args: [ CellDeviceType.abbrs ],
-                    msg: 'Cell device type is invalid'
+                    args: [ BrainwaveDeviceType.abbrs ],
+                    msg: 'Brainwave device type is invalid'
                 }
             }
         },
@@ -50,7 +50,7 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 len: {
                     args: [ 1, DEVICE_SERIAL_NUM_MAX_LENGTH ],
-                    msg: 'Cell device serial number must be inclusively between 1 and ' + DEVICE_SERIAL_NUM_MAX_LENGTH + ' characters in length'
+                    msg: 'Brainwave device serial number must be inclusively between 1 and ' + DEVICE_SERIAL_NUM_MAX_LENGTH + ' characters in length'
                 }
             }
         },
@@ -61,7 +61,7 @@ module.exports = function(sequelize, DataTypes) {
             validate : {
                 len: {
                     args: [ 1, DEVICE_DESCRIPTION_MAX_LENGTH ],
-                    msg: 'Cell device description can be no more than ' + DEVICE_DESCRIPTION_MAX_LENGTH + ' characters in length'
+                    msg: 'Brainwave device description can be no more than ' + DEVICE_DESCRIPTION_MAX_LENGTH + ' characters in length'
                 }
             }
         },
@@ -81,12 +81,12 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,               // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,     // defaulted globally
-        tableName: 'cellDevices', // force table name to this value
+        tableName: 'brainwaveDevices', // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                CellDevice.belongsTo(models.CellInstance, { foreignKey: 'instanceId' });
+                BrainwaveDevice.belongsTo(models.BrainwaveInstance, { foreignKey: 'instanceId' });
             },
             getMinorMax: function() {
                 return DEVICE_FIELD_MINOR_MAX;
@@ -109,5 +109,5 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
-    return CellDevice;
+    return BrainwaveDevice;
 };

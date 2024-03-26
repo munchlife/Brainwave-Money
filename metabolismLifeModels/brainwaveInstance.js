@@ -1,6 +1,6 @@
 'use strict';
 
-// cellInstance.js (model)
+// brainwaveInstance.js (model)
 
 var CountryCodes = require('../metabolismTypes/countryCodes');
 var charges = require('electric-field-demo');
@@ -10,7 +10,7 @@ var INSTANCE_WEBSITE_MAX_LENGTH = 255;
 var INSTANCE_FIELD_MAJOR_MAX = 65535;
 
 module.exports = function(sequelize, DataTypes) {
-    var CellInstance = sequelize.define('CellInstance', {
+    var BrainwaveInstance = sequelize.define('BrainwaveInstance', {
         instanceId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
@@ -21,15 +21,15 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: true,
             validate: {
                 isFloat: {
-                    msg: 'Cell signal frequency value must be a number'
+                    msg: 'Brainwave signal frequency value must be a number'
                 },
                 min: {
                     args: 0.0,
-                    msg: 'Cell signal frequency value must be greater than or equal to 0hz'
+                    msg: 'Brainwave signal frequency value must be greater than or equal to 0hz'
                 },
                 max: {
                     args: 150.0,
-                    msg: 'Cell signal frequency value must be less than or equal to 150hz'
+                    msg: 'Brainwave signal frequency value must be less than or equal to 150hz'
                 }
             }
         },
@@ -40,7 +40,7 @@ module.exports = function(sequelize, DataTypes) {
 //             validate: {
 //                 isIn: {
 //                     args: [[ DELTA, THETA, ALPHA, BETA, LOW GAMMA, HIGH GAMMA ]],
-//                     msg: 'Cell signal frequency is not in the valid set of band types'
+//                     msg: 'Brainwave signal frequency is not in the valid set of band types'
 //                 }
 //             }
 //         },
@@ -125,7 +125,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
             }
         },
-        cellType: {
+        brainwaveType: {
             type: DataTypes.BIGINT.UNSIGNED,
             allowNull: true,
             defaultValue: null,
@@ -167,7 +167,7 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,                 // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,       // defaulted globally
-        tableName: 'cellInstances',     // force table name to this value
+        tableName: 'brainwaveInstances',     // force table name to this value
         validate: {
             validateInterference: function() {
                 if ((this.constructiveInterference === null) !== (this.destructiveInterference === null))
@@ -176,13 +176,13 @@ module.exports = function(sequelize, DataTypes) {
         },
         classMethods: {
             associate: function(models) {
-                CellInstance.belongsTo(models.Cell,          {                           foreignKey: 'cellId' });
-                CellInstance.belongsTo(models.CellField,     {                           foreignKey: 'fieldId' });
-                CellInstance.hasOne(models.Electromagnetism, { as: 'Electromagnetisms',  foreignKey: 'electromagnetismId' });
-                CellInstance.hasMany(models.CellStakeholder, { as: 'StakeholderMembers', foreignKey: 'instanceId' });
-                CellInstance.hasMany(models.CellDevice,      { as: 'Devices',            foreignKey: 'instanceId' });
-                CellInstance.hasOne(models.Address,          { as: 'Address',            foreignKey: 'instanceId' });
-                CellInstance.hasMany(models.Phone,           { as: 'Phones',             foreignKey: 'instanceId' });
+                BrainwaveInstance.belongsTo(models.Brainwave,          {                           foreignKey: 'brainwaveId' });
+                BrainwaveInstance.belongsTo(models.BrainwaveField,     {                           foreignKey: 'fieldId' });
+                BrainwaveInstance.hasOne(models.Electromagnetism, { as: 'Electromagnetisms',  foreignKey: 'electromagnetismId' });
+                BrainwaveInstance.hasMany(models.BrainwaveStakeholder, { as: 'StakeholderMembers', foreignKey: 'instanceId' });
+                BrainwaveInstance.hasMany(models.BrainwaveDevice,      { as: 'Devices',            foreignKey: 'instanceId' });
+                BrainwaveInstance.hasOne(models.Address,          { as: 'Address',            foreignKey: 'instanceId' });
+                BrainwaveInstance.hasMany(models.Phone,           { as: 'Phones',             foreignKey: 'instanceId' });
             },
             extractName: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));
@@ -221,7 +221,7 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         instanceMethods: {
-            calculateCellFieldId: function() {
+            calculateBrainwaveFieldId: function() {
                 return Math.floor(this.instanceId / INSTANCE_FIELD_MAJOR_MAX) + 1;
             },
             calculateAndSetMajor: function() {
@@ -290,5 +290,5 @@ module.exports = function(sequelize, DataTypes) {
             }
     });
 
-    return CellInstance;
+    return BrainwaveInstance;
 };

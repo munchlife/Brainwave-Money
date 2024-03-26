@@ -1,26 +1,26 @@
 'use strict';
 
-// chargeCell.js (model)
+// chargeBrainwave.js (model)
 
 var CountryCodes = require('../metabolismTypes/countryCodes');
 
-var CELL_NAME_MAX_LENGTH = 255;
-var CELL_WEBSITE_MAX_LENGTH = 255;
+var BRAINWAVE_NAME_MAX_LENGTH = 255;
+var BRAINWAVE_WEBSITE_MAX_LENGTH = 255;
 
 module.exports = function(sequelize, DataTypes) {
-    var ChargeCell = sequelize.define('ChargeCell', {
-        chargeCellId: {
+    var ChargeBrainwave = sequelize.define('ChargeBrainwave', {
+        chargeBrainwaveId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
         },
         name: {
-            type: DataTypes.STRING( CELL_NAME_MAX_LENGTH ),
+            type: DataTypes.STRING( BRAINWAVE_NAME_MAX_LENGTH ),
             allowNull: false,
             validate: {
                 len: {
-                    args: [ 1, CELL_NAME_MAX_LENGTH ],
-                    msg: 'Charge cell name must be inclusively between 1 and ' + CELL_NAME_MAX_LENGTH + ' characters in length'
+                    args: [ 1, BRAINWAVE_NAME_MAX_LENGTH ],
+                    msg: 'Charge brainwave name must be inclusively between 1 and ' + BRAINWAVE_NAME_MAX_LENGTH + ' characters in length'
                 }
             }
         },
@@ -31,7 +31,7 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 isIn: {
                     args: [[ 4815 ]],
-                    msg: 'Charge cell type is not in the approved set of category numbers'
+                    msg: 'Charge brainwave type is not in the approved set of category numbers'
                 }
             }
         },
@@ -42,10 +42,10 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 len: {
                     args: [ 1, MERCHANT_WEBSITE_MAX_LENGTH ],
-                    msg: 'Charge cell website address can be no more than ' + MERCHANT_WEBSITE_MAX_LENGTH + ' characters in length'
+                    msg: 'Charge brainwave website address can be no more than ' + MERCHANT_WEBSITE_MAX_LENGTH + ' characters in length'
                 },
                 isUrl: {
-                    msg: 'Charge cell website must be a valid URL'
+                    msg: 'Charge brainwave website must be a valid URL'
                 }
             }
         },
@@ -55,7 +55,7 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 isIn: {
                     args: [ CountryCodes.abbrs ],
-                    msg: 'Charge cell country code is not in the approved set of countries'
+                    msg: 'Charge brainwave country code is not in the approved set of countries'
                 }
             }
         }
@@ -65,15 +65,15 @@ module.exports = function(sequelize, DataTypes) {
         // updatedAt:  true,
         paranoid: true,               // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,     // defaulted globally
-        tableName: 'chargeCells', // force table name to this value
+        tableName: 'chargeBrainwaves', // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                ChargeCell.hasMany(models.ChargeInstance, { as: 'Instances', foreignKey: 'chargeCellId' });
-                ChargeCell.hasMany(models.Charge,         { as: 'Bounties',  foreignKey: 'chargeCellId' });
-                ChargeCell.hasOne(models.Address,         { as: 'Address',   foreignKey: 'chargeCellId' });
-                ChargeCell.hasMany(models.Phone,          { as: 'Phones',    foreignKey: 'chargeCellId' });
+                ChargeBrainwave.hasMany(models.ChargeInstance, { as: 'Instances', foreignKey: 'chargeBrainwaveId' });
+                ChargeBrainwave.hasMany(models.Charge,         { as: 'Bounties',  foreignKey: 'chargeBrainwaveId' });
+                ChargeBrainwave.hasOne(models.Address,         { as: 'Address',   foreignKey: 'chargeBrainwaveId' });
+                ChargeBrainwave.hasMany(models.Phone,          { as: 'Phones',    foreignKey: 'chargeBrainwaveId' });
             },
             extractType: function(metabolism, value) {
                 value = metabolism.Sequelize.Validator.trim(metabolism.Sequelize.Validator.toString(value));
@@ -94,5 +94,5 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
-    return ChargeCell;
+    return ChargeBrainwave;
 };

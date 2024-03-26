@@ -6,15 +6,15 @@
 var metabolism = require('../../metabolismLifeModels/database');
 var CycleType  = require('../../metabolismTypes/cycleTypes');
 
-module.exports = function(cellId, cycleLife) {
+module.exports = function(brainwaveId, cycleLife) {
 
     var self = this;
     self.continueProcessing = true;
-    self.cellId         = cellId;
+    self.brainwaveId         = brainwaveId;
     self.cycleLife          = cycleLife;
 
     self.audit = function(messageNumber, message) {
-        return metabolism.CellGraph[self.cellId].CycleAudit
+        return metabolism.BrainwaveGraph[self.brainwaveId].CycleAudit
             .create({
                 cycleId: self.cycleLife.cycleId,
                 messageNumber: messageNumber,
@@ -114,7 +114,7 @@ module.exports = function(cellId, cycleLife) {
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete
                 throw new Error('Cycle Outsider already marked as COMPLETE');
 
-            case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Cancelled
+            case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Canbrainwaveed
                 throw new Error('Cannot process cycle marked as CANCELLED');
 
             default: // UNKNOWN STATUS
@@ -131,7 +131,7 @@ module.exports = function(cellId, cycleLife) {
             case CycleType.lifeStatusType.ENUM.RDYPRCS.status: // Ready for Processing
             case CycleType.lifeStatusType.ENUM.PRCSDC.status: // Process Signal
             case CycleType.lifeStatusType.ENUM.COMPLT.status: // Complete
-            case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Cancelled
+            case CycleType.lifeStatusType.ENUM.CNCLLD.status: // Canbrainwaveed
                 self.cycleLife.status = status;
                 break;
 

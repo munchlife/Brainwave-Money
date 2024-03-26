@@ -1,20 +1,20 @@
 'use strict';
 
-// cell.js (routes)
+// brainwave.js (routes)
 
 // Node.js native packages
 var fs = require('fs');
 
 // Dependency packages
-var debug   = require('debug')('munch:routes:Cell');
-var verbose = require('debug')('munch:verbose:routes:Cell');
+var debug   = require('debug')('munch:routes:Brainwave');
+var verbose = require('debug')('munch:verbose:routes:Brainwave');
 var express = require('express');
 var mv      = require('mv');
 
 // Local js modules
 var Middlewares  = require('./middlewares');
 var metabolism   = require('../../models/database');
-var CellGraph    = require('../../config/cellGraph');
+var BrainwaveGraph    = require('../../config/brainwaveGraph');
 var Immunities   = require('../../config/immunities');
 var Services        = require('../../config/services');
 var Blockages    = require('../../config/blockages');
@@ -28,30 +28,30 @@ var router = module.exports = express.Router();
 // -----------------------------------------------------------------------------
 // NON-TOKEN AUTH ROUTES
 // -----------------------------------------------------------------------------
-// Cell OAuth2 Authorization Callback
+// Brainwave OAuth2 Authorization Callback
 // TODO: place proper restrictions to auth callback to verify sender
-var authCallback = function(req, res, cellId, serviceId) {
+var authCallback = function(req, res, brainwaveId, serviceId) {
     metabolism.sequelize.Promise.all([
         metabolism.ServiceSignalPathway
-            .find({ where: {cellId: cellId, serviceId: serviceId} /* attributes: default */ }),
+            .find({ where: {brainwaveId: brainwaveId, serviceId: serviceId} /* attributes: default */ }),
         metabolism.Service
             .find({ where: {serviceId: serviceId}                 /* attributes: default */ }),
-        metabolism.Cell
-            .find({ where: {cellId: cellId}                 /* attributes: default */ })
+        metabolism.Brainwave
+            .find({ where: {brainwaveId: brainwaveId}                 /* attributes: default */ })
     ]).bind({})
-    .spread(function(signalPathway, service, cell) {
+    .spread(function(signalPathway, service, brainwave) {
         if (signalPathway)
             throw new Blockages.ConflictError('Service signalPathway already exists');
         else if (!service)
             throw new Blockages.NotFoundError('Service not found');
-        else if (!cell)
-            throw new Blockages.NotFoundError('Cell not found');
+        else if (!brainwave)
+            throw new Blockages.NotFoundError('Brainwave not found');
 
-        this.cell = cell;
+        this.brainwave = brainwave;
         this.service = service;
 
         var serviceAPI = new Services[service.serviceName.toString()]();
-        return serviceAPI.authenticateCallback(req.query.code, req.headers.host + '/v1', null, cell.cellId);
+        return serviceAPI.authenticateCallback(req.query.code, req.headers.host + '/v1', null, brainwave.brainwaveId);
     })
     .then(function(newSignalPathway) {
       /*newSignalPathway.signalPathwayId: 0,*/
@@ -61,7 +61,7 @@ var authCallback = function(req, res, cellId, serviceId) {
       /*newSignalPathway.reinforcementSignalPheromoneExpiration: set by serviceAPI*/
       /*newSignalPathway.optional:                               set by serviceAPI*/
       /*newSignalPathway.lifeId                                  null,*/
-        newSignalPathway.cellId                                  = this.cell.cellId;
+        newSignalPathway.brainwaveId                                  = this.brainwave.brainwaveId;
         newSignalPathway.serviceId                                  = this.service.serviceId;
 
         return metabolism.ServiceSignalPathway.create(newSignalPathway);
@@ -77,24 +77,24 @@ var authCallback = function(req, res, cellId, serviceId) {
     });
 };
 
-// /cell/service/:serviceId/auth/callback
+// /brainwave/service/:serviceId/auth/callback
 // --- OAuth2 authorization callback handler (correctly uses state query field)
 router.get('/service/:serviceId/auth/callback', function(req, res) {
-    debug('[GET] /cell/service/:serviceId/auth/callback');
-    var cellId = req.query.state;
+    debug('[GET] /brainwave/service/:serviceId/auth/callback');
+    var brainwaveId = req.query.state;
     var serviceId  = req.params.serviceId;
 
-    authCallback(req, res, cellId, serviceId);
+    authCallback(req, res, brainwaveId, serviceId);
 });
 
-// /cell/:id/service/:serviceId/auth/callback
+// /brainwave/:id/service/:serviceId/auth/callback
 // --- OAuth2 authorization callback handler (for services that don't support the state field)
 router.get('/:id/service/:serviceId/auth/callback', function(req, res) {
-    debug('[GET] /cell/:id/service/:serviceId/auth/callback');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/service/:serviceId/auth/callback');
+    var brainwaveId = req.params.id;
     var serviceId  = req.params.serviceId;
 
-    authCallback(req, res, cellId, serviceId);
+    authCallback(req, res, brainwaveId, serviceId);
 });
 
 // -----------------------------------------------------------------------------
@@ -106,18 +106,18 @@ router.use(Middlewares.tokenAuth);
 // ATTRIBUTE/INCLUDE SETUP
 // -----------------------------------------------------------------------------
 // Removed from all attribute lists: createdAt, updatedAt, deletedAt
-var attributesAddress           = [ 'addressId',       'name', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ]; // Removed: lifeId, cellId, instanceId, serviceId, chargeCellId, chargeInstanceId
-var attributesCellDevice        = [ 'deviceId',        'minor', 'type', 'serialNumber', 'description', 'acceptsCash', 'acceptsCredit', 'instanceId' ];
-var attributesCellInstance      = [ 'instanceId',      'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'fieldId' ]; // Removed: cellId
-var attributesCellStakeholder   = [ 'stakeholderId',   'immunities', 'cellId', 'instanceId', 'lifeId' ]; // Removed: N/A
-var attributesPhone             = [ 'phoneId',         'name', 'number', 'extension' ];    // Removed: chargeInstanceId, chargeCellId, cellId, instanceId, lifeId, serviceId
-var attributesServiceSignalPathway = [ 'signalPathwayId', 'signalPheromone', 'serviceId' ]; // Removed: signalPheromone, signalPheromoneExpiration, reinforcementWavePheromone, reinforcementWavePheromoneExpiration, optional, cellId, lifeId
+var attributesAddress           = [ 'addressId',       'name', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ]; // Removed: lifeId, brainwaveId, instanceId, serviceId, chargeBrainwaveId, chargeInstanceId
+var attributesBrainwaveDevice        = [ 'deviceId',        'minor', 'type', 'serialNumber', 'description', 'acceptsCash', 'acceptsCredit', 'instanceId' ];
+var attributesBrainwaveInstance      = [ 'instanceId',      'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'brainwaveType', 'countryCode', 'fieldId' ]; // Removed: brainwaveId
+var attributesBrainwaveStakeholder   = [ 'stakeholderId',   'immunities', 'brainwaveId', 'instanceId', 'lifeId' ]; // Removed: N/A
+var attributesPhone             = [ 'phoneId',         'name', 'number', 'extension' ];    // Removed: chargeInstanceId, chargeBrainwaveId, brainwaveId, instanceId, lifeId, serviceId
+var attributesServiceSignalPathway = [ 'signalPathwayId', 'signalPheromone', 'serviceId' ]; // Removed: signalPheromone, signalPheromoneExpiration, reinforcementWavePheromone, reinforcementWavePheromoneExpiration, optional, brainwaveId, lifeId
 
-// Remove fields from metabolism.Cell: deletedAt
-var cellAttributes = [ 'cellId', 'verified', 'name', 'type', 'website', 'countryCode', 'createdAt', 'updatedAt' ];
+// Remove fields from metabolism.Brainwave: deletedAt
+var brainwaveAttributes = [ 'brainwaveId', 'verified', 'name', 'type', 'website', 'countryCode', 'createdAt', 'updatedAt' ];
 
-// Remove fields from metabolism.CellInstance: deletedAt
-var instanceAttributes = [ 'instanceId', 'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'createdAt', 'updatedAt', 'cellId', 'fieldId' ];
+// Remove fields from metabolism.BrainwaveInstance: deletedAt
+var instanceAttributes = [ 'instanceId', 'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'brainwaveType', 'countryCode', 'createdAt', 'updatedAt', 'brainwaveId', 'fieldId' ];
 
 // Remove fields from metabolism.Life: phoneVerified, emailVerified, receiptEmail, receiptEmailVerified, referralCode, eegHash, eegExpiration, genomeHash, createdAt, updatedAt, deletedAt
 var lifeAttributes = [ 'lifeId', 'phone', 'email', 'givenName', 'middleName', 'familyName', 'countryCode' ];
@@ -126,45 +126,45 @@ var lifeAttributes = [ 'lifeId', 'phone', 'email', 'givenName', 'middleName', 'f
 var includeService = { model: metabolism.Service, attributes: [ 'serviceId', 'serviceType', 'serviceName', 'companyName', 'website', 'countryCode' ] };
 
 var includeAddress           = { model: metabolism.Address,           as: 'Address',            attributes: attributesAddress };
-var includeCellDevice        = { model: metabolism.CellDevice,        as: 'Devices',            attributes: attributesCellDevice };
-var includeCellInstance      = { model: metabolism.CellInstance,      as: 'Instances',          attributes: attributesCellInstance};
-var includeCellStakeholder   = { model: metabolism.CellStakeholder,   as: 'StakeholderMembers', attributes: attributesCellStakeholder };
+var includeBrainwaveDevice        = { model: metabolism.BrainwaveDevice,        as: 'Devices',            attributes: attributesBrainwaveDevice };
+var includeBrainwaveInstance      = { model: metabolism.BrainwaveInstance,      as: 'Instances',          attributes: attributesBrainwaveInstance};
+var includeBrainwaveStakeholder   = { model: metabolism.BrainwaveStakeholder,   as: 'StakeholderMembers', attributes: attributesBrainwaveStakeholder };
 var includePhone             = { model: metabolism.Phone,             as: 'Phones',             attributes: attributesPhone };
 var includeServiceSignalPathway = { model: metabolism.ServiceSignalPathway, as: 'SignalPathways',     attributes: attributesServiceSignalPathway };
 
-//  cellIncludesAll      = [ includeAddress, includeCellInstance, includeCellStakeholder, includePhone, includeServiceSignalPathway ];
-var cellIncludesCell     = [ includeAddress, includeCellInstance, includeCellStakeholder, includePhone, includeServiceSignalPathway ];
-var cellIncludesInstance = [ includeAddress, includeCellDevice,   includeCellStakeholder, includePhone ];
+//  brainwaveIncludesAll      = [ includeAddress, includeBrainwaveInstance, includeBrainwaveStakeholder, includePhone, includeServiceSignalPathway ];
+var brainwaveIncludesBrainwave     = [ includeAddress, includeBrainwaveInstance, includeBrainwaveStakeholder, includePhone, includeServiceSignalPathway ];
+var brainwaveIncludesInstance = [ includeAddress, includeBrainwaveDevice,   includeBrainwaveStakeholder, includePhone ];
 
 // -----------------------------------------------------------------------------
 // USE MERCHANT-ORDER ROUTES
 // -----------------------------------------------------------------------------
-// All routes related to a cell's cycles are located in the cell-cycle.js file
-router.use(require('./cellCycle'));
+// All routes related to a brainwave's cycles are located in the brainwave-cycle.js file
+router.use(require('./brainwaveCycle'));
 
 // -----------------------------------------------------------------------------
 // GET ROUTES
 // -----------------------------------------------------------------------------
-// /cell/:id
-// --- retrieve info for cell (:id)
+// /brainwave/:id
+// --- retrieve info for brainwave (:id)
 router.get('/:id', function(req, res) {
-    debug('[GET] /cell/:id');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.Cell
+    metabolism.Brainwave
         .find({
-            where: {cellId: cellId},
-            include: cellIncludesCell,
-            attributes: cellAttributes
+            where: {brainwaveId: brainwaveId},
+            include: brainwaveIncludesBrainwave,
+            attributes: brainwaveAttributes
         })
-        .then(function(cell) {
-            if (!cell)
-                throw new Blockages.NotFoundError('Cell not found');
+        .then(function(brainwave) {
+            if (!brainwave)
+                throw new Blockages.NotFoundError('Brainwave not found');
 
-            res.status(200).send(Blockages.respMsg(res, true, cell.get()));
+            res.status(200).send(Blockages.respMsg(res, true, brainwave.get()));
         })
         .catch(function(error) {
             res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
@@ -172,14 +172,14 @@ router.get('/:id', function(req, res) {
 });
 
 // TODO: determine different media types and types to expand uses
-var sendCellMedia = function(res, cellId, type) {
+var sendBrainwaveMedia = function(res, brainwaveId, type) {
     var mediaTypes = [ '.png', '.wav', '.mov', '.fasta' ];
 
     if (!validate.isIn(type, mediaTypes))
         return res.status(400).send(Blockages.respMsg(res, false, 'Media type not recognized'));
 
     var mediaFile = 'media-name' + type;
-    var mediaPath = res.app.locals.rootDir + '/medias/cell/' + cellId + '/';
+    var mediaPath = res.app.locals.rootDir + '/medias/brainwave/' + brainwaveId + '/';
     var mediaInfo = { root: mediaPath };
 
     res.sendFile(mediaFile, mediaInfo, function (error) {
@@ -193,42 +193,42 @@ var sendCellMedia = function(res, cellId, type) {
     });
 };
 
-// /cell/:id/media (default type)
-// --- retrieve cell media (logo) for cell (:id)
+// /brainwave/:id/media (default type)
+// --- retrieve brainwave media (logo) for brainwave (:id)
 router.get('/:id/media', function(req, res) {
-    debug('[GET] /cell/:id/media');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/media');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    sendCellMedia(res, cellId);
+    sendBrainwaveMedia(res, brainwaveId);
 });
 
-// /cell/:id/media/:type (all supported types)
-// --- retrieve cell media (logo) for cell (:id)
+// /brainwave/:id/media/:type (all supported types)
+// --- retrieve brainwave media (logo) for brainwave (:id)
 router.get('/:id/media/:type', function(req, res) {
-    debug('[GET] /cell/:id/media/:type');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/media/:type');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    sendCellMedia(res, cellId, req.params.type);
+    sendBrainwaveMedia(res, brainwaveId, req.params.type);
 });
 
-// /cell/:id/address
-// --- retrieve the address of the cell (:id)
+// /brainwave/:id/address
+// --- retrieve the address of the brainwave (:id)
 router.get('/:id/address', function(req, res) {
-    debug('[GET] /cell/:id/address');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/address');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Address
         .find({
-            where: {cellId: cellId},
+            where: {brainwaveId: brainwaveId},
             attributes: attributesAddress
         })
         .then(function(address) {
@@ -242,18 +242,18 @@ router.get('/:id/address', function(req, res) {
         });
 });
 
-// /cell/:id/phones
-// --- retrieve array of phone numbers for cell (:id)
+// /brainwave/:id/phones
+// --- retrieve array of phone numbers for brainwave (:id)
 router.get('/:id/phones', function(req, res) {
-    debug('[GET] /cell/:id/phones');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/phones');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Phone
         .findAll({
-            where: {cellId: cellId},
+            where: {brainwaveId: brainwaveId},
             attributes: attributesPhone
         })
         .then(function(phones) {
@@ -264,20 +264,20 @@ router.get('/:id/phones', function(req, res) {
         });
 });
 
-// /cell/:id/signalPathways/:type
-// --- retrieve array of connected services of (:type) for cell (:id)
+// /brainwave/:id/signalPathways/:type
+// --- retrieve array of connected services of (:type) for brainwave (:id)
 // TODO: service types: dictionary, genomics, communications
 router.get('/:id/signalPathways/:type', function(req, res) {
-    debug('[GET] /cell/:id/signalPathways/:type');
-    var cellId         = req.params.id;
+    debug('[GET] /brainwave/:id/signalPathways/:type');
+    var brainwaveId         = req.params.id;
     var serviceTypeString = validate.toString(req.params.type).toLowerCase();
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.ServiceSignalPathway
         .findAll({
-            where: {cellId: cellId},
+            where: {brainwaveId: brainwaveId},
             include: includeService,
             attributes: attributesServiceSignalPathway
         })
@@ -310,21 +310,21 @@ router.get('/:id/signalPathways/:type', function(req, res) {
         });
 });
 
-// /cell/:id/signalPathway/:signalPathwayId
-// --- retrieve info on signalPathway (:signalPathwayId) for cell (:id)
+// /brainwave/:id/signalPathway/:signalPathwayId
+// --- retrieve info on signalPathway (:signalPathwayId) for brainwave (:id)
 router.get('/:id/signalPathway/:signalPathwayId', function(req, res) {
-    debug('[GET] /cell/:id/signalPathway/:signalPathwayId');
-    var cellId          = req.params.id;
+    debug('[GET] /brainwave/:id/signalPathway/:signalPathwayId');
+    var brainwaveId          = req.params.id;
     var signalPathwayId = req.params.signalPathwayId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.ServiceSignalPathway
         .find({
             where: {
                 signalPathwayId: signalPathwayId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             },
             include: includeService,
             attributes: attributesServiceSignalPathway
@@ -340,21 +340,21 @@ router.get('/:id/signalPathway/:signalPathwayId', function(req, res) {
         });
 });
 
-// /cell/:id/signalPathwayForService/:serviceId
-// --- retrieve info on signalPathway to service (:serviceId) for cell (:id)
+// /brainwave/:id/signalPathwayForService/:serviceId
+// --- retrieve info on signalPathway to service (:serviceId) for brainwave (:id)
 router.get('/:id/signalPathwayForService/:serviceId', function(req, res) {
-    debug('[GET] /cell/:id/signalPathwayForService/:serviceId');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/signalPathwayForService/:serviceId');
+    var brainwaveId = req.params.id;
     var serviceId = req.params.serviceId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.ServiceSignalPathway
         .find({
             where: {
                 serviceId: serviceId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             },
             attributes: attributesServiceSignalPathway
         })
@@ -369,23 +369,23 @@ router.get('/:id/signalPathwayForService/:serviceId', function(req, res) {
         });
 });
 
-// /cell/:id/stakeholder
-// --- retrieve array of top level cell stakeholder (all members) for cell (:id)
+// /brainwave/:id/stakeholder
+// --- retrieve array of top level brainwave stakeholder (all members) for brainwave (:id)
 router.get('/:id/stakeholder', function(req, res) {
-    debug('[GET] /cell/:id/stakeholder');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/stakeholder');
+    var brainwaveId = req.params.id;
 
-    // TODO: restrict this route to only admins; returns a list of cell admins (access to all instances)
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    // TODO: restrict this route to only admins; returns a list of brainwave admins (access to all instances)
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellStakeholder
+    metabolism.BrainwaveStakeholder
         .findAll({
             where: {
-                cellId: cellId,
+                brainwaveId: brainwaveId,
                 instanceId: null
             },
-            attributes: attributesCellStakeholder
+            attributes: attributesBrainwaveStakeholder
         })
         .then(function(stakeholderMembers) {
             if (stakeholderMembers.length === 0)
@@ -398,24 +398,24 @@ router.get('/:id/stakeholder', function(req, res) {
         });
 });
 
-// /cell/:id/stakeholderMember/:lifeId
-// --- retrieve immunity info on top level cell stakeholder member (:lifeId) for cell (:id)
+// /brainwave/:id/stakeholderMember/:lifeId
+// --- retrieve immunity info on top level brainwave stakeholder member (:lifeId) for brainwave (:id)
 router.get('/:id/stakeholderMember/:lifeId', function(req, res) {
-    debug('[GET] /cell/:id/stakeholderMember/:lifeId');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/stakeholderMember/:lifeId');
+    var brainwaveId = req.params.id;
     var lifeId = req.params.lifeId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellStakeholder
+    metabolism.BrainwaveStakeholder
         .find({
             where: {
                 lifeId: lifeId,
-                cellId: cellId,
+                brainwaveId: brainwaveId,
                 instanceId: null
             },
-            attributes: attributesCellStakeholder
+            attributes: attributesBrainwaveStakeholder
         })
         .then(function(stakeholderMember) {
             if (!stakeholderMember)
@@ -428,19 +428,19 @@ router.get('/:id/stakeholderMember/:lifeId', function(req, res) {
         });
 });
 
-// /cell/:id/instances
-// --- retrieve array of instances for cell (:id)
+// /brainwave/:id/instances
+// --- retrieve array of instances for brainwave (:id)
 router.get('/:id/instances', function(req, res) {
-    debug('[GET] /cell/:id/instances');
-    var cellId = req.params.id;
+    debug('[GET] /brainwave/:id/instances');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellInstance
+    metabolism.BrainwaveInstance
         .findAll({
-            where: {cellId: cellId},
-            attributes: attributesCellInstance
+            where: {brainwaveId: brainwaveId},
+            attributes: attributesBrainwaveInstance
         })
         .then(function(instances) {
             res.status(200).send(Blockages.respMsg(res, true, instances));
@@ -450,23 +450,23 @@ router.get('/:id/instances', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId
-// --- retrieve info on instance (:instanceId) for cell (:id)
+// /brainwave/:id/instance/:instanceId
+// --- retrieve info on instance (:instanceId) for brainwave (:id)
 router.get('/:id/instance/:instanceId', function(req, res) {
-    debug('[GET] /cell/:id/instance/:instanceId');
-    var cellId     = req.params.id;
+    debug('[GET] /brainwave/:id/instance/:instanceId');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellInstance
+    metabolism.BrainwaveInstance
         .find({
             where: {
-                cellId: cellId,
+                brainwaveId: brainwaveId,
                 instanceId: instanceId
             },
-            include: cellIncludesInstance,
+            include: brainwaveIncludesInstance,
             attributes: instanceAttributes
         })
         .then(function(instance) {
@@ -480,14 +480,14 @@ router.get('/:id/instance/:instanceId', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/address
-// --- retrieve the address of instance (:instanceId) for cell (:id)
+// /brainwave/:id/instance/:instanceId/address
+// --- retrieve the address of instance (:instanceId) for brainwave (:id)
 router.get('/:id/instance/:instanceId/address', function(req, res) {
-    debug('[GET] /cell/:id/instance/:instanceId/address');
-    var cellId     = req.params.id;
+    debug('[GET] /brainwave/:id/instance/:instanceId/address');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Address
@@ -506,14 +506,14 @@ router.get('/:id/instance/:instanceId/address', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/phones
-// --- retrieve phone numbers of instance (:instanceId) for cell (:id)
+// /brainwave/:id/instance/:instanceId/phones
+// --- retrieve phone numbers of instance (:instanceId) for brainwave (:id)
 router.get('/:id/instance/:instanceId/phones', function(req, res) {
-    debug('[GET] /cell/:id/instance/:instanceId/phones');
-    var cellId     = req.params.id;
+    debug('[GET] /brainwave/:id/instance/:instanceId/phones');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Phone
@@ -529,23 +529,23 @@ router.get('/:id/instance/:instanceId/phones', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/stakeholder
-// --- retrieve array of cell stakeholder (all members) of instance (:instanceId) for cell (:id)
+// /brainwave/:id/instance/:instanceId/stakeholder
+// --- retrieve array of brainwave stakeholder (all members) of instance (:instanceId) for brainwave (:id)
 router.get('/:id/instance/:instanceId/stakeholder', function(req, res) {
-    debug('[GET] /cell/:id/instance/:instanceId/stakeholder');
-    var cellId     = req.params.id;
+    debug('[GET] /brainwave/:id/instance/:instanceId/stakeholder');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellStakeholder
+    metabolism.BrainwaveStakeholder
         .findAll({
             where: {
-                cellId: cellId,
+                brainwaveId: brainwaveId,
                 instanceId: instanceId
             },
-            attributes: attributesCellStakeholder
+            attributes: attributesBrainwaveStakeholder
         })
         .then(function(stakeholderMembers) {
             res.status(200).send(Blockages.respMsg(res, true, stakeholderMembers));
@@ -555,25 +555,25 @@ router.get('/:id/instance/:instanceId/stakeholder', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/stakeholderMember/:lifeId
-// --- retrieve immunity info on cell stakeholder member (:lifeId) of instance (:instanceId) for cell (:id)
+// /brainwave/:id/instance/:instanceId/stakeholderMember/:lifeId
+// --- retrieve immunity info on brainwave stakeholder member (:lifeId) of instance (:instanceId) for brainwave (:id)
 router.get('/:id/instance/:instanceId/stakeholderMember/:lifeId', function(req, res) {
-    debug('[GET] /cell/:id/instance/:instanceId/stakeholderMember/:lifeId');
-    var cellId     = req.params.id;
+    debug('[GET] /brainwave/:id/instance/:instanceId/stakeholderMember/:lifeId');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
     var lifeId     = req.params.lifeId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellStakeholder
+    metabolism.BrainwaveStakeholder
         .find({
             where: {
                 lifeId: lifeId,
-                cellId: cellId,
+                brainwaveId: brainwaveId,
                 instanceId: instanceId
             },
-            attributes: attributesCellStakeholder
+            attributes: attributesBrainwaveStakeholder
         })
         .then(function(stakeholderMember) {
             if (!stakeholderMember)
@@ -586,20 +586,20 @@ router.get('/:id/instance/:instanceId/stakeholderMember/:lifeId', function(req, 
         });
 });
 
-// /cell/:id/instance/:instanceId/devices
-// --- retrieve array of devices at instance (:instanceId) for cell (:id)
+// /brainwave/:id/instance/:instanceId/devices
+// --- retrieve array of devices at instance (:instanceId) for brainwave (:id)
 router.get('/:id/instance/:instanceId/devices', function(req, res) {
-    debug('[GET] /cell/:id/instance/:instanceId/devices');
-    var cellId     = req.params.id;
+    debug('[GET] /brainwave/:id/instance/:instanceId/devices');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellDevice
+    metabolism.BrainwaveDevice
         .findAll({
             where: {instanceId: instanceId},
-            attributes: attributesCellDevice
+            attributes: attributesBrainwaveDevice
         })
         .then(function(devices) {
             res.status(200).send(Blockages.respMsg(res, true, devices));
@@ -609,28 +609,28 @@ router.get('/:id/instance/:instanceId/devices', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/device/:deviceId
-// --- retrieve info on device (:deviceId) of instance (:instanceId) for cell (:id)
+// /brainwave/:id/instance/:instanceId/device/:deviceId
+// --- retrieve info on device (:deviceId) of instance (:instanceId) for brainwave (:id)
 router.get('/:id/instance/:instanceId/device/:deviceId', function(req, res) {
-    debug('[GET] /cell/:id/instance/:instanceId/device/:deviceId');
-    var cellId     = req.params.id;
+    debug('[GET] /brainwave/:id/instance/:instanceId/device/:deviceId');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
     var deviceId   = req.params.deviceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellDevice
+    metabolism.BrainwaveDevice
         .find({
             where: {
                 deviceId: deviceId,
                 instanceId: instanceId
             },
-            attributes: attributesCellDevice
+            attributes: attributesBrainwaveDevice
         })
         .then(function(device) {
             if (!device)
-                throw new Blockages.NotFoundError('Cell device not found');
+                throw new Blockages.NotFoundError('Brainwave device not found');
 
             res.status(200).send(Blockages.respMsg(res, true, device.get()));
         })
@@ -639,56 +639,56 @@ router.get('/:id/instance/:instanceId/device/:deviceId', function(req, res) {
         });
 });
 
-// /cell/:id/loadDeviceType/:type/serialNumber/:serialNumber
-// --- retrieve the cell (:id) information based on the device type (:type)
+// /brainwave/:id/loadDeviceType/:type/serialNumber/:serialNumber
+// --- retrieve the brainwave (:id) information based on the device type (:type)
 //     and serial number (:serialNumber) of the asking device
 router.get('/:id/loadDeviceType/:type/serialNumber/:serialNumber', function(req, res) {
-    debug('[GET] /cell/:id/loadDeviceType/:type/serialNumber/:serialNumber');
-    var cellId       = req.params.id;
+    debug('[GET] /brainwave/:id/loadDeviceType/:type/serialNumber/:serialNumber');
+    var brainwaveId       = req.params.id;
     var type         = validate.trim(validate.toString(req.params.type)).toUpperCase();
     var serialNumber = validate.trim(validate.toString(req.params.serialNumber));
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellDevice
+    metabolism.BrainwaveDevice
         .find({
             where: {
                 type: type,
                 serialNumber: serialNumber
             },
-            include: metabolism.CellInstance,
-            attributes: attributesCellDevice
+            include: metabolism.BrainwaveInstance,
+            attributes: attributesBrainwaveDevice
         }).bind({})
         .then(function(device) {
-            if (!device || device.CellInstance.cellId !== validate.toInt(cellId))
-                throw new Blockages.NotFoundError('Cell device not found');
+            if (!device || device.BrainwaveInstance.brainwaveId !== validate.toInt(brainwaveId))
+                throw new Blockages.NotFoundError('Brainwave device not found');
 
             this.device = device;
 
-            return metabolism.Cell.find({ where: {cellId: cellId} });
+            return metabolism.Brainwave.find({ where: {brainwaveId: brainwaveId} });
         })
-        .then(function(cell) {
-            if (!cell)
-                throw new Blockages.NotFoundError('Cell not found');
+        .then(function(brainwave) {
+            if (!brainwave)
+                throw new Blockages.NotFoundError('Brainwave not found');
 
-            res.status(200).send(Blockages.respMsg(res, true, {cell: cell.get(), device: this.device.get()}));
+            res.status(200).send(Blockages.respMsg(res, true, {brainwave: brainwave.get(), device: this.device.get()}));
         })
         .catch(function(error) {
             res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
         });
 });
 
-// /cell/:id/sequencer
+// /brainwave/:id/sequencer
 // --- retrieve sequencer information (JSON data? use service?)
 router.get('/:id/sequencer', function(req, res) {
-    debug('[GET] /cell/:id/sequencer');
-    var cellId  = req.params.id;
+    debug('[GET] /brainwave/:id/sequencer');
+    var brainwaveId  = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelStakeholder, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    var regFilePath = res.app.locals.rootDir + '/sequencer/' + cellId + '/sequencer.json';
+    var regFilePath = res.app.locals.rootDir + '/sequencer/' + brainwaveId + '/sequencer.json';
     verbose('    regFilePath = ' + regFilePath);
     fs.readFile(regFilePath, {encoding: 'utf8', flag: 'r'}, function (error, data) {
         if (error) {
@@ -705,10 +705,10 @@ router.get('/:id/sequencer', function(req, res) {
     });
 });
 
-// /cell/instance/interferometer?constructiveInterference=[constructiveInterference]&destructiveInterference=[destructiveInterference]&constructiveInterferenceD=[constructiveInterference region delta]&destructiveInterferenceD=[destructiveInterference region delta]
+// /brainwave/instance/interferometer?constructiveInterference=[constructiveInterference]&destructiveInterference=[destructiveInterference]&constructiveInterferenceD=[constructiveInterference region delta]&destructiveInterferenceD=[destructiveInterference region delta]
 // --- retrieve array of instances in a given area covered by the interferometer (constructiveInterference, destructiveInterference, constructiveInterferenceDelta, destructiveInterferenceDelta)
 router.get('/instance/interferometer', function(req, res) {
-    debug('[GET] /cell/instance/interferometer?');
+    debug('[GET] /brainwave/instance/interferometer?');
     var constructiveInterference      = validate.toFloat(req.query.constructiveInterference);
     var destructiveInterference       = validate.toFloat(req.query.destructiveInterference);
     var constructiveInterferenceDelta = validate.toFloat(req.query.constructiveInterferenceD);
@@ -723,13 +723,13 @@ router.get('/instance/interferometer', function(req, res) {
     var destructiveInterferenceMax  = Math.min(destructiveInterference    + (destructiveInterferenceDelta/2),  180);
     verbose('ConstructiveInterferenceMin: ' + constructiveInterferenceMin + 'ConstructiveInterferenceMax: ' + constructiveInterferenceMax + ' DestructiveInterferenceMin: ' + destructiveInterferenceMin + ' DestructiveInterferenceMax: ' + destructiveInterferenceMax);
 
-    metabolism.CellInstance
+    metabolism.BrainwaveInstance
         .findAll({
             where: {
                 constructiveInterference: { between: [constructiveInterferenceMin, constructiveInterferenceMax] },
                 destructiveInterference: { between: [destructiveInterferenceMin, destructiveInterferenceMax] }
             },
-            include: [includeAddress, includePhone, {model: metabolism.Cell, attributes: cellAttributes}],
+            include: [includeAddress, includePhone, {model: metabolism.Brainwave, attributes: brainwaveAttributes}],
             attributes: instanceAttributes
         })
         .then(function(instances) {
@@ -743,35 +743,35 @@ router.get('/instance/interferometer', function(req, res) {
 // -----------------------------------------------------------------------------
 // PUT ROUTES
 // -----------------------------------------------------------------------------
-// /cell/:id
-// --- update info for cell (:id)
+// /brainwave/:id
+// --- update info for brainwave (:id)
 router.put('/:id', function(req, res) {
-    debug('[PUT] /cell/:id');
-    var cellId = req.params.id;
+    debug('[PUT] /brainwave/:id');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.Cell
+    metabolism.Brainwave
         .find({
-            where: {cellId: cellId},
-            attributes: cellAttributes
+            where: {brainwaveId: brainwaveId},
+            attributes: brainwaveAttributes
         })
-        .then(function(cell) {
-            if (!cell)
-                throw new Blockages.NotFoundError('Cell not found');
+        .then(function(brainwave) {
+            if (!brainwave)
+                throw new Blockages.NotFoundError('Brainwave not found');
 
-          /*cell.cellId:      not accessible for change */
-          /*cell.verified:    not accessible for change */
-            cell.name         = validate.trim(validate.toString(req.body.name));
-            cell.type         = validate.trim(validate.toString(req.body.type));
-            cell.website      = metabolism.Cell.extractWebsite(metabolism, req.body.website);
-          /*cell.countryCode: not accessible for change */
+          /*brainwave.brainwaveId:      not accessible for change */
+          /*brainwave.verified:    not accessible for change */
+            brainwave.name         = validate.trim(validate.toString(req.body.name));
+            brainwave.type         = validate.trim(validate.toString(req.body.type));
+            brainwave.website      = metabolism.Brainwave.extractWebsite(metabolism, req.body.website);
+          /*brainwave.countryCode: not accessible for change */
 
-            return cell.save();
+            return brainwave.save();
         })
-        .then(function(cell) {
-            res.status(200).send(Blockages.respMsg(res, true, cell.get()));
+        .then(function(brainwave) {
+            res.status(200).send(Blockages.respMsg(res, true, brainwave.get()));
         })
         .catch(metabolism.Sequelize.ValidationError, function(error) {
             res.status(400).send(Blockages.respMsg(res, false, error.errors[0]));
@@ -781,21 +781,21 @@ router.put('/:id', function(req, res) {
         });
 });
 
-// /cell/:id/address/:addressId
-// --- update main address (:addressId) for cell (:id)
+// /brainwave/:id/address/:addressId
+// --- update main address (:addressId) for brainwave (:id)
 router.put('/:id/address/:addressId', function(req, res) {
-    debug('[PUT] /cell/:id/address/:addressId');
-    var cellId     = req.params.id;
+    debug('[PUT] /brainwave/:id/address/:addressId');
+    var brainwaveId     = req.params.id;
     var addressId  = req.params.addressId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Address
         .find({
             where: {
                 addressId: addressId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             },
             attributes: attributesAddress
         })
@@ -813,10 +813,10 @@ router.put('/:id/address/:addressId', function(req, res) {
             address.region            = validate.trim(validate.toString(req.body.region));
             address.postalCode        = validate.trim(validate.toString(req.body.postalCode));
           /*address.lifeId:           not accessible for change */
-          /*address.cellId:           not accessible for change */
+          /*address.brainwaveId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
           /*address.serviceId:           not accessible for change */
-          /*address.chargeCellId:     not accessible for change */
+          /*address.chargeBrainwaveId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
@@ -832,21 +832,21 @@ router.put('/:id/address/:addressId', function(req, res) {
         });
 });
 
-// /cell/:id/phone/:phoneId
-// --- update phone number (:phoneId) for cell (:id)
+// /brainwave/:id/phone/:phoneId
+// --- update phone number (:phoneId) for brainwave (:id)
 router.put('/:id/phone/:phoneId', function(req, res) {
-    debug('[PUT] /cell/:id/phone/phoneId');
-    var cellId     = req.params.id;
+    debug('[PUT] /brainwave/:id/phone/phoneId');
+    var brainwaveId     = req.params.id;
     var phoneId    = req.params.phoneId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Phone
         .find({
             where: {
                 phoneId: phoneId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             },
             attributes: attributesPhone
         })
@@ -859,10 +859,10 @@ router.put('/:id/phone/:phoneId', function(req, res) {
             phone.number            = validate.trim(validate.toString(req.body.number));
             phone.extension         = metabolism.Phone.extractExtension(metabolism, req.body.extension);
           /*phone.lifeId:           not accessible for change */
-          /*phone.cellId:           not accessible for change */
+          /*phone.brainwaveId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
           /*phone.serviceId:           not accessible for change */
-          /*phone.chargeCellId:     not accessible for change */
+          /*phone.chargeBrainwaveId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
@@ -878,28 +878,28 @@ router.put('/:id/phone/:phoneId', function(req, res) {
         });
 });
 
-// A route to update a service signalPathway for a cell does not exist;
+// A route to update a service signalPathway for a brainwave does not exist;
 // the signalPathway should just be deleted and reregistered for updating
 
-// /cell/:id/stakeholderMember/:lifeId
-// --- update stakeholder member (:lifeId) at cell level for cell (:id)
-// TODO: Expand functionality to ensure there is always at least one admin account for the cell
+// /brainwave/:id/stakeholderMember/:lifeId
+// --- update stakeholder member (:lifeId) at brainwave level for brainwave (:id)
+// TODO: Expand functionality to ensure there is always at least one admin account for the brainwave
 router.put('/:id/stakeholderMember/:lifeId', function(req, res) {
-    debug('[PUT] /cell/:id/stakeholderMember/:lifeId');
-    var cellId = req.params.id;
+    debug('[PUT] /brainwave/:id/stakeholderMember/:lifeId');
+    var brainwaveId = req.params.id;
     var lifeId = req.params.lifeId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellStakeholder
+    metabolism.BrainwaveStakeholder
         .find({
             where: {
                 lifeId: lifeId,
-                cellId: cellId,
+                brainwaveId: brainwaveId,
                 instanceId: null
             },
-            attributes: attributesCellStakeholder
+            attributes: attributesBrainwaveStakeholder
         })
         .then(function(stakeholderMember) {
             if (!stakeholderMember)
@@ -908,7 +908,7 @@ router.put('/:id/stakeholderMember/:lifeId', function(req, res) {
           /*stakeholderMember.stakeholderId: not accessible for change */
             stakeholderMember.immunities =   validate.toInt(req.body.immunities);
           /*stakeholderMember.lifeId:        not accessible for change */
-          /*stakeholderMember.cellId:        not accessible for change */
+          /*stakeholderMember.brainwaveId:        not accessible for change */
           /*stakeholderMember.instanceId:    not accessible for change */
 
             return stakeholderMember.save();
@@ -924,23 +924,23 @@ router.put('/:id/stakeholderMember/:lifeId', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId
-// --- update info of instance (:instanceid) for cell (:id)
+// /brainwave/:id/instance/:instanceId
+// --- update info of instance (:instanceid) for brainwave (:id)
 router.put('/:id/instance/:instanceId', function(req, res) {
-    debug('[PUT] /cell/:id/instance/:instanceId');
-    var cellId     = req.params.id;
+    debug('[PUT] /brainwave/:id/instance/:instanceId');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellInstance
+    metabolism.BrainwaveInstance
         .find({
             where: {
                 instanceId: instanceId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             },
-            attributes: attributesCellInstance
+            attributes: attributesBrainwaveInstance
         })
         .then(function(instance) {
             if (!instance)
@@ -949,21 +949,21 @@ router.put('/:id/instance/:instanceId', function(req, res) {
             // Extract 'constructiveInterference' from the body
             var constructiveInterference = null;
             if (req.body.hasOwnProperty('constructiveInterference'))
-                constructiveInterference = metabolism.CellInstance.extractConstructiveInterferenceitude(metabolism, req.body.constructiveInterference);
+                constructiveInterference = metabolism.BrainwaveInstance.extractConstructiveInterferenceitude(metabolism, req.body.constructiveInterference);
 
             // Extract 'destructiveInterference' from the body
             var destructiveInterference = null;
             if (req.body.hasOwnProperty('destructiveInterference'))
-                destructiveInterference = metabolism.CellInstance.extractDestructiveInterferencegitude(metabolism, req.body.destructiveInterference);
+                destructiveInterference = metabolism.BrainwaveInstance.extractDestructiveInterferencegitude(metabolism, req.body.destructiveInterference);
 
           /*instance.instanceId: 	      not accessible for change */
             instance.constructiveInterference = constructiveInterference;
             instance.destructiveInterference  = destructiveInterference;
-            instance.name                     = metabolism.CellInstance.extractName(metabolism, req.body.name);
-            instance.website                  = metabolism.CellInstance.extractWebsite(metabolism, req.body.website);
-          /*instance.cellType: 		      not accessible for change */
+            instance.name                     = metabolism.BrainwaveInstance.extractName(metabolism, req.body.name);
+            instance.website                  = metabolism.BrainwaveInstance.extractWebsite(metabolism, req.body.website);
+          /*instance.brainwaveType: 		      not accessible for change */
           /*instance.countryCode: 	      not accessible for change */
-          /*instance.chargeCellId: 	      not accessible for change */
+          /*instance.chargeBrainwaveId: 	      not accessible for change */
 
             return instance.save();
         })
@@ -978,15 +978,15 @@ router.put('/:id/instance/:instanceId', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/address/:addressId
-// --- update main address (:addressId) for instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/address/:addressId
+// --- update main address (:addressId) for instance (:instanceId) of brainwave (:id)
 router.put('/:id/instance/:instanceId/address/:addressId', function(req, res) {
-    debug('[PUT] /cell/:id/instance/:instanceId/address/:addressId');
-    var cellId     = req.params.id;
+    debug('[PUT] /brainwave/:id/instance/:instanceId/address/:addressId');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
     var addressId  = req.params.addressId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Address
@@ -1011,10 +1011,10 @@ router.put('/:id/instance/:instanceId/address/:addressId', function(req, res) {
             address.region            = validate.trim(validate.toString(req.body.region));
             address.postalCode        = validate.trim(validate.toString(req.body.postalCode));
           /*address.lifeId:           not accessible for change */
-          /*address.cellId:           not accessible for change */
+          /*address.brainwaveId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
           /*address.serviceId: 	      not accessible for change */
-          /*address.chargeCellId:     not accessible for change */
+          /*address.chargeBrainwaveId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
@@ -1030,15 +1030,15 @@ router.put('/:id/instance/:instanceId/address/:addressId', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/phone/:phoneId
-// --- update phone number (:phoneId) for instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/phone/:phoneId
+// --- update phone number (:phoneId) for instance (:instanceId) of brainwave (:id)
 router.put('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
-    debug('[PUT] /cell/:id/instance/:instanceId/phone/:phoneId');
-    var cellId     = req.params.id;
+    debug('[PUT] /brainwave/:id/instance/:instanceId/phone/:phoneId');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
     var phoneId    = req.params.phoneId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Phone
@@ -1058,10 +1058,10 @@ router.put('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
             phone.number    	    = validate.trim(validate.toString(req.body.number));
             phone.extension 	    = metabolism.Phone.extractExtension(metabolism, req.body.extension);
           /*phone.lifeId: 	    not accessible for change */
-          /*phone.cellId: 	    not accessible for change */
+          /*phone.brainwaveId: 	    not accessible for change */
           /*phone.instanceId: 	    not accessible for change */
           /*phone.serviceId: 	    not accessible for change */
-          /*phone.chargeCellId:     not accessible for change */
+          /*phone.chargeBrainwaveId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
@@ -1077,25 +1077,25 @@ router.put('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/stakeholderMember/:lifeId
-// --- update stakeholder member (:lifeId) at instance level for instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/stakeholderMember/:lifeId
+// --- update stakeholder member (:lifeId) at instance level for instance (:instanceId) of brainwave (:id)
 router.put('/:id/instance/:instanceId/stakeholderMember/:lifeId', function(req, res) {
-    debug('[PUT] /cell/:id/instance/:instanceId/stakeholderMember/:lifeId');
-    var cellId     = req.params.id;
+    debug('[PUT] /brainwave/:id/instance/:instanceId/stakeholderMember/:lifeId');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
     var lifeId     = req.params.lifeId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellStakeholder
+    metabolism.BrainwaveStakeholder
         .find({
             where: {
                 lifeId: lifeId,
-                cellId: cellId,
+                brainwaveId: brainwaveId,
                 instanceId: instanceId
             },
-            attributes: attributesCellStakeholder
+            attributes: attributesBrainwaveStakeholder
         })
         .then(function(stakeholderMember) {
             if (!stakeholderMember)
@@ -1104,7 +1104,7 @@ router.put('/:id/instance/:instanceId/stakeholderMember/:lifeId', function(req, 
           /*stakeholderMember.stakeholderId: not accessible for change */
             stakeholderMember.immunities     = validate.toInt(req.body.immunities);
           /*stakeholderMember.lifeId:        not accessible for change */
-          /*stakeholderMember.cellId:        not accessible for change */
+          /*stakeholderMember.brainwaveId:        not accessible for change */
           /*stakeholderMember.instanceId:    not accessible for change */
 
             return stakeholderMember.save();
@@ -1120,42 +1120,42 @@ router.put('/:id/instance/:instanceId/stakeholderMember/:lifeId', function(req, 
         });
 });
 
-// /cell/:id/instance/:instanceId/device/:deviceId
-// --- update info of device (:deviceId) for instance (:instanceid) of cell (:id)
+// /brainwave/:id/instance/:instanceId/device/:deviceId
+// --- update info of device (:deviceId) for instance (:instanceid) of brainwave (:id)
 router.put('/:id/instance/:instanceId/device/:deviceId', function(req, res) {
-    debug('[PUT] /cell/:id/instance/:instanceId/device/:deviceId');
-    var cellId     = req.params.id;
+    debug('[PUT] /brainwave/:id/instance/:instanceId/device/:deviceId');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
     var deviceId   = req.params.deviceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellDevice
+    metabolism.BrainwaveDevice
         .find({
             where: {
                 deviceId: deviceId,
                 instanceId: instanceId
             },
-            attributes: attributesCellDevice
+            attributes: attributesBrainwaveDevice
         })
         .then(function(device) {
             if (!device)
-                throw new Blockages.NotFoundError('Cell device not found');
+                throw new Blockages.NotFoundError('Brainwave device not found');
 
             var acceptsCash = false;
             if (req.body.hasOwnProperty('acceptsCash'))
-                acceptsCash = metabolism.CellDevice.extractAcceptsCash(metabolism, req.body.acceptsCash);
+                acceptsCash = metabolism.BrainwaveDevice.extractAcceptsCash(metabolism, req.body.acceptsCash);
 
             var acceptsCredit = false;
             if (req.body.hasOwnProperty('acceptsCredit'))
-                acceptsCredit = metabolism.CellDevice.extractAcceptsCredit(metabolism, req.body.acceptsCredit);
+                acceptsCredit = metabolism.BrainwaveDevice.extractAcceptsCredit(metabolism, req.body.acceptsCredit);
 
           /*device.deviceId: 	 not accessible for change */
           /*device.minor: 	 not accessible for change */
             device.type          = validate.trim(validate.toString(req.body.type)).toUpperCase();
             device.serialNumber  = validate.trim(validate.toString(req.body.serialNumber));
-            device.description   = metabolism.CellDevice.extractDescription(metabolism, req.body.textDescription);
+            device.description   = metabolism.BrainwaveDevice.extractDescription(metabolism, req.body.textDescription);
             device.acceptsCash   = acceptsCash;
             device.acceptsCredit = acceptsCredit;
           /*device.instanceId:   not accessible for change */
@@ -1176,42 +1176,42 @@ router.put('/:id/instance/:instanceId/device/:deviceId', function(req, res) {
 // -----------------------------------------------------------------------------
 // POST ROUTES
 // -----------------------------------------------------------------------------
-// /cell/signup
-// --- create a new cell
+// /brainwave/signup
+// --- create a new brainwave
 router.post('/signup', function(req, res) {
-    debug('[POST] /cell/signup');
+    debug('[POST] /brainwave/signup');
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
-    // Create the cell record
-    var newCell = {
-      /*cellId:  0,*/
+    // Create the brainwave record
+    var newBrainwave = {
+      /*brainwaveId:  0,*/
       /*verified:    false,*/
         name:        validate.trim(validate.toString(req.body.name)),
         type:        validate.trim(validate.toString(req.body.type)),
-        website:     metabolism.Cell.extractWebsite(metabolism, req.body.website),
+        website:     metabolism.Brainwave.extractWebsite(metabolism, req.body.website),
         countryCode: CountryCodes.ENUM.USA.abbr
     };
 
-    metabolism.Cell.create(newCell).bind({})
-        .then(function(cell) {
-            this.cell = cell;
+    metabolism.Brainwave.create(newBrainwave).bind({})
+        .then(function(brainwave) {
+            this.brainwave = brainwave;
 
-            // Create cell stakeholder record to make the life an admin
+            // Create brainwave stakeholder record to make the life an admin
             var newStakeholder = {
               /*stakeholderId: 0,*/
                 immunities:    Immunities.AuthLevelAdminStakeholder,
                 lifeId:        res.locals.lifePacket.life.lifeId,
-                cellId:        cell.cellId
+                brainwaveId:        brainwave.brainwaveId
               /*instanceId:    null*/
             };
 
-            return metabolism.CellStakeholder.create(newStakeholder);
+            return metabolism.BrainwaveStakeholder.create(newStakeholder);
         })
         .then(function(stakeholderMember) {
-            return CellGraph.create(this.cell.cellId);
+            return BrainwaveGraph.create(this.brainwave.brainwaveId);
         })
         .then(function() {
-            res.status(201).send(Blockages.respMsg(res, true, this.cell.get()));
+            res.status(201).send(Blockages.respMsg(res, true, this.brainwave.get()));
         })
         .catch(metabolism.Sequelize.ValidationError, function(error) {
             res.status(400).send(Blockages.respMsg(res, false, error.errors[0]));
@@ -1221,50 +1221,50 @@ router.post('/signup', function(req, res) {
         });
 });
 
-// /cell/instance/signup
-// --- create a new cell adestructiveInterferenceg with one instance with an optional address and phone number
+// /brainwave/instance/signup
+// --- create a new brainwave adestructiveInterferenceg with one instance with an optional address and phone number
 router.post('/instance/signup', function(req, res) {
-    debug('[POST] /cell/instance/signup');
+    debug('[POST] /brainwave/instance/signup');
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
-    // Create the cell record
-    var newCell = {
-      /*cellId:      0,*/
+    // Create the brainwave record
+    var newBrainwave = {
+      /*brainwaveId:      0,*/
       /*verified:    false,*/
         name:        validate.trim(validate.toString(req.body.name)),
         type:        validate.trim(validate.toString(req.body.type)),
-        website:     metabolism.Cell.extractWebsite(metabolism, req.body.website),
+        website:     metabolism.Brainwave.extractWebsite(metabolism, req.body.website),
         countryCode: CountryCodes.ENUM.USA.abbr
     };
 
-    metabolism.Cell.create(newCell).bind({})
-        .then(function(cell) {
-            this.cell = cell;
+    metabolism.Brainwave.create(newBrainwave).bind({})
+        .then(function(brainwave) {
+            this.brainwave = brainwave;
 
-            // Create cell stakeholder record to make the life an admin
+            // Create brainwave stakeholder record to make the life an admin
             var newStakeholder = {
               /*stakeholderId: 0,*/
                 immunities:    Immunities.AuthLevelAdminStakeholder,
                 lifeId:        res.locals.lifePacket.life.lifeId,
-                cellId:        cell.cellId
+                brainwaveId:        brainwave.brainwaveId
               /*instanceId:    null*/
             };
 
-            return metabolism.CellStakeholder.create(newStakeholder);
+            return metabolism.BrainwaveStakeholder.create(newStakeholder);
         })
         .then(function(stakeholderMember) {
-            return CellGraph.create(this.cell.cellId);
+            return BrainwaveGraph.create(this.brainwave.brainwaveId);
         })
         .then(function(instance) {
             // Extract 'constructiveInterference' from the body
             var constructiveInterference = instance.calculateConstructiveInterference();
             if (req.body.hasOwnProperty('constructiveInterference'))
-                constructiveInterference = metabolism.CellInstance.extractConstructiveInterference(metabolism, req.body.constructiveInterference);
+                constructiveInterference = metabolism.BrainwaveInstance.extractConstructiveInterference(metabolism, req.body.constructiveInterference);
 
             // Extract 'destructiveInterference' from the body
             var destructiveInterference = instance.calculateDestructiveInterference();
             if (req.body.hasOwnProperty('destructiveInterference'))
-                destructiveInterference = metabolism.CellInstance.extractDestructiveInterference(metabolism, req.body.destructiveInterference);
+                destructiveInterference = metabolism.BrainwaveInstance.extractDestructiveInterference(metabolism, req.body.destructiveInterference);
 
             // Create the instance record
             var newInstance = {
@@ -1274,23 +1274,23 @@ router.post('/instance/signup', function(req, res) {
                 destructiveInterference:  destructiveInterference,
               /*name:        		  null,*/
               /*website:      		  null,*/
-              /*cellType:     		  null,*/
+              /*brainwaveType:     		  null,*/
               /*countryCode:  	          null,*/
-                cellId:       	          this.cell.cellId
+                brainwaveId:       	          this.brainwave.brainwaveId
               /*fieldId:      		  null*/
             };
 
-            return metabolism.CellInstance.create(newInstance);
+            return metabolism.BrainwaveInstance.create(newInstance);
         })
         .then(function(instance) {
             this.instance = instance;
 
             var id = instance.calculateFieldId();
-            return metabolism.CellField.find({ where: {fieldId: id} });
+            return metabolism.BrainwaveField.find({ where: {fieldId: id} });
         })
         .then(function(field) {
             if (!field)
-                throw new Blockages.NotFoundError('Field to associate with cell instance not found');
+                throw new Blockages.NotFoundError('Field to associate with brainwave instance not found');
 
             return field.addInstance(this.instance);
         })
@@ -1316,10 +1316,10 @@ router.post('/instance/signup', function(req, res) {
                     region:           validate.trim(validate.toString(req.body.region)),
                     postalCode:       validate.trim(validate.toString(req.body.postalCode)),
                   /*lifeId:           null,*/
-                  /*cellId:           null,*/
+                  /*brainwaveId:           null,*/
                     instanceId:       this.instance.instanceId
                   /*serviceId:           null,*/
-                  /*chargeCellId:     null,*/
+                  /*chargeBrainwaveId:     null,*/
                   /*chargeInstanceId: null*/
                 };
 
@@ -1334,10 +1334,10 @@ router.post('/instance/signup', function(req, res) {
                     number:           validate.trim(validate.toString(req.body.number)),
                   /*extension:        null,*/
                   /*lifeId:           null,*/
-                  /*cellId:           null,*/
+                  /*brainwaveId:           null,*/
                     instanceId:       this.instance.instanceId
                   /*serviceId:           null,*/
-                  /*chargeCellId:     null,*/
+                  /*chargeBrainwaveId:     null,*/
                   /*chargeInstanceId: null*/
                 };
 
@@ -1345,12 +1345,12 @@ router.post('/instance/signup', function(req, res) {
             }
 
          // signalPathwayId, signalPheromone, signalPheromoneExpiration, reinforcementSignalPheromone, reinforcementSignalPheromoneExpiration, optional, lifeId fields are defaults
-            executeArray.push(metabolism.ServiceSignalPathway.create({ cellId: this.cell.cellId, serviceId: 1008 }));
+            executeArray.push(metabolism.ServiceSignalPathway.create({ brainwaveId: this.brainwave.brainwaveId, serviceId: 1008 }));
 
             return metabolism.sequelize.Promise.all(executeArray);
         })
         .then(function(results) {
-            res.status(201).send(Blockages.respMsg(res, true, this.cell.get()));
+            res.status(201).send(Blockages.respMsg(res, true, this.brainwave.get()));
         })
         .catch(metabolism.Sequelize.ValidationError, function(error) {
             res.status(400).send(Blockages.respMsg(res, false, error.errors[0]));
@@ -1360,23 +1360,23 @@ router.post('/instance/signup', function(req, res) {
         });
 });
 
-// /cell/:id/media
-// --- add an media to an existing cell (:id)
+// /brainwave/:id/media
+// --- add an media to an existing brainwave (:id)
 router.post('/:id/media', function(req, res) {
-    debug('[POST] /cell/:id/media');
-    var cellId = req.params.id;
+    debug('[POST] /brainwave/:id/media');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.Cell
+    metabolism.Brainwave
         .find({
-            where: {cellId: cellId},
-            attributes: cellAttributes
+            where: {brainwaveId: brainwaveId},
+            attributes: brainwaveAttributes
         })
-        .then(function(cell) {
-            if (!cell)
-                throw new Blockages.NotFoundError('Cell not found');
+        .then(function(brainwave) {
+            if (!brainwave)
+                throw new Blockages.NotFoundError('Brainwave not found');
 
             // Validate 'media' format
             // TODO: restrict media format to PNG
@@ -1385,13 +1385,13 @@ router.post('/:id/media', function(req, res) {
             if (validate.equals(req.files.media.name, ''))
                 throw new Blockages.BadRequestError('Media is required');
 
-            // Move the media into the directory associated with the cell
-            var mediaDir = 'medias/cell/' + cell.cellId + '/';
-            mv(mediaPath, mediaDir + 'cell-media.extension', {mkdirp: true}, function(error) {
+            // Move the media into the directory associated with the brainwave
+            var mediaDir = 'medias/brainwave/' + brainwave.brainwaveId + '/';
+            mv(mediaPath, mediaDir + 'brainwave-media.extension', {mkdirp: true}, function(error) {
                 if (error)
                     throw error;
                 else
-                    res.status(201).send(Blockages.respMsg(res, true, cell.get()));
+                    res.status(201).send(Blockages.respMsg(res, true, brainwave.get()));
             });
         })
         .catch(function(error) {
@@ -1399,30 +1399,30 @@ router.post('/:id/media', function(req, res) {
         });
 });
 
-// /cell/:id/address
-// --- add an address to an existing cell (:id)
+// /brainwave/:id/address
+// --- add an address to an existing brainwave (:id)
 router.post('/:id/address', function(req, res) {
-    debug('[POST] /cell/:id/address');
-    var cellId = req.params.id;
+    debug('[POST] /brainwave/:id/address');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.Cell
+    metabolism.Brainwave
         .find({
-            where: {cellId: cellId},
+            where: {brainwaveId: brainwaveId},
             include: includeAddress,
-            attributes: cellAttributes
+            attributes: brainwaveAttributes
         })
-        .then(function(cell) {
-            if (!cell)
-                throw new Blockages.NotFoundError('Cell not found');
-            else if (cell.Address !== null)
-                throw new Blockages.ConflictError('Cell already has an address');
+        .then(function(brainwave) {
+            if (!brainwave)
+                throw new Blockages.NotFoundError('Brainwave not found');
+            else if (brainwave.Address !== null)
+                throw new Blockages.ConflictError('Brainwave already has an address');
 
             var newAddress = {
               /*addressId:        0,*/
-                name:             '$$_cell',
+                name:             '$$_brainwave',
                 address1:         validate.trim(validate.toString(req.body.address1)),
                 address2:         metabolism.Address.extractAddress(metabolism, req.body.address2),
                 address3:         metabolism.Address.extractAddress(metabolism, req.body.address3),
@@ -1431,10 +1431,10 @@ router.post('/:id/address', function(req, res) {
                 region:           validate.trim(validate.toString(req.body.region)),
                 postalCode:       validate.trim(validate.toString(req.body.postalCode)),
               /*lifeId:           null,*/
-                cellId:           cell.cellId
+                brainwaveId:           brainwave.brainwaveId
               /*instanceId:       null,*/
               /*serviceId:           null,*/
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
               /*chargeInstanceId: null*/
             };
 
@@ -1451,23 +1451,23 @@ router.post('/:id/address', function(req, res) {
         });
 });
 
-// /cell/:id/phone
-// --- add a phone number to an existing cell (:id)
+// /brainwave/:id/phone
+// --- add a phone number to an existing brainwave (:id)
 router.post('/:id/phone', function(req, res) {
-    debug('[POST] /cell/:id/phone');
-    var cellId = req.params.id;
+    debug('[POST] /brainwave/:id/phone');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.Cell
+    metabolism.Brainwave
         .find({
-            where: {cellId: cellId},
-            attributes: cellAttributes
+            where: {brainwaveId: brainwaveId},
+            attributes: brainwaveAttributes
         })
-        .then(function(cell) {
-            if (!cell)
-                throw new Blockages.NotFoundError('Cell not found');
+        .then(function(brainwave) {
+            if (!brainwave)
+                throw new Blockages.NotFoundError('Brainwave not found');
 
             var newPhone = {
               /*phoneId:          0,*/
@@ -1475,10 +1475,10 @@ router.post('/:id/phone', function(req, res) {
                 number:           validate.trim(validate.toString(req.body.number)),
                 extension:        metabolism.Phone.extractExtension(metabolism, req.body.extension),
               /*lifeId:           null,*/
-                cellId:           cell.cellId
+                brainwaveId:           brainwave.brainwaveId
               /*instanceId:       null,*/
               /*serviceId:           null,*/
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
               /*chargeInstanceId: null*/
             };
 
@@ -1495,68 +1495,68 @@ router.post('/:id/phone', function(req, res) {
         });
 });
 
-// /cell/:id/signalPathwayForService/:serviceId
-// --- add a signalPathway for a cell (:id) of an existing service (:serviceId)
+// /brainwave/:id/signalPathwayForService/:serviceId
+// --- add a signalPathway for a brainwave (:id) of an existing service (:serviceId)
 router.post('/:id/signalPathwayForService/:serviceId', function(req, res) {
-    debug('[POST] /cell/:id/signalPathwayForService/:serviceId');
-    var cellId = req.params.id;
+    debug('[POST] /brainwave/:id/signalPathwayForService/:serviceId');
+    var brainwaveId = req.params.id;
     var serviceId = req.params.serviceId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.sequelize.Promise.all([
         metabolism.ServiceSignalPathway
-            .find({ where: {cellId: cellId, serviceId: serviceId} /* attributes: default */ }),
+            .find({ where: {brainwaveId: brainwaveId, serviceId: serviceId} /* attributes: default */ }),
         metabolism.Service
             .find({ where: {serviceId: serviceId}                 /* attributes: default */ }),
-        metabolism.Cell
-            .find({ where: {cellId: cellId}                 /* attributes: default */ })
+        metabolism.Brainwave
+            .find({ where: {brainwaveId: brainwaveId}                 /* attributes: default */ })
     ])
-    .spread(function(signalPathway, service, cell) {
+    .spread(function(signalPathway, service, brainwave) {
         if (signalPathway)
             throw new Blockages.ConflictError('Service signalPathway already exists');
         else if (!service)
             throw new Blockages.NotFoundError('Service not found');
-        else if (!cell)
-            throw new Blockages.NotFoundError('Cell not found');
+        else if (!brainwave)
+            throw new Blockages.NotFoundError('Brainwave not found');
 
         var serviceAPI = new Services[service.serviceId.toString()]();
 
-        res.redirect(serviceAPI.authenticate(req.headers.host + '/v1', null, cell.cellId));
+        res.redirect(serviceAPI.authenticate(req.headers.host + '/v1', null, brainwave.brainwaveId));
     })
     .catch(function(error) {
         res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
     });
 });
 
-// /cell/:id/allowPaymentService/:serviceId
-// --- add a signalPathway for a cell (:id) of an existing dictionary service (:serviceId)
+// /brainwave/:id/allowPaymentService/:serviceId
+// --- add a signalPathway for a brainwave (:id) of an existing dictionary service (:serviceId)
 router.post('/:id/serviceExpressionConstraints/:serviceId', function(req, res) {
-    debug('[POST] /cell/:id/serviceExpressionConstraints/:serviceId');
-    var cellId  = req.params.id;
+    debug('[POST] /brainwave/:id/serviceExpressionConstraints/:serviceId');
+    var brainwaveId  = req.params.id;
     var serviceId  = req.params.serviceId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.sequelize.Promise.all([
         metabolism.ServiceSignalPathway
-            .find({ where: {cellId: cellId, serviceId: serviceId} /* attributes: default */ }),
+            .find({ where: {brainwaveId: brainwaveId, serviceId: serviceId} /* attributes: default */ }),
         metabolism.Service
             .find({ where: {serviceId: serviceId}                 /* attributes: default */ }),
-        metabolism.Cell
-            .find({ where: {cellId: cellId}                 /* attributes: default */ })
+        metabolism.Brainwave
+            .find({ where: {brainwaveId: brainwaveId}                 /* attributes: default */ })
     ])
-    .spread(function(signalPathway, service, cell) {
+    .spread(function(signalPathway, service, brainwave) {
         if (signalPathway)
             throw new Blockages.ConflictError('Service signalPathway already exists');
         else if (!service)
             throw new Blockages.NotFoundError('Service not found');
         else if (service.serviceType & ServiceType.ENUM.DICTIONARY.value === 0)
             throw new Blockages.BadRequestError('Service is not a dictionary service');
-        else if (!cell)
-            throw new Blockages.NotFoundError('Cell not found');
+        else if (!brainwave)
+            throw new Blockages.NotFoundError('Brainwave not found');
 
         var newSignalPathway = {
           /*signalPathwayId: 			    0,*/
@@ -1566,7 +1566,7 @@ router.post('/:id/serviceExpressionConstraints/:serviceId', function(req, res) {
           /*reinforcementSignalPheromoneExpiration: null,*/
           /*optional:       			    null,*/
           /*lifeId:         		            null,*/
-            cellId:     	 		    cell.cellId,
+            brainwaveId:     	 		    brainwave.brainwaveId,
             serviceId:      			    service.serviceId
         }; 
 
@@ -1583,21 +1583,21 @@ router.post('/:id/serviceExpressionConstraints/:serviceId', function(req, res) {
     });
 });
 
-// /cell/:id/stakeholderMember
-// --- add a stakeholder member to an existing cell (:id)
+// /brainwave/:id/stakeholderMember
+// --- add a stakeholder member to an existing brainwave (:id)
 router.post('/:id/stakeholderMember', function(req, res) {
-    debug('[POST] /cell/:id/stakeholderMember');
-    var cellId = req.params.id;
+    debug('[POST] /brainwave/:id/stakeholderMember');
+    var brainwaveId = req.params.id;
     var lifeId = req.body.lifeId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.sequelize.Promise.all([
-        metabolism.Cell
+        metabolism.Brainwave
             .find({
-                where: {cellId: cellId},
-                attributes: cellAttributes
+                where: {brainwaveId: brainwaveId},
+                attributes: brainwaveAttributes
             }),
         metabolism.Life
             .find({
@@ -1605,9 +1605,9 @@ router.post('/:id/stakeholderMember', function(req, res) {
                 attributes: lifeAttributes
             })
     ])
-    .spread(function(cell, life) {
-        if (!cell)
-            throw new Blockages.NotFoundError('Cell not found');
+    .spread(function(brainwave, life) {
+        if (!brainwave)
+            throw new Blockages.NotFoundError('Brainwave not found');
         else if (!life)
             throw new Blockages.NotFoundError('Life not found');
 
@@ -1615,11 +1615,11 @@ router.post('/:id/stakeholderMember', function(req, res) {
           /*stakeholderId: 0,*/
             immunities:    validate.toInt(req.body.immunities),
             lifeId:        life.lifeId,
-            cellId:        cell.cellId
+            brainwaveId:        brainwave.brainwaveId
           /*instanceId:    null*/
         };
 
-        return metabolism.CellStakeholder.create(newStakeholderMember);
+        return metabolism.BrainwaveStakeholder.create(newStakeholderMember);
     })
     .then(function(stakeholderMember) {
         res.status(201).send(Blockages.respMsg(res, true, stakeholderMember.get()));
@@ -1632,33 +1632,33 @@ router.post('/:id/stakeholderMember', function(req, res) {
     });
 });
 
-// /cell/:id/instance
-// --- add a instance to an existing cell (:id)
+// /brainwave/:id/instance
+// --- add a instance to an existing brainwave (:id)
 router.post('/:id/instance', function(req, res) {
-    debug('[POST] /cell/:id/instance');
-    var cellId = req.params.id;
+    debug('[POST] /brainwave/:id/instance');
+    var brainwaveId = req.params.id;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.Cell
+    metabolism.Brainwave
         .find({
-            where: {cellId: cellId},
-            attributes: cellAttributes
+            where: {brainwaveId: brainwaveId},
+            attributes: brainwaveAttributes
         }).bind({})
-        .then(function(cell) {
-            if (!cell)
-                throw new Blockages.NotFoundError('Cell not found');
+        .then(function(brainwave) {
+            if (!brainwave)
+                throw new Blockages.NotFoundError('Brainwave not found');
 
             // Extract 'constructiveInterference' from the body
             var constructiveInterference = null;
             if (req.body.hasOwnProperty('constructiveInterference'))
-                constructiveInterference = metabolism.CellInstance.extractConstructiveInterferenceitude(metabolism, req.body.constructiveInterference);
+                constructiveInterference = metabolism.BrainwaveInstance.extractConstructiveInterferenceitude(metabolism, req.body.constructiveInterference);
 
             // Extract 'destructiveInterference' from the body
             var destructiveInterference = null;
             if (req.body.hasOwnProperty('destructiveInterference'))
-                destructiveInterference = metabolism.CellInstance.extractDestructiveInterferencegitude(metabolism, req.body.destructiveInterference);
+                destructiveInterference = metabolism.BrainwaveInstance.extractDestructiveInterferencegitude(metabolism, req.body.destructiveInterference);
 
             var newInstance = {
               /*instanceId:   		   0,*/
@@ -1667,19 +1667,19 @@ router.post('/:id/instance', function(req, res) {
                 destructiveInterference:   destructiveInterference,
               /*name:         	           null,*/
               /*website:     		   null,*/
-              /*cellType:     		   null,*/
+              /*brainwaveType:     		   null,*/
               /*countryCode:  		   null,*/
-                cellId:       		   cell.cellId
+                brainwaveId:       		   brainwave.brainwaveId
               /*fieldId: 		   null*/
             };
 
-            return metabolism.CellInstance.create(newInstance);
+            return metabolism.BrainwaveInstance.create(newInstance);
         })
         .then(function(instance) {
             this.instance = instance;
 
             var id = instance.calculateFieldId();
-            return metabolism.CellField.find({ where: {fieldId: id} });
+            return metabolism.BrainwaveField.find({ where: {fieldId: id} });
         })
         .then(function(field) {
             if (!field)
@@ -1703,21 +1703,21 @@ router.post('/:id/instance', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/address
-// --- add an address to an existing instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/address
+// --- add an address to an existing instance (:instanceId) of brainwave (:id)
 router.post('/:id/instance/:instanceId/address', function(req, res) {
-    debug('[POST] /cell/:id/instance/:instanceId/address');
-    var cellId     = req.params.id;
+    debug('[POST] /brainwave/:id/instance/:instanceId/address');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellInstance
+    metabolism.BrainwaveInstance
         .find({
             where: {
                 instanceId: instanceId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             },
             include: includeAddress,
             attributes: instanceAttributes
@@ -1739,10 +1739,10 @@ router.post('/:id/instance/:instanceId/address', function(req, res) {
                 region:           validate.trim(validate.toString(req.body.region)),
                 postalCode:       validate.trim(validate.toString(req.body.postalCode)),
               /*lifeId:           null,*/
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
                 instanceId:       instance.instanceId
               /*serviceId:           null,*/
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
               /*chargeInstanceId: null*/
             };
 
@@ -1759,21 +1759,21 @@ router.post('/:id/instance/:instanceId/address', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/phone
-// --- add a phone number to an existing instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/phone
+// --- add a phone number to an existing instance (:instanceId) of brainwave (:id)
 router.post('/:id/instance/:instanceId/phone', function(req, res) {
-    debug('[POST] /cell/:id/instance/:instanceId/phone');
-    var cellId     = req.params.id;
+    debug('[POST] /brainwave/:id/instance/:instanceId/phone');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellInstance
+    metabolism.BrainwaveInstance
         .find({
             where: {
                 instanceId: instanceId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             },
             attributes: instanceAttributes
         })
@@ -1787,10 +1787,10 @@ router.post('/:id/instance/:instanceId/phone', function(req, res) {
                 number:           validate.trim(validate.toString(req.body.number)),
                 extension:        metabolism.Phone.extractExtension(metabolism, req.body.extension),
               /*lifeId:           null,*/
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
                 instanceId:       instance.instanceId
               /*serviceId:           null,*/
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
               /*chargeInstanceId: null*/
             };
 
@@ -1807,26 +1807,26 @@ router.post('/:id/instance/:instanceId/phone', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/stakeholderMember
-// --- add a stakeholder member to an existing instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/stakeholderMember
+// --- add a stakeholder member to an existing instance (:instanceId) of brainwave (:id)
 router.post('/:id/instance/:instanceId/stakeholderMember', function(req, res) {
-    debug('[POST] /cell/:id/instance/:instanceId/stakeholderMember');
-    var cellId     = req.params.id;
+    debug('[POST] /brainwave/:id/instance/:instanceId/stakeholderMember');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
     var lifeId     = req.body.lifeId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelAdminStakeholder, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.sequelize.Promise.all([
-        metabolism.Cell
+        metabolism.Brainwave
             .find({
-                where: {cellId: cellId},
-                attributes: cellAttributes
+                where: {brainwaveId: brainwaveId},
+                attributes: brainwaveAttributes
             }),
-        metabolism.CellInstance
+        metabolism.BrainwaveInstance
             .find({
-                where: {instanceId: instanceId, cellId: cellId},
+                where: {instanceId: instanceId, brainwaveId: brainwaveId},
                 attributes: instanceAttributes
             }),
         metabolism.Life
@@ -1835,9 +1835,9 @@ router.post('/:id/instance/:instanceId/stakeholderMember', function(req, res) {
                 attributes: lifeAttributes
             })
     ])
-    .spread(function(cell, instance, life) {
-        if (!cell)
-            throw new Blockages.NotFoundError('Cell not found');
+    .spread(function(brainwave, instance, life) {
+        if (!brainwave)
+            throw new Blockages.NotFoundError('Brainwave not found');
         else if (!instance)
             throw new Blockages.NotFoundError('Instance not found');
         else if (!life)
@@ -1847,11 +1847,11 @@ router.post('/:id/instance/:instanceId/stakeholderMember', function(req, res) {
           /*stakeholderId: 0,*/
             immunities:    validate.toInt(req.body.immunities),
             lifeId:        life.lifeId,
-            cellId:        cell.cellId,
+            brainwaveId:        brainwave.brainwaveId,
             instanceId:    instance.instanceId
         };
 
-        return metabolism.CellStakeholder.create(newStakeholderMember);
+        return metabolism.BrainwaveStakeholder.create(newStakeholderMember);
     })
     .then(function(stakeholderMember) {
         res.status(201).send(Blockages.respMsg(res, true, stakeholderMember.get()));
@@ -1864,21 +1864,21 @@ router.post('/:id/instance/:instanceId/stakeholderMember', function(req, res) {
     });
 });
 
-// /cell/:id/instance/:instanceId/device
-// --- add a device to an existing cell instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/device
+// --- add a device to an existing brainwave instance (:instanceId) of brainwave (:id)
 router.post('/:id/instance/:instanceId/device', function(req, res) {
-    debug('[POST] /cell/:id/instance/:instanceId/device');
-    var cellId     = req.params.id;
+    debug('[POST] /brainwave/:id/instance/:instanceId/device');
+    var brainwaveId     = req.params.id;
     var instanceId = req.params.instanceId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellInstance
+    metabolism.BrainwaveInstance
         .find({
             where: {
                 instanceId: instanceId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             },
             attributes: instanceAttributes
         }).bind({})
@@ -1889,30 +1889,30 @@ router.post('/:id/instance/:instanceId/device', function(req, res) {
             // Extract 'acceptsCash' from the body
             var acceptsCash = false;
             if (req.body.hasOwnProperty('acceptsCash'))
-                acceptsCash = metabolism.CellDevice.extractAcceptsCash(metabolism, req.body.acceptsCash);
+                acceptsCash = metabolism.BrainwaveDevice.extractAcceptsCash(metabolism, req.body.acceptsCash);
 
             // Extract 'acceptsCredit' from the body
             var acceptsCredit = false;
             if (req.body.hasOwnProperty('acceptsCredit'))
-                acceptsCredit = metabolism.CellDevice.extractAcceptsCredit(metabolism, req.body.acceptsCredit);
+                acceptsCredit = metabolism.BrainwaveDevice.extractAcceptsCredit(metabolism, req.body.acceptsCredit);
 
             var newDevice = {
               /*deviceId:      0,*/
                 minor:         0,
                 type:          validate.trim(validate.toString(req.body.type)).toUpperCase(),
                 serialNumber:  validate.trim(validate.toString(req.body.serialNumber)),
-                description:   metabolism.CellDevice.extractDescription(metabolism, req.body.textDescription),
+                description:   metabolism.BrainwaveDevice.extractDescription(metabolism, req.body.textDescription),
                 acceptsCash:   acceptsCash,
                 acceptsCredit: acceptsCredit,
                 instanceId:    instance.instanceId
             };
 
-            return metabolism.CellDevice.create(newDevice);
+            return metabolism.BrainwaveDevice.create(newDevice);
         })
         .then(function(device) {
             this.device = device;
 
-            return metabolism.CellDevice.max('minor', { where: {instanceId: device.instanceId} });
+            return metabolism.BrainwaveDevice.max('minor', { where: {instanceId: device.instanceId} });
         })
         .then(function(minorMax) {
             var minor = 0;
@@ -1937,35 +1937,35 @@ router.post('/:id/instance/:instanceId/device', function(req, res) {
 // -----------------------------------------------------------------------------
 // DELETE ROUTES
 // -----------------------------------------------------------------------------
-// /cell/:id
-// --- delete an existing cell (:id)
+// /brainwave/:id
+// --- delete an existing brainwave (:id)
 router.delete('/:id', function(req, res) {
-    debug('[DELETE] /cell/:id');
+    debug('[DELETE] /brainwave/:id');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /cell/:id/media/:type
-// --- delete an media of an existing cell (:id)
+// /brainwave/:id/media/:type
+// --- delete an media of an existing brainwave (:id)
 router.delete('/:id/media/:type', function(req, res) {
-    debug('[DELETE] /cell/:id/media/:type');
+    debug('[DELETE] /brainwave/:id/media/:type');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /cell/:id/address/:addressId
-// --- delete an address (:addressId) of an existing cell (:id)
+// /brainwave/:id/address/:addressId
+// --- delete an address (:addressId) of an existing brainwave (:id)
 router.delete('/:id/address/:addressId', function(req, res) {
-    debug('[DELETE] /cell/:id/address/:addressId');
-    var cellId = req.params.id;
+    debug('[DELETE] /brainwave/:id/address/:addressId');
+    var brainwaveId = req.params.id;
     var addressId  = req.params.addressId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Address
         .find({
             where: {
                 addressId: addressId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             }
             // attributes: default
         })
@@ -1983,21 +1983,21 @@ router.delete('/:id/address/:addressId', function(req, res) {
         });
 });
 
-// /cell/:id/phone/:phoneId
-// --- delete a phone number (:phoneId) of an existing cell (:id)
+// /brainwave/:id/phone/:phoneId
+// --- delete a phone number (:phoneId) of an existing brainwave (:id)
 router.delete('/:id/phone/:phoneId', function(req, res) {
-    debug('[DELETE] /cell/:id/phone/:phoneId');
-    var cellId = req.params.id;
+    debug('[DELETE] /brainwave/:id/phone/:phoneId');
+    var brainwaveId = req.params.id;
     var phoneId    = req.params.phoneId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelAdminStakeholder, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Phone
         .find({
             where: {
                 phoneId: phoneId,
-                cellId: cellId
+                brainwaveId: brainwaveId
             }
             // attributes: default
         })
@@ -2015,20 +2015,20 @@ router.delete('/:id/phone/:phoneId', function(req, res) {
         });
 });
 
-// /cell/:id/signalPathway/:signalPathwayId
-// --- delete a signalPathway (:signalPathwayId) for a cell (:id) of an existing service
+// /brainwave/:id/signalPathway/:signalPathwayId
+// --- delete a signalPathway (:signalPathwayId) for a brainwave (:id) of an existing service
 router.delete('/:id/signalPathway/:signalPathwayId', function(req, res) {
-    debug('[DELETE] /cell/:id/signalPathway/:signalPathwayId');
-    var cellId     = req.params.id;
+    debug('[DELETE] /brainwave/:id/signalPathway/:signalPathwayId');
+    var brainwaveId     = req.params.id;
     var signalPathwayId = req.params.signalPathwayId;
 
-    if (!Immunities.verifyNoRejectionFromCell(cellId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwave(brainwaveId, Immunities.AuthLevelManager, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.ServiceSignalPathway
         .find({
             where: {signalPathwayId: signalPathwayId,
-                    cellId: cellId}
+                    brainwaveId: brainwaveId}
             // attributes: default
         })
         .then(function(signalPathway) {
@@ -2045,29 +2045,29 @@ router.delete('/:id/signalPathway/:signalPathwayId', function(req, res) {
         });
 });
 
-// /cell/:id/stakeholderMember/:lifeId
-// --- delete stakeholder member (:lifeId) of an existing cell (:id)
+// /brainwave/:id/stakeholderMember/:lifeId
+// --- delete stakeholder member (:lifeId) of an existing brainwave (:id)
 router.delete('/:id/stakeholderMember/:lifeId', function(req, res) {
-    debug('[DELETE] /cell/:id/stakeholderMember/:lifeId');
+    debug('[DELETE] /brainwave/:id/stakeholderMember/:lifeId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /cell/:id/instance/:instanceId
-// --- delete an existing instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId
+// --- delete an existing instance (:instanceId) of brainwave (:id)
 router.delete('/:id/instance/:instanceId', function(req, res) {
-    debug('[DELETE] /cell/:id/instance/:instanceId');
+    debug('[DELETE] /brainwave/:id/instance/:instanceId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /cell/:id/instance/:instanceId/address/:addressId
-// --- delete an address (:addressId) of an existing instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/address/:addressId
+// --- delete an address (:addressId) of an existing instance (:instanceId) of brainwave (:id)
 router.delete('/:id/instance/:instanceId/address/:addressId', function(req, res) {
-    debug('[DELETE] /cell/:id/instance/:instanceId/address/:addressId');
-    var cellId = req.params.id;
+    debug('[DELETE] /brainwave/:id/instance/:instanceId/address/:addressId');
+    var brainwaveId = req.params.id;
     var instanceId = req.params.instanceId;
     var addressId  = req.params.addressId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Address
@@ -2092,15 +2092,15 @@ router.delete('/:id/instance/:instanceId/address/:addressId', function(req, res)
         });
 });
 
-// /cell/:id/instance/:instanceId/phone/:phoneId
-// --- delete a phone number (:phoneId) of an existing instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/phone/:phoneId
+// --- delete a phone number (:phoneId) of an existing instance (:instanceId) of brainwave (:id)
 router.delete('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
-    debug('[DELETE] /cell/:id/instance/:instanceId/phone/:phoneId');
-    var cellId = req.params.id;
+    debug('[DELETE] /brainwave/:id/instance/:instanceId/phone/:phoneId');
+    var brainwaveId = req.params.id;
     var instanceId = req.params.instanceId;
     var phoneId    = req.params.phoneId;
 
-    if (!Immunities.verifyNoRejectionFromCellInstance(cellId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
+    if (!Immunities.verifyNoRejectionFromBrainwaveInstance(brainwaveId, instanceId, Immunities.AuthLevelManager, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
     metabolism.Phone
@@ -2125,47 +2125,47 @@ router.delete('/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
         });
 });
 
-// /cell/:id/instance/:instanceId/stakeholderMember/:lifeId
-// --- delete stakeholder member (:lifeId) at instance level of an existing instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/stakeholderMember/:lifeId
+// --- delete stakeholder member (:lifeId) at instance level of an existing instance (:instanceId) of brainwave (:id)
 router.put('/:id/instance/:instanceId/stakeholderMember/:lifeId', function(req, res) {
-    debug('[DELETE] /cell/:id/instance/:instanceId/stakeholderMember/:lifeId');
+    debug('[DELETE] /brainwave/:id/instance/:instanceId/stakeholderMember/:lifeId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /cell/:id/instance/:instanceId/device/:deviceId
-// --- delete a device (:deviceId) of an existing instance (:instanceId) of cell (:id)
+// /brainwave/:id/instance/:instanceId/device/:deviceId
+// --- delete a device (:deviceId) of an existing instance (:instanceId) of brainwave (:id)
 router.delete('/:id/instance/:instanceId/device/:deviceId', function(req, res) {
-    debug('[DELETE] /cell/:id/instance/:instanceId/device/:deviceId');
+    debug('[DELETE] /brainwave/:id/instance/:instanceId/device/:deviceId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
 // -----------------------------------------------------------------------------
 // CATCH-ALL ROUTES (error)
 // -----------------------------------------------------------------------------
-// /cell/*
+// /brainwave/*
 // --- Any get route request not handled is caught with this route
 router.get('/*', function(req, res) {
-    debug('[GET] /cell/*');
+    debug('[GET] /brainwave/*');
     res.status(501).send(Blockages.respMsg(res, false, 'The requested route does not exist'));
 });
 
-// /cell/*
+// /brainwave/*
 // --- Any put route request not handled is caught with this route
 router.put('/*', function(req, res) {
-    debug('[PUT] /cell/*');
+    debug('[PUT] /brainwave/*');
     res.status(501).send(Blockages.respMsg(res, false, 'The requested route does not exist'));
 });
 
-// /cell/*
+// /brainwave/*
 // --- Any post route request not handled is caught with this route
 router.post('/*', function(req, res) {
-    debug('[POST] /cell/*');
+    debug('[POST] /brainwave/*');
     res.status(501).send(Blockages.respMsg(res, false, 'The requested route does not exist'));
 });
 
-// /cell/*
+// /brainwave/*
 // --- Any delete route request not handled is caught with this route
 router.delete('/*', function(req, res) {
-    debug('[DELETE] /cell/*');
+    debug('[DELETE] /brainwave/*');
     res.status(501).send(Blockages.respMsg(res, false, 'The requested route does not exist'));
 });

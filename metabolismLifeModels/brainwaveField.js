@@ -1,6 +1,6 @@
 'use strict';
 
-// cellField.js (model)
+// brainwaveField.js (model)
 
 // Field (UUID) Version Info:
 //      Version 1 - MAC address  (UNSECURE)
@@ -10,7 +10,7 @@
 //      Version 5 - SHA-1 hash
 
 module.exports = function(sequelize, DataTypes) {
-    var CellField = sequelize.define('CellField', {
+    var BrainwaveField = sequelize.define('BrainwaveField', {
         fieldId: {
             type: DataTypes.BIGINT.UNSIGNED,
             primaryKey: true,
@@ -38,19 +38,19 @@ module.exports = function(sequelize, DataTypes) {
         updatedAt: false,
         paranoid:  true,            // adds deletedAt timestamp (won't actually delete entries)
         // freezeTableName: true,   // defaulted globally
-        tableName: 'cellFields',    // force table name to this value
+        tableName: 'brainwaveFields',    // force table name to this value
         validate: {
         },
         classMethods: {
             associate: function(models) {
-                CellField.hasMany(models.CellInstance,      { as: 'Instances',        foreignKey: 'cellFieldId' });
-                CellField.hasMany(models.Electromagnetism,  { as: 'Electromagnetism', foreignKey: 'electromagnetismId' });
-             // CellField.belongsTo(models.IonosphereField, { as: 'Ionosphere',       foreignKey: 'ionosphereId' });
+                BrainwaveField.hasMany(models.BrainwaveInstance,      { as: 'Instances',        foreignKey: 'brainwaveFieldId' });
+                BrainwaveField.hasMany(models.Electromagnetism,  { as: 'Electromagnetism', foreignKey: 'electromagnetismId' });
+             // BrainwaveField.belongsTo(models.IonosphereField, { as: 'Ionosphere',       foreignKey: 'ionosphereId' });
             }
         },
         instanceMethods: {
         }
     });
 
-    return CellField;
+    return BrainwaveField;
 };

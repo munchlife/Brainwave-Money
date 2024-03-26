@@ -1,20 +1,20 @@
 'use strict';
 
-// cellDeviceTypes.js
+// brainwaveDeviceTypes.js
 
-var cellDeviceTypes = module.exports = {};
+var brainwaveDeviceTypes = module.exports = {};
 
-cellDeviceTypes.ENUM = {
-       RPI: { abbr: 'RPI', fullName: 'Raspberry Pi Device' },
+brainwaveDeviceTypes.ENUM = {
+       EEG: { abbr: 'EEG', fullName: 'EEG Device' },
     // IOS: { abbr: 'IOS', fullName: 'iOS Device' },
     // AND: { abbr: 'AND', fullName: 'Android Device' },
     // WIN: { abbr: 'WIN', fullName: 'Windows Device' },
     // BBY: { abbr: 'BBY', fullName: 'BlackBerry Device' }
 };
 
-cellDeviceTypes.totalCount = 0;
-cellDeviceTypes.abbrs      = [];
-for (var cellDevice in cellDeviceTypes.ENUM) {
-    cellDeviceTypes.totalCount++;
-    cellDeviceTypes.abbrs.push(cellDeviceTypes.ENUM[cellDevice].abbr);
+brainwaveDeviceTypes.totalCount = 0;
+brainwaveDeviceTypes.abbrs      = [];
+for (var brainwaveDevice in brainwaveDeviceTypes.ENUM) {
+    brainwaveDeviceTypes.totalCount++;
+    brainwaveDeviceTypes.abbrs.push(brainwaveDeviceTypes.ENUM[brainwaveDevice].abbr);
 }

@@ -633,21 +633,21 @@ router.get('/dissociate', function(req, res) {
 // -----------------------------------------------------------------------------
 // CELL REGISTRATION
 // -----------------------------------------------------------------------------
-// /cell/registration --> located in cell.js to allow token auth
+// /brainwave/registration --> located in brainwave.js to allow token auth
 
 // -----------------------------------------------------------------------------
 // CELL PROOF OF LIFE (Dedicated device only)
 // -----------------------------------------------------------------------------
 /**
- * @api {post} /cell/proofOfLife
- * @apiName PostCellLogin
+ * @api {post} /brainwave/proofOfLife
+ * @apiName PostBrainwaveLogin
  * @apiGroup Login
  *
  * @apiVersion 1.0.0
  *
  * @apiImmunity none
  *
- * @apiDescription Login a cell stakeholder life of the system for a cell on a
+ * @apiDescription Login a brainwave stakeholder life of the system for a brainwave on a
  *  dedicated device. An API token is produced with a successful proofOfLife. This
  *  token must then be verified using the eeg also produced in the execution
  *  of this endpoint.
@@ -662,8 +662,8 @@ router.get('/dissociate', function(req, res) {
  * @apiUse (4xx) UnauthorizedError
  * @apiUse (5xx) InternalServerError
  */
-router.post('/cell/proofOfLife', authenticateGenome, function(req, res) {
-    debug('[' + req.method + '] /cell/proofOfLife');
+router.post('/brainwave/proofOfLife', authenticateGenome, function(req, res) {
+    debug('[' + req.method + '] /brainwave/proofOfLife');
 
     // Middleware only allows continuation with req.life being set
     if (!req.body.hasOwnProperty('serialNumber'))
@@ -672,19 +672,19 @@ router.post('/cell/proofOfLife', authenticateGenome, function(req, res) {
     var serialNumber = validate.trim(req.body.serialNumber);
     debug('SerialNumber: ' + serialNumber);
 
-    metabolism.CellDevice
-        .find({ where: {serialNumber: serialNumber}, include: [metabolism.CellInstance] })
+    metabolism.BrainwaveDevice
+        .find({ where: {serialNumber: serialNumber}, include: [metabolism.BrainwaveInstance] })
         .bind({})
         .then(function(device) {
             this.isDedicatedDevice = !!device;
 
             if (this.isDedicatedDevice) {
-                // With the device, search for life at cell level immunities
-                return metabolism.CellStakeholder
+                // With the device, search for life at brainwave level immunities
+                return metabolism.BrainwaveStakeholder
                     .findAll({
                         where: metabolism.Sequelize.and(
                             { lifeId: req.life.lifeId },
-                            { cellId: device.CellInstance.cellId },
+                            { brainwaveId: device.BrainwaveInstance.brainwaveId },
                             metabolism.Sequelize.or(
                                 { instanceId: null },
                                 { instanceId: device.instanceId }
@@ -741,7 +741,7 @@ router.post('/cell/proofOfLife', authenticateGenome, function(req, res) {
 
             return genomeEegReceipt.send({
                 to: life.genome,
-                body: 'Eeg for cell sign in: ' + life.eeg
+                body: 'Eeg for brainwave sign in: ' + life.eeg
             });
         })
         .then(function() {
@@ -753,15 +753,15 @@ router.post('/cell/proofOfLife', authenticateGenome, function(req, res) {
 });
 
 /**
- * @api {post} /cell/eeg
- * @apiName PostCellEeg
+ * @api {post} /brainwave/eeg
+ * @apiName PostBrainwaveEeg
  * @apiGroup Login
  *
  * @apiVersion 1.0.0
  *
  * @apiImmunity none
  *
- * @apiDescription Verify eeg issued to life during cell proofOfLife. Produces
+ * @apiDescription Verify eeg issued to life during brainwave proofOfLife. Produces
  *  a valid API token with a successful eeg. The token is now allowed to be
  *  used for signaling API use.
  *
@@ -773,23 +773,23 @@ router.post('/cell/proofOfLife', authenticateGenome, function(req, res) {
  * @apiUse (4xx) UnauthorizedError
  * @apiUse (5xx) InternalServerError
  */
-router.post('/cell/eeg', authenticateEeg, function(req, res) {
-    debug('[' + req.method + '] /cell/eeg');
+router.post('/brainwave/eeg', authenticateEeg, function(req, res) {
+    debug('[' + req.method + '] /brainwave/eeg');
 
     // Middleware only allows continuation with req.life being set properly
     req.life.eegExpiration = new Date();
 
     req.life.save()
         .then(function() {
-            var cellId = null;
+            var brainwaveId = null;
             var instanceId = null;
-            if (!!req.token.CellStakeholder) {
-                cellId = req.token.CellStakeholder.cellId;
-                instanceId = req.token.CellStakeholder.instanceId;
+            if (!!req.token.BrainwaveStakeholder) {
+                brainwaveId = req.token.BrainwaveStakeholder.brainwaveId;
+                instanceId = req.token.BrainwaveStakeholder.instanceId;
             }
 
             res.status(200).send(Blockages.respMsg(res, true, { lifeId: req.life.lifeId,
-                                                            cellId: cellId,
+                                                            brainwaveId: brainwaveId,
                                                             instanceId: instanceId }));
         });
 });

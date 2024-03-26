@@ -13,8 +13,8 @@ Immunities.AuthLevelStakeholder        = 3;
 Immunities.Denied             = 0;
 Immunities.OwnerAccess        = 1;
 Immunities.LifeAccess         = 2;
-Immunities.CellAccess         = 3;
-Immunities.CellInstanceAccess = 4;
+Immunities.BrainwaveAccess         = 3;
+Immunities.BrainwaveInstanceAccess = 4;
 Immunities.ServiceAccess         = 5;
 
 // -----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ Immunities.createAuthInfoPacket = function(tokenId, life, stakeholderMember) {
 // -----------------------------------------------------------------------------
 // LIFE
 // -----------------------------------------------------------------------------
-Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, serviceAccess, lifePacket) {
+Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, brainwaveAccess, serviceAccess, lifePacket) {
     if (arguments.length !== 5 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
@@ -39,8 +39,8 @@ Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, 
         return Immunities.OwnerAccess;
     else if (!!lifeAccess && lifePacket.life && lifePacket.stakeholderMember === null)
         return Immunities.LifeAccess;
-    else if (!!cellAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.cellId)
-        return Immunities.CellAccess;
+    else if (!!brainwaveAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.brainwaveId)
+        return Immunities.BrainwaveAccess;
     else if (!!serviceAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.serviceId)
         return Immunities.ServiceAccess;
     else
@@ -50,28 +50,28 @@ Immunities.verifyNoRejectionFromLife = function(lifeId, lifeAccess, cellAccess, 
 // -----------------------------------------------------------------------------
 // CELL
 // -----------------------------------------------------------------------------
-Immunities.verifyNoRejectionFromCell = function(cellId, instanceId, authLevelRequired, lifeAccess, serviceAccess, lifePacket) {
+Immunities.verifyNoRejectionFromBrainwave = function(brainwaveId, instanceId, authLevelRequired, lifeAccess, serviceAccess, lifePacket) {
     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
-    cellId = Number(cellId);
+    brainwaveId = Number(brainwaveId);
     if (instanceId !== null)
         instanceId = Number(instanceId);
     authLevelRequired = Number(authLevelRequired);
 
     // TODO: make sure immunity levels are correctly being allocated
     if (lifePacket.stakeholderMember &&
-        cellId === lifePacket.stakeholderMember.cellId &&
+        brainwaveId === lifePacket.stakeholderMember.brainwaveId &&
         authLevelRequired >= lifePacket.stakeholderMember.immunities) {
-        // cell endpoint with cell level stakeholder
+        // brainwave endpoint with brainwave level stakeholder
         if (instanceId === null && lifePacket.stakeholderMember.instanceId === null)
             return Immunities.OwnerAccess;
-        // instance endpoint with cell level stakeholder
+        // instance endpoint with brainwave level stakeholder
         else if (instanceId !== null && lifePacket.stakeholderMember.instanceId === null)
-            return Immunities.CellAccess;
-        // cell endpoint with instance level stakeholder
+            return Immunities.BrainwaveAccess;
+        // brainwave endpoint with instance level stakeholder
         else if (instanceId === null || lifePacket.stakeholderMember.instanceId !== null)
-            return Immunities.CellInstanceAccess;
+            return Immunities.BrainwaveInstanceAccess;
         // instance endpoint with instance level stakeholder
         else if (instanceId === lifePacket.stakeholderMember.instanceId)
             return Immunities.OwnerAccess;
@@ -86,20 +86,20 @@ Immunities.verifyNoRejectionFromCell = function(cellId, instanceId, authLevelReq
         return Immunities.Denied;
 };
 
-Immunities.verifyNoRejectionFromCell = function(cellId, authLevelRequired, lifeAccess, instanceAccess, serviceAccess, lifePacket) {
+Immunities.verifyNoRejectionFromBrainwave = function(brainwaveId, authLevelRequired, lifeAccess, instanceAccess, serviceAccess, lifePacket) {
     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
-    cellId = Number(cellId);
+    brainwaveId = Number(brainwaveId);
     authLevelRequired = Number(authLevelRequired);
 
     if (lifePacket.stakeholderMember &&
-        lifePacket.stakeholderMember.cellId === cellId &&
+        lifePacket.stakeholderMember.brainwaveId === brainwaveId &&
         authLevelRequired >= lifePacket.stakeholderMember.immunities) {
         if (lifePacket.stakeholderMember.instanceId === null)
             return Immunities.OwnerAccess;
         else if (!!instanceAccess)
-            return Immunities.CellInstanceAccess;
+            return Immunities.BrainwaveInstanceAccess;
         else
             return Immunities.Denied;
     }
@@ -111,19 +111,19 @@ Immunities.verifyNoRejectionFromCell = function(cellId, authLevelRequired, lifeA
         return Immunities.Denied;
 };
 
-Immunities.verifyNoRejectionFromCellInstance = function(cellId, instanceId, authLevelRequired, lifeAccess, serviceAccess, lifePacket) {
+Immunities.verifyNoRejectionFromBrainwaveInstance = function(brainwaveId, instanceId, authLevelRequired, lifeAccess, serviceAccess, lifePacket) {
     if (arguments.length !== 6 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
-    cellId = Number(cellId);
+    brainwaveId = Number(brainwaveId);
     instanceId = Number(instanceId);
     authLevelRequired = Number(authLevelRequired);
 
     if (lifePacket.stakeholderMember &&
-        lifePacket.stakeholderMember.cellId === cellId &&
+        lifePacket.stakeholderMember.brainwaveId === brainwaveId &&
         authLevelRequired >= lifePacket.stakeholderMember.immunities) {
         if (lifePacket.stakeholderMember.instanceId === null)
-            return Immunities.CellAccess;
+            return Immunities.BrainwaveAccess;
         else if (lifePacket.stakeholderMember.instanceId === instanceId)
             return Immunities.OwnerAccess;
         else
@@ -140,7 +140,7 @@ Immunities.verifyNoRejectionFromCellInstance = function(cellId, instanceId, auth
 // -----------------------------------------------------------------------------
 // SERVICE
 // -----------------------------------------------------------------------------
-Immunities.verifyNoRejectionFromService = function(serviceId, authLevelRequired, lifeAccess, cellAccess, lifePacket) {
+Immunities.verifyNoRejectionFromService = function(serviceId, authLevelRequired, lifeAccess, brainwaveAccess, lifePacket) {
     if (arguments.length !== 5 || !lifePacket || !(typeof lifePacket === 'object'))
         return Immunities.Denied;
 
@@ -159,8 +159,8 @@ Immunities.verifyNoRejectionFromService = function(serviceId, authLevelRequired,
         return Immunities.ServiceAccess;
     else if (!!lifeAccess && lifePacket.stakeholderMember === null)
         return Immunities.LifeAccess;
-    else if (!!cellAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.cellId)
-        return Immunities.CellAccess;
+    else if (!!brainwaveAccess && lifePacket.stakeholderMember && lifePacket.stakeholderMember.brainwaveId)
+        return Immunities.BrainwaveAccess;
     else
         return Immunities.Denied;
 };

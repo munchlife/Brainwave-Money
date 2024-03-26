@@ -32,21 +32,21 @@ router.get('/:id/auth/callback', function(req, res) {
     debug('[GET] /service/:serviceId/auth/callback');
     var serviceId     = req.params.id;
     var lifeId     = null;
-    var cellId     = null;
+    var brainwaveId     = null;
     var stateType  = req.query.state.substring(0, 1);
     var stateId    = parseInt(req.query.state.substring(1), 10);
     if (stateType === 'l') {
         lifeId = stateId;
     }
     else if (stateType === 'c') {
-        cellId = stateId;
+        brainwaveId = stateId;
     }
 
     var executions = [];
     executions.push(metabolism.Service.find({ where: {serviceId: serviceId} /* attributes: default */ }) );
 
-    // If lifeId and cellId are both defined or undefined/null, throw error.
-    if (!!lifeId === !!cellId) {
+    // If lifeId and brainwaveId are both defined or undefined/null, throw error.
+    if (!!lifeId === !!brainwaveId) {
         throw new Blockages.BadRequestError('Invalid authorization callback request');
     }
     // Otherwise, execute queries for the ID that is not undefined/null.
@@ -58,31 +58,31 @@ router.get('/:id/auth/callback', function(req, res) {
                 .find({ where: {lifeId: lifeId}                 /* attributes: default */ }));
             executions.push(metabolism.sequelize.Promise.resolve(null));
         }
-        else if (!!cellId) {
+        else if (!!brainwaveId) {
             executions.push(metabolism.ServiceSignalPathway
-                .find({ where: {cellId: cellId, serviceId: serviceId} /* attributes: default */ }));
+                .find({ where: {brainwaveId: brainwaveId, serviceId: serviceId} /* attributes: default */ }));
             executions.push(metabolism.sequelize.Promise.resolve(null));
-            executions.push(metabolism.Cell
-                .find({ where: {cellId: cellId}                 /* attributes: default */ }));
+            executions.push(metabolism.Brainwave
+                .find({ where: {brainwaveId: brainwaveId}                 /* attributes: default */ }));
         }
     }
 
     metabolism.sequelize.Promise.all(executions)
     .bind({})
-    .spread(function(service, signalPathway, life, cell) {
+    .spread(function(service, signalPathway, life, brainwave) {
         if (signalPathway)
             throw new Blockages.ConflictError('Service signalPathway already exists');
         else if (!service)
             throw new Blockages.NotFoundError('Service not found');
         else if (!!lifeId && !life)
             throw new Blockages.NotFoundError('Life not found');
-        else if (!!cellId && !cell)
-            throw new Blockages.NotFoundError('Cell not found');
+        else if (!!brainwaveId && !brainwave)
+            throw new Blockages.NotFoundError('Brainwave not found');
 
         this.service = service;
 
         var serviceAPI = new Services[service.serviceName.toString()]();
-        return serviceAPI.authenticateCallback(req.query.code, req.headers.host + '/v1', lifeId, cellId);
+        return serviceAPI.authenticateCallback(req.query.code, req.headers.host + '/v1', lifeId, brainwaveId);
     })
     .then(function(newSignalPathway) {
       /*newSignalPathway.signalPathwayId: 0,*/
@@ -92,7 +92,7 @@ router.get('/:id/auth/callback', function(req, res) {
       /*newSignalPathway.reinforcementSignalPheromoneExpiration: set by serviceAPI*/
       /*newSignalPathway.optional:                               set by serviceAPI*/
         newSignalPathway.lifeId                                  = lifeId;
-        newSignalPathway.cellId                                  = cellId;
+        newSignalPathway.brainwaveId                                  = brainwaveId;
         newSignalPathway.serviceId                                  = this.service.serviceId;
 
         return metabolism.ServiceSignalPathway.create(newSignalPathway);
@@ -120,7 +120,7 @@ var attributesAddress           = [ 'addressId',       'address1', 'address2', '
 var attributesPhone             = [ 'phoneId',         'name', 'number', 'extension' ];
 var attributesServiceSetting       = [ /*'serviceId',*/      'host', 'apiHost', 'sanmetabolismoxHost', 'scope', 'signupPath', 'authenticatePath', 'refreshPath', 'balancePath', 'sendPath', 'requestPath', 'deauthenticatePath' ];
 var attributesServiceStakeholder   = [ 'stakeholderId',   'immunities', 'serviceId', 'lifeId' ];
-var attributesServiceSignalPathway = [ 'signalPathwayId', 'lifeId', 'cellId' ];
+var attributesServiceSignalPathway = [ 'signalPathwayId', 'lifeId', 'brainwaveId' ];
 
 // Remove fields from metabolism.Service: deletedAt
 var serviceAttributes = [ 'serviceId', 'verified', 'serviceType', 'serviceName', 'companyName', 'website', 'countryCode', 'supportEmail', 'supportEmailVerified', 'supportWebsite', 'supportVersion', 'createdAt', 'updatedAt' ];
@@ -511,10 +511,10 @@ router.put('/:id/address/:addressId', function(req, res) {
             address.region            = validate.trim(validate.toString(req.body.region));
             address.postalCode        = validate.trim(validate.toString(req.body.postalCode));
           /*address.lifeId:           not accessible for change */
-          /*address.cellId:           not accessible for change */
+          /*address.brainwaveId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
           /*address.serviceId:           not accessible for change */
-          /*address.chargeCellId:     not accessible for change */
+          /*address.chargeBrainwaveId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
@@ -557,10 +557,10 @@ router.put('/:id/phone/:phoneId', function(req, res) {
             phone.number            = validate.trim(validate.toString(req.body.number));
             phone.extension         = metabolism.Phone.extractExtension(metabolism, req.body.extension);
           /*phone.lifeId:           not accessible for change */
-          /*phone.cellId:           not accessible for change */
+          /*phone.brainwaveId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
           /*phone.serviceId:           not accessible for change */
-          /*phone.chargeCellId:     not accessible for change */
+          /*phone.chargeBrainwaveId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
@@ -738,10 +738,10 @@ router.post('/:id/address', function(req, res) {
                 region:           validate.trim(validate.toString(req.body.region)),
                 postalCode:       validate.trim(validate.toString(req.body.postalCode)),
               /*lifeId:           null,*/
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
               /*instanceId:       null,*/
                 serviceId:           service.serviceId,
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
               /*chargeInstanceId: null*/
             };
 
@@ -782,10 +782,10 @@ router.post('/:id/phone', function(req, res) {
                 number:           validate.trim(validate.toString(req.body.number)),
                 extension:        metabolism.Phone.extractExtension(metabolism, req.body.extension),
               /*lifeId:           null,*/
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
               /*instanceId:       null,*/
                 serviceId:           service.serviceId
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
               /*chargeInstanceId: null*/
             };
 

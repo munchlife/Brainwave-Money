@@ -8,8 +8,8 @@
 // description = Life Species
 
 var LifeSpecies = module.exports = [
-  { lsNumber: 1, mccMin: null, mccMax: null, abbr: 'XXXXXX', description: 'Humanoid' },
-  { lsNumber: 2, mccMin: null, mccMax: null, abbr: 'XXXXXX', description: 'Cow' },
-  { lsNumber: 3, mccMin: null, mccMax: null, abbr: 'XXXXXX', description: 'Trimeresurus Gramineus' },
-  { lsNumber: 4, mccMin: null, mccMax: null, abbr: 'XXXXXX', description: 'Saccharomyces Cerevisiae' },
+  { lsNumber: 1, abbr: 'XXXXXX', description: 'Human' },
+  { lsNumber: 2, abbr: 'XXXXXX', description: 'Cow' },
+  { lsNumber: 3, abbr: 'XXXXXX', description: 'Trimeresurus Gramineus' },
+  { lsNumber: 4, abbr: 'XXXXXX', description: 'Saccharomyces Cerevisiae' },
 ];

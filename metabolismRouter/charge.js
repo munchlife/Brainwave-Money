@@ -30,8 +30,8 @@ router.use(Middlewares.tokenAuth);
 // ATTRIBUTE/INCLUDE SETUP
 // -----------------------------------------------------------------------------
 var attributesAddress  = [ 'addressId',        'name', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ];
-var attributesCharge   = [ 'chargeId',         'value', 'chargeCellId' ];
-var attributesInstance = [ 'chargeInstanceId', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode' ];
+var attributesCharge   = [ 'chargeId',         'value', 'chargeBrainwaveId' ];
+var attributesInstance = [ 'chargeInstanceId', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'brainwaveType', 'countryCode' ];
 var attributesPhone    = [ 'phoneId',          'name', 'number', 'extension' ];
 var attributesService     = [ 'serviceId',           'name' ]
 
@@ -41,16 +41,16 @@ var includeAddress        = { model: metabolism.Address,        as: 'Addresses',
 var includePhone          = { model: metabolism.Phone,          as: 'Phones',    attributes: attributesPhone };
 var includeService           = { model: metabolism.Service,           as: 'Services',     attributes: attributesService };
 
-var chargeIncludesCell = [ includeChargeInstance, includeCharge, includeAddress, includePhone ];
+var chargeIncludesBrainwave = [ includeChargeInstance, includeCharge, includeAddress, includePhone ];
 
 // Remove fields from metabolism.Charge: createdAt, deletedAt
-var chargeAttributes = [ 'chargeId', 'value', 'lifeId', 'chargeCellId', 'updatedAt' ];
+var chargeAttributes = [ 'chargeId', 'value', 'lifeId', 'chargeBrainwaveId', 'updatedAt' ];
 
-// Remove fields from metabolism.ChargeCell: createdAt, deletedAt
-var chargeCellAttributes = [ 'chargeCellId', 'name', 'cellType', 'website', 'countryCode', 'updatedAt' ];
+// Remove fields from metabolism.ChargeBrainwave: createdAt, deletedAt
+var chargeBrainwaveAttributes = [ 'chargeBrainwaveId', 'name', 'brainwaveType', 'website', 'countryCode', 'updatedAt' ];
 
 // Remove fields from metabolism.ChargeInstance: createdAt, deletedAt
-var chargeInstanceAttributes = [ 'chargeInstanceId', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'updatedAt', 'chargeCellId' ];
+var chargeInstanceAttributes = [ 'chargeInstanceId', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'brainwaveType', 'countryCode', 'updatedAt', 'chargeBrainwaveId' ];
 
 // -----------------------------------------------------------------------------
 // GET ROUTES
@@ -106,12 +106,12 @@ router.get('/life/:id/charge/:chargeId', function(req, res) {
         });
 });
 
-// /charge/life/:id/cell/:cellId
-// --- retrieve the charge for a charge cell (:cellId) for life (:id)
+// /charge/life/:id/brainwave/:brainwaveId
+// --- retrieve the charge for a charge brainwave (:brainwaveId) for life (:id)
 router.get('/life/:id/charge/:chargeId', function(req, res) {
-    debug('[GET] /charge/life/:id/cell/:cellId');
+    debug('[GET] /charge/life/:id/brainwave/:brainwaveId');
     var lifeId       = req.params.id;
-    var chargeCellId = req.params.cellId;
+    var chargeBrainwaveId = req.params.brainwaveId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
@@ -120,7 +120,7 @@ router.get('/life/:id/charge/:chargeId', function(req, res) {
         .find({
             where: {
                 lifeId: lifeId,
-                chargeCellId: chargeCellId
+                chargeBrainwaveId: chargeBrainwaveId
             },
             attributes: chargeAttributes
         })
@@ -135,38 +135,38 @@ router.get('/life/:id/charge/:chargeId', function(req, res) {
         });
 });
 
-// /charge/cell/:id
-// --- retrieve info for charge cell (:id)
-router.get('/cell/:id', function(req, res) {
-    debug('[GET] /charge/cell/:id/');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id
+// --- retrieve info for charge brainwave (:id)
+router.get('/brainwave/:id', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
-    metabolism.ChargeCell
-        .find({ where: {chargeCellId: chargeCellId},
-                include: chargeIncludesCell })
-        .then(function(chargeCell) {
-            if (!chargeCell)
-                throw new Blockages.NotFoundError('Charge cell not found');
+    metabolism.ChargeBrainwave
+        .find({ where: {chargeBrainwaveId: chargeBrainwaveId},
+                include: chargeIncludesBrainwave })
+        .then(function(chargeBrainwave) {
+            if (!chargeBrainwave)
+                throw new Blockages.NotFoundError('Charge brainwave not found');
 
-            res.status(200).send(Blockages.respMsg(res, true, chargeCell.get()));
+            res.status(200).send(Blockages.respMsg(res, true, chargeBrainwave.get()));
         })
         .catch(function(error) {
             res.status(error.status || 500).send(Blockages.respMsg(res, false, error));
         });
 });
 
-// /charge/cell/:id/chargeTotal
-// --- retrieve total number of charges and their value for charge cell (:id)
-router.get('/cell/:id/chargeTotal', function(req, res) {
-    debug('[GET] /charge/cell/:id/chargeTotal');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/chargeTotal
+// --- retrieve total number of charges and their value for charge brainwave (:id)
+router.get('/brainwave/:id/chargeTotal', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/chargeTotal');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
     metabolism.Charge
-        .findAll({ where: {chargeCellId: chargeCellId} })
+        .findAll({ where: {chargeBrainwaveId: chargeBrainwaveId} })
         .then(function(charges) {
             var chargeTotal = 0;
             for (var i = 0; i < charges.length; i++)
@@ -179,31 +179,31 @@ router.get('/cell/:id/chargeTotal', function(req, res) {
         });
 });
 
-// /charge/cell/:id/charges (admin only)
-// --- retrieve all charges for charge cell (:id)
-router.get('/cell/:id/charges', function(req, res) {
-    debug('[GET] /charge/cell/:id/charges');
+// /charge/brainwave/:id/charges (admin only)
+// --- retrieve all charges for charge brainwave (:id)
+router.get('/brainwave/:id/charges', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/charges');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/image
-// --- retrieve cell image (logo) for charge cell (:id)
-router.get('/cell/:id/image', function(req, res) {
-    debug('[GET] /charge/cell/:id/image');
+// /charge/brainwave/:id/image
+// --- retrieve brainwave image (logo) for charge brainwave (:id)
+router.get('/brainwave/:id/image', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/image');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/address
-// --- retrieve the address of the charge cell (:id)
-router.get('/cell/:id/address', function(req, res) {
-    debug('[GET] /charge/cell/:id/address');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/address
+// --- retrieve the address of the charge brainwave (:id)
+router.get('/brainwave/:id/address', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/address');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
     metabolism.Address
         .find({
-            where: {chargeCellId: chargeCellId},
+            where: {chargeBrainwaveId: chargeBrainwaveId},
             attributes: attributesAddress
         })
         .then(function(address) {
@@ -214,17 +214,17 @@ router.get('/cell/:id/address', function(req, res) {
         });
 });
 
-// /charge/cell/:id/phones
-// --- retrieve array of phone numbers for charge cell (:id)
-router.get('/cell/:id/phones', function(req, res) {
-    debug('[GET] /charge/cell/:id/phones');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/phones
+// --- retrieve array of phone numbers for charge brainwave (:id)
+router.get('/brainwave/:id/phones', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/phones');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
     metabolism.Phone
         .findAll({
-            where: {chargeCellId: chargeCellId},
+            where: {chargeBrainwaveId: chargeBrainwaveId},
             attributes: attributesPhone
         })
         .then(function(phones) {
@@ -235,17 +235,17 @@ router.get('/cell/:id/phones', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instances
-// --- retrieve array of charge instances for charge cell (:id)
-router.get('/cell/:id/instances', function(req, res) {
-    debug('[GET] /charge/cell/:id/instances');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/instances
+// --- retrieve array of charge instances for charge brainwave (:id)
+router.get('/brainwave/:id/instances', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/instances');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
     metabolism.ChargeInstance
         .findAll({
-            where: {chargeCellId: chargeCellId},
+            where: {chargeBrainwaveId: chargeBrainwaveId},
             attributes: chargeInstanceAttributes
         })
         .then(function(instances) {
@@ -256,11 +256,11 @@ router.get('/cell/:id/instances', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instance/:instanceId
-// --- retrieve info on charge instance (:instanceId) for charge cell (:id)
-router.get('/cell/:id/instance/:instanceId', function(req, res) {
-    debug('[GET] /charge/cell/:id/instance/:instanceId');
-    var chargeCellId     = req.params.id;
+// /charge/brainwave/:id/instance/:instanceId
+// --- retrieve info on charge instance (:instanceId) for charge brainwave (:id)
+router.get('/brainwave/:id/instance/:instanceId', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/instance/:instanceId');
+    var chargeBrainwaveId     = req.params.id;
     var chargeInstanceId = req.params.instanceId;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
@@ -269,7 +269,7 @@ router.get('/cell/:id/instance/:instanceId', function(req, res) {
         .find({
             where: {
                 instanceId: chargeInstanceId,
-                cellId: chargeCellId
+                brainwaveId: chargeBrainwaveId
             },
             attributes: chargeInstanceAttributes
         })
@@ -284,11 +284,11 @@ router.get('/cell/:id/instance/:instanceId', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instance/:instanceId/address
-// --- retrieve the address of charge instance (:instanceId) for charge cell (:id)
-router.get('/cell/:id/instance/:instanceId/address', function(req, res) {
-    debug('[GET] /charge/cell/:id/instance/:instanceId/address');
-    //  chargeCellId = req.params.id;
+// /charge/brainwave/:id/instance/:instanceId/address
+// --- retrieve the address of charge instance (:instanceId) for charge brainwave (:id)
+router.get('/brainwave/:id/instance/:instanceId/address', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/instance/:instanceId/address');
+    //  chargeBrainwaveId = req.params.id;
     var chargeInstanceId = req.params.instanceId;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
@@ -306,11 +306,11 @@ router.get('/cell/:id/instance/:instanceId/address', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instance/:instanceId/phones
-// --- retrieve phone numbers of charge instance (:instanceId) for charge cell (:id)
-router.get('/cell/:id/instance/:instanceId/phones', function(req, res) {
-    debug('[GET] /charge/cell/:id/instance/:instanceId/phones');
-    //  chargeCellId = req.params.id;
+// /charge/brainwave/:id/instance/:instanceId/phones
+// --- retrieve phone numbers of charge instance (:instanceId) for charge brainwave (:id)
+router.get('/brainwave/:id/instance/:instanceId/phones', function(req, res) {
+    debug('[GET] /charge/brainwave/:id/instance/:instanceId/phones');
+    //  chargeBrainwaveId = req.params.id;
     var chargeInstanceId = req.params.instanceId;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
@@ -329,9 +329,9 @@ router.get('/cell/:id/instance/:instanceId/phones', function(req, res) {
 });
 
 // /charge/instance/interferenceDegree?constructive=[constructive]&destructive=[destructive]&constructiveDelta=[constructive region delta]&destructiveDelta=[destructive region delta]
-// --- retrieve array of instance charge interference(s) in given mapped area of field (constructive, destructive, constructiveDelta, destructiveDelta) // retrieve charge alignments or misalignments for cell charge at a point in time during a cell cycle
-router.get('/cell/instance/interferometer?', function(req, res) {
-    debug('[GET] /charge/cell/instance/interferometer?'); 
+// --- retrieve array of instance charge interference(s) in given mapped area of field (constructive, destructive, constructiveDelta, destructiveDelta) // retrieve charge alignments or misalignments for brainwave charge at a point in time during a brainwave cycle
+router.get('/brainwave/instance/interferometer?', function(req, res) {
+    debug('[GET] /charge/brainwave/instance/interferometer?'); 
     var constructiveInterference      = validate.toFloat(req.query.constructiveInterference);
     var destructiveInterference       = validate.toFloat(req.query.destructiveInterference);
     var deltaConstructiveInterference = validate.toFloat(req.query.deltaConstructiveInterference);
@@ -352,7 +352,7 @@ verbose('constructiveInterference: ' + constructiveInterference + ' destructiveI
                  constructive: { between: [minimumConstructiveInterference, maximumConstructiveInterference] },
                  destructive: { between: [minimumDestructiveInterference, maximumDestructiveInterference] },
             },
-            include: {model: metabolism.chargeCell, attributes: chargeCellAttributes},
+            include: {model: metabolism.chargeBrainwave, attributes: chargeBrainwaveAttributes},
             attributes: chargeInstanceAttributes
         })
         .then(function(instances) {
@@ -363,7 +363,7 @@ verbose('constructiveInterference: ' + constructiveInterference + ' destructiveI
         });
 });
 
-// /charge/cell/:id/life/:id/chargeContributionMargin
+// /charge/brainwave/:id/life/:id/chargeContributionMargin
 // --- retrieve contribution margin for life's charge interferenceDegree (:id)
 router.get('/life/:id/charge/:chargeId/contributionMargin', function(req, res) {
     debug('[GET] /life/:id/charge/:chargeId/contributionMargin'); // /life/:id/chargeCurrent/:chargeCurrentId/chargeContributionMargin
@@ -412,7 +412,7 @@ router.put('/life/:id/charge/:chargeId', function(req, res) {
           /*charge.chargeId:     not accessible for change */
             charge.value =       validate.toInt(req.body.value);
           /*charge.lifeId:       not accessible for change */
-          /*charge.chargeCellId: not accessible for change */
+          /*charge.chargeBrainwaveId: not accessible for change */
 
             return charge.save();
         })
@@ -427,33 +427,33 @@ router.put('/life/:id/charge/:chargeId', function(req, res) {
         });
 });
 
-// /charge/cell/:id
-// --- update info for charge cell (:id)
-router.put('/cell/:id', function(req, res) {
-    debug('[PUT] /charge/cell/:id');
-    var cellId = req.params.id;
+// /charge/brainwave/:id
+// --- update info for charge brainwave (:id)
+router.put('/brainwave/:id', function(req, res) {
+    debug('[PUT] /charge/brainwave/:id');
+    var brainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
-    metabolism.ChargeCell
+    metabolism.ChargeBrainwave
         .find({
-            where: {chargeCellId: cellId},
-            attributes: chargeCellAttributes
+            where: {chargeBrainwaveId: brainwaveId},
+            attributes: chargeBrainwaveAttributes
         })
-        .then(function(chargeCell) {
-            if (!chargeCell)
-                throw new Blockages.NotFoundError('Charge cell not found');
+        .then(function(chargeBrainwave) {
+            if (!chargeBrainwave)
+                throw new Blockages.NotFoundError('Charge brainwave not found');
 
-          /*chargeCell.chargeCellId: not accessible for change */
-            chargeCell.name          = validate.trim(validate.toString(req.body.name));
-            chargeCell.type          = metabolism.ChargeCell.extractWebsite(metabolism, req.body.type);
-            chargeCell.website       = metabolism.ChargeCell.extractWebsite(metabolism, req.body.website);
-          /*chargeCell.countryCode:  not accessible for change */
+          /*chargeBrainwave.chargeBrainwaveId: not accessible for change */
+            chargeBrainwave.name          = validate.trim(validate.toString(req.body.name));
+            chargeBrainwave.type          = metabolism.ChargeBrainwave.extractWebsite(metabolism, req.body.type);
+            chargeBrainwave.website       = metabolism.ChargeBrainwave.extractWebsite(metabolism, req.body.website);
+          /*chargeBrainwave.countryCode:  not accessible for change */
 
-            return chargeCell.save();
+            return chargeBrainwave.save();
         })
-        .then(function(chargeCell) {
-            res.status(200).send(Blockages.respMsg(res, true, chargeCell.get()));
+        .then(function(chargeBrainwave) {
+            res.status(200).send(Blockages.respMsg(res, true, chargeBrainwave.get()));
         })
         .catch(metabolism.Sequelize.ValidationError, function(error) {
             res.status(400).send(Blockages.respMsg(res, false, error.errors[0]));
@@ -463,11 +463,11 @@ router.put('/cell/:id', function(req, res) {
         });
 });
 
-// /charge/cell/:id/address/:addressId
-// --- update main address (:addressId) for charge cell (:id)
-router.put('/cell/:id/address/:addressId', function(req, res) {
-    debug('[PUT] /charge/cell/:id/address/:addressId');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/address/:addressId
+// --- update main address (:addressId) for charge brainwave (:id)
+router.put('/brainwave/:id/address/:addressId', function(req, res) {
+    debug('[PUT] /charge/brainwave/:id/address/:addressId');
+    var chargeBrainwaveId = req.params.id;
     var addressId    = req.params.addressId;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
@@ -476,7 +476,7 @@ router.put('/cell/:id/address/:addressId', function(req, res) {
        .find({
             where: {
                 addressId: addressId,
-                chargeCellId: chargeCellId
+                chargeBrainwaveId: chargeBrainwaveId
             },
             attributes: attributesAddress
         })
@@ -494,10 +494,10 @@ router.put('/cell/:id/address/:addressId', function(req, res) {
             address.region            = validate.trim(validate.toString(req.body.region));
             address.postalCode        = validate.trim(validate.toString(req.body.postalCode));
           /*address.lifeId:           not accessible for change */
-          /*address.cellId:           not accessible for change */
+          /*address.brainwaveId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
           /*address.serviceId:           not accessible for change */
-          /*address.chargeCellId:     not accessible for change */
+          /*address.chargeBrainwaveId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
@@ -513,11 +513,11 @@ router.put('/cell/:id/address/:addressId', function(req, res) {
         });
 });
 
-// /charge/cell/:id/phone/:phoneId
-// --- update phone number (:phoneId) for charge cell (:id)
-router.put('/cell/:id/phone/:phoneId', function(req, res) {
-    debug('[PUT] /charge/cell/:id/phone/:phoneId');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/phone/:phoneId
+// --- update phone number (:phoneId) for charge brainwave (:id)
+router.put('/brainwave/:id/phone/:phoneId', function(req, res) {
+    debug('[PUT] /charge/brainwave/:id/phone/:phoneId');
+    var chargeBrainwaveId = req.params.id;
     var phoneId      = req.params.phoneId;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
@@ -526,7 +526,7 @@ router.put('/cell/:id/phone/:phoneId', function(req, res) {
         .find({
             where: {
                 phoneId: phoneId,
-                chargeCellId: chargeCellId
+                chargeBrainwaveId: chargeBrainwaveId
             },
             attributes: attributesPhone
         })
@@ -539,10 +539,10 @@ router.put('/cell/:id/phone/:phoneId', function(req, res) {
             phone.number            = validate.trim(validate.toString(req.body.number));
             phone.extension         = metabolism.Phone.extractExtension(metabolism, req.body.extension);
           /*phone.lifeId:           not accessible for change */
-          /*phone.cellId:           not accessible for change */
+          /*phone.brainwaveId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
           /*phone.serviceId:           not accessible for change */
-          /*phone.chargeCellId:     not accessible for change */
+          /*phone.chargeBrainwaveId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
@@ -558,11 +558,11 @@ router.put('/cell/:id/phone/:phoneId', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instance/:instanceId
-// --- update info of charge instance (:instanceid) for charge cell (:id)
-router.put('/cell/:id/instance/:instanceId', function(req, res) {
-    debug('[PUT] /charge/cell/:id/instance/:instanceId');
-    var chargeCellId     = req.params.id;
+// /charge/brainwave/:id/instance/:instanceId
+// --- update info of charge instance (:instanceid) for charge brainwave (:id)
+router.put('/brainwave/:id/instance/:instanceId', function(req, res) {
+    debug('[PUT] /charge/brainwave/:id/instance/:instanceId');
+    var chargeBrainwaveId     = req.params.id;
     var chargeInstanceId = req.params.instanceId;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
@@ -571,7 +571,7 @@ router.put('/cell/:id/instance/:instanceId', function(req, res) {
         .find({
             where: {
                 chargeInstanceId: chargeInstanceId,
-                chargeCellId: chargeCellId
+                chargeBrainwaveId: chargeBrainwaveId
             },
             attributes: chargeInstanceAttributes
         })
@@ -597,9 +597,9 @@ router.put('/cell/:id/instance/:instanceId', function(req, res) {
             instance.destructiveInterference  = destructiveInterference;
             instance.name                     = metabolism.ChargeInstance.extractName(metabolism, req.body.name);
             instance.website                  = metabolism.ChargeInstance.extractWebsite(metabolism, req.body.website);
-          /*instance.cellType:                not accessible for change */
+          /*instance.brainwaveType:                not accessible for change */
           /*instance.countryCode:             not accessible for change */
-          /*instance.chargeCellId:            not accessible for change */
+          /*instance.chargeBrainwaveId:            not accessible for change */
 
             return instance.save();
         })
@@ -614,11 +614,11 @@ router.put('/cell/:id/instance/:instanceId', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instance/:instanceId/address/:addressId
-// --- update main address (:addressId) for charge instance (:instanceId) of charge cell (:id)
-router.put('/cell/:id/instance/:instanceId/address/:addressId', function(req, res) {
-    debug('[PUT] /charge/cell/:id/instance/:instanceId/address/:addressId');
-   //  chargeCellId = req.params.id;
+// /charge/brainwave/:id/instance/:instanceId/address/:addressId
+// --- update main address (:addressId) for charge instance (:instanceId) of charge brainwave (:id)
+router.put('/brainwave/:id/instance/:instanceId/address/:addressId', function(req, res) {
+    debug('[PUT] /charge/brainwave/:id/instance/:instanceId/address/:addressId');
+   //  chargeBrainwaveId = req.params.id;
     var chargeInstanceId = req.params.instanceId;
     var addressId        = req.params.addressId;
 
@@ -646,10 +646,10 @@ router.put('/cell/:id/instance/:instanceId/address/:addressId', function(req, re
             address.region            = validate.trim(validate.toString(req.body.region));
             address.postalCode        = validate.trim(validate.toString(req.body.postalCode));
           /*address.lifeId:           not accessible for change */
-          /*address.cellId:           not accessible for change */
+          /*address.brainwaveId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
           /*address.serviceId:           not accessible for change */
-          /*address.chargeCellId:     not accessible for change */
+          /*address.chargeBrainwaveId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
@@ -665,11 +665,11 @@ router.put('/cell/:id/instance/:instanceId/address/:addressId', function(req, re
         });
 });
 
-// /charge/cell/:id/instance/:instanceId/phone/:phoneId
-// --- update phone number (:phoneId) for charge instance (:instanceId) of charge cell (:id)
-router.put('/cell/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
-    debug('[PUT] /charge/cell/:id/instance/:instanceId/phone/:phoneId');
-    //  chargeCellId = req.params.id;
+// /charge/brainwave/:id/instance/:instanceId/phone/:phoneId
+// --- update phone number (:phoneId) for charge instance (:instanceId) of charge brainwave (:id)
+router.put('/brainwave/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
+    debug('[PUT] /charge/brainwave/:id/instance/:instanceId/phone/:phoneId');
+    //  chargeBrainwaveId = req.params.id;
     var chargeInstanceId = req.params.instanceId;
     var phoneId          = req.params.phoneId;
 
@@ -692,10 +692,10 @@ router.put('/cell/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
             phone.number            = validate.trim(validate.toString(req.body.number));
             phone.extension         = metabolism.Phone.extractExtension(metabolism, req.body.extension);
           /*phone.lifeId:           not accessible for change */
-          /*phone.cellId:           not accessible for change */
+          /*phone.brainwaveId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
           /*phone.serviceId:           not accessible for change */
-          /*phone.chargeCellId:     not accessible for change */
+          /*phone.chargeBrainwaveId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
@@ -714,25 +714,25 @@ router.put('/cell/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
 // -----------------------------------------------------------------------------
 // POST ROUTES
 // -----------------------------------------------------------------------------
-// /charge/cell/register
-// --- create a new charge cell
-router.post('/cell/register', function(req, res) {
-    debug('[POST] /charge/cell/register');
+// /charge/brainwave/register
+// --- create a new charge brainwave
+router.post('/brainwave/register', function(req, res) {
+    debug('[POST] /charge/brainwave/register');
     
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
-    // Create the cell record
-    var newChargeCell = {
-      /*chargeCellId: 0,*/
+    // Create the brainwave record
+    var newChargeBrainwave = {
+      /*chargeBrainwaveId: 0,*/
         name:             validate.trim(validate.toString(req.body.name)),
-        type:             metabolism.ChargeCell.extractWebsite(metabolism, req.body.type),
-        website:          metabolism.ChargeCell.extractWebsite(metabolism, req.body.website),
+        type:             metabolism.ChargeBrainwave.extractWebsite(metabolism, req.body.type),
+        website:          metabolism.ChargeBrainwave.extractWebsite(metabolism, req.body.website),
         countryCode:      CountryCodes.ENUM.USA.abbr
     };
 
-    metabolism.ChargeCell.create(newChargeCell)
-        .then(function(chargeCell) {
-            res.status(201).send(Blockages.respMsg(res, true, chargeCell.get()));
+    metabolism.ChargeBrainwave.create(newChargeBrainwave)
+        .then(function(chargeBrainwave) {
+            res.status(201).send(Blockages.respMsg(res, true, chargeBrainwave.get()));
         })
         .catch(metabolism.Sequelize.ValidationError, function(error) {
             res.status(400).send(Blockages.respMsg(res, false, error.errors[0]));
@@ -742,31 +742,31 @@ router.post('/cell/register', function(req, res) {
         });
 });
 
-// /charge/cell/:id/charge
+// /charge/brainwave/:id/charge
 // --- create a new charge
-router.post('/cell/:id/charge', function(req, res) {
-    debug('[POST] /charge/cell/:id/charge');
-    var chargeCellId = req.params.id;
+router.post('/brainwave/:id/charge', function(req, res) {
+    debug('[POST] /charge/brainwave/:id/charge');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
     metabolism.Charge
         .find({
             where: {
-                chargeCellId: chargeCellId,
+                chargeBrainwaveId: chargeBrainwaveId,
                 lifeId: res.locals.lifePacket.life.lifeId
             },
             attributes: chargeAttributes
         })
         .then(function(charge) {
             if (charge)
-                throw new Blockages.ConflictError('Charge already exists for this cell');
+                throw new Blockages.ConflictError('Charge already exists for this brainwave');
 
             var newCharge = {
               /*chargeId:         0,*/
                 value:        validate.toInt(req.body.value),
                 lifeId:       res.locals.lifePacket.life.lifeId,
-                chargeCellId: chargeCellId
+                chargeBrainwaveId: chargeBrainwaveId
             };
 
             return metabolism.Charge.create(newCharge);
@@ -782,36 +782,36 @@ router.post('/cell/:id/charge', function(req, res) {
         });
 });
 
-// /charge/cell/:id/image
-// --- add an image to an existing charge cell (:id)
-router.post('/cell/:id/image', function(req, res) {
-    debug('[POST] /charge/cell/:id/image');
+// /charge/brainwave/:id/image
+// --- add an image to an existing charge brainwave (:id)
+router.post('/brainwave/:id/image', function(req, res) {
+    debug('[POST] /charge/brainwave/:id/image');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/address
-// --- add an address to an existing charge cell (:id)
-router.post('/cell/:id/address', function(req, res) {
-    debug('[POST] /charge/cell/:id/address');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/address
+// --- add an address to an existing charge brainwave (:id)
+router.post('/brainwave/:id/address', function(req, res) {
+    debug('[POST] /charge/brainwave/:id/address');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
-    metabolism.ChargeCell
+    metabolism.ChargeBrainwave
         .find({
-            where: {chargeCellId: chargeCellId},
+            where: {chargeBrainwaveId: chargeBrainwaveId},
             include: includeAddress,
-            attributes: chargeCellAttributes
+            attributes: chargeBrainwaveAttributes
         })
-        .then(function(chargeCell) {
-            if (!chargeCell)
-                throw new Blockages.NotFoundError('Charge cell not found');
-            else if (chargeCell.Address !== null)
-                throw new Blockages.ConflictError('Charge cell already has an address');
+        .then(function(chargeBrainwave) {
+            if (!chargeBrainwave)
+                throw new Blockages.NotFoundError('Charge brainwave not found');
+            else if (chargeBrainwave.Address !== null)
+                throw new Blockages.ConflictError('Charge brainwave already has an address');
 
             var newAddress = {
               /*addressId:        0,*/
-                name:             '$$_cell',
+                name:             '$$_brainwave',
                 address1:         validate.trim(validate.toString(req.body.address1)),
                 address2:         metabolism.Address.extractAddress(metabolism, req.body.address2),
                 address3:         metabolism.Address.extractAddress(metabolism, req.body.address3),
@@ -820,10 +820,10 @@ router.post('/cell/:id/address', function(req, res) {
                 region:           validate.trim(validate.toString(req.body.region)),
                 postalCode:       validate.trim(validate.toString(req.body.postalCode)),
               /*lifeId:           null,*/
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
               /*instanceId:       null,*/
               /*serviceId:           null,*/
-                chargeCellId:     chargeCell.chargeCellId
+                chargeBrainwaveId:     chargeBrainwave.chargeBrainwaveId
               /*chargeInstanceId: null*/
             };
 
@@ -840,22 +840,22 @@ router.post('/cell/:id/address', function(req, res) {
         });
 });
 
-// /charge/cell/:id/phone
-// --- add a phone number to an existing charge cell (:id)
-router.post('/cell/:id/phone', function(req, res) {
-    debug('[POST] /charge/cell/:id/phone');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/phone
+// --- add a phone number to an existing charge brainwave (:id)
+router.post('/brainwave/:id/phone', function(req, res) {
+    debug('[POST] /charge/brainwave/:id/phone');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
-    metabolism.ChargeCell
+    metabolism.ChargeBrainwave
         .find({
-            where: {chargeCellId: chargeCellId},
-            attributes: chargeCellAttributes
+            where: {chargeBrainwaveId: chargeBrainwaveId},
+            attributes: chargeBrainwaveAttributes
         })
-        .then(function(chargeCell) {
-            if (!chargeCell)
-                throw new Blockages.NotFoundError('Charge cell not found');
+        .then(function(chargeBrainwave) {
+            if (!chargeBrainwave)
+                throw new Blockages.NotFoundError('Charge brainwave not found');
 
             var newPhone = {
               /*phoneId:          0,*/
@@ -863,10 +863,10 @@ router.post('/cell/:id/phone', function(req, res) {
                 number:           validate.trim(validate.toString(req.body.number)),
                 extension:        metabolism.Phone.extractExtension(metabolism, req.body.extension),
               /*lifeId:           null,*/
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
               /*instanceId:       null,*/
               /*serviceId:           null,*/
-                chargeCellId:     chargeCell.chargeCellId
+                chargeBrainwaveId:     chargeBrainwave.chargeBrainwaveId
               /*chargeInstanceId: null*/
             };
 
@@ -883,22 +883,22 @@ router.post('/cell/:id/phone', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instance
-// --- add a instance to an existing charge cell (:id)
-router.post('/cell/:id/instance', function(req, res) {
-    debug('[POST] /charge/cell/:id/instance');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/instance
+// --- add a instance to an existing charge brainwave (:id)
+router.post('/brainwave/:id/instance', function(req, res) {
+    debug('[POST] /charge/brainwave/:id/instance');
+    var chargeBrainwaveId = req.params.id;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
 
-    metabolism.ChargeCell
+    metabolism.ChargeBrainwave
         .find({
-            where: {chargeCellId: chargeCellId},
-            attributes: chargeCellAttributes
+            where: {chargeBrainwaveId: chargeBrainwaveId},
+            attributes: chargeBrainwaveAttributes
         })
-        .then(function(chargeCell) {
-            if (!chargeCell)
-                throw new Blockages.NotFoundError('Charge cell not found');
+        .then(function(chargeBrainwave) {
+            if (!chargeBrainwave)
+                throw new Blockages.NotFoundError('Charge brainwave not found');
 
             // Extract 'constructiveInterference' from the body
             var constructiveInterference = null;
@@ -916,9 +916,9 @@ router.post('/cell/:id/instance', function(req, res) {
                 destructiveInterference:  destructiveInterference,
                 name:                     metabolism.ChargeInstance.extractName(metabolism, req.body.name),
                 website:                  metabolism.ChargeInstance.extractWebsite(metabolism, req.body.website),
-                cellType:                 metabolism.ChargeInstance.extractType(metabolism, req.body.type),
+                brainwaveType:                 metabolism.ChargeInstance.extractType(metabolism, req.body.type),
               /*countryCode:              null,*/
-                chargeCellId:             chargeCell.chargeCellId
+                chargeBrainwaveId:             chargeBrainwave.chargeBrainwaveId
             };
 
             return metabolism.ChargeInstance.create(newChargeInstance);
@@ -934,11 +934,11 @@ router.post('/cell/:id/instance', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instance/:instanceId/address
-// --- add an address to an existing charge instance (:instanceId) of charge cell (:id)
-router.post('/cell/:id/instance/:instanceId/address', function(req, res) {
-    debug('[POST] /charge/cell/:id/instance/:instanceId/address');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/instance/:instanceId/address
+// --- add an address to an existing charge instance (:instanceId) of charge brainwave (:id)
+router.post('/brainwave/:id/instance/:instanceId/address', function(req, res) {
+    debug('[POST] /charge/brainwave/:id/instance/:instanceId/address');
+    var chargeBrainwaveId = req.params.id;
     var chargeInstanceId = req.params.instanceId;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
@@ -947,10 +947,10 @@ router.post('/cell/:id/instance/:instanceId/address', function(req, res) {
         .find({
             where: {
                 chargeInstanceId: chargeInstanceId,
-                chargeCellId: chargeCellId
+                chargeBrainwaveId: chargeBrainwaveId
             },
             include: includeAddress,
-            attributes: chargeCellAttributes
+            attributes: chargeBrainwaveAttributes
         })
         .then(function(chargeInstance) {
             if (!chargeInstance)
@@ -969,10 +969,10 @@ router.post('/cell/:id/instance/:instanceId/address', function(req, res) {
                 region:           validate.trim(validate.toString(req.body.region)),
                 postalCode:       validate.trim(validate.toString(req.body.postalCode)),
               /*lifeId:           null,*/
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
               /*instanceId:       null,*/
               /*serviceId:           null,*/
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
                 chargeInstanceId: chargeInstance.chargeInstanceId
             };
 
@@ -989,11 +989,11 @@ router.post('/cell/:id/instance/:instanceId/address', function(req, res) {
         });
 });
 
-// /charge/cell/:id/instance/:instanceId/phone
-// --- add a phone number to an existing charge instance (:instanceId) of charge cell (:id)
-router.post('/cell/:id/instance/:instanceId/phone', function(req, res) {
-    debug('[POST] /charge/cell/:id/instance/:instanceId/phone');
-    var chargeCellId = req.params.id;
+// /charge/brainwave/:id/instance/:instanceId/phone
+// --- add a phone number to an existing charge instance (:instanceId) of charge brainwave (:id)
+router.post('/brainwave/:id/instance/:instanceId/phone', function(req, res) {
+    debug('[POST] /charge/brainwave/:id/instance/:instanceId/phone');
+    var chargeBrainwaveId = req.params.id;
     var chargeInstanceId = req.params.instanceId;
 
     // No immunity level necessary for this route; all are allowed access after token has been verified.
@@ -1002,7 +1002,7 @@ router.post('/cell/:id/instance/:instanceId/phone', function(req, res) {
         .find({
             where: {
                 chargeInstanceId: chargeInstanceId,
-                chargeCellId: chargeCellId
+                chargeBrainwaveId: chargeBrainwaveId
             },
             attributes: chargeInstanceAttributes
         })
@@ -1016,10 +1016,10 @@ router.post('/cell/:id/instance/:instanceId/phone', function(req, res) {
                 number:           validate.trim(validate.toString(req.body.number)),
                 extension:        metabolism.Phone.extractExtension(metabolism, req.body.extension),
               /*lifeId:           null,*/
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
               /*instanceId:       null,*/
               /*serviceId:           null,*/
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
                 chargeInstanceId: chargeInstance.chargeInstanceId
             };
 
@@ -1046,52 +1046,52 @@ router.delete('/:id', function(req, res) {
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id
+// /charge/brainwave/:id
 // ---
-router.delete('/cell/:id', function(req, res) {
-    debug('[DELETE] /charge/cell/:id');
+router.delete('/brainwave/:id', function(req, res) {
+    debug('[DELETE] /charge/brainwave/:id');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/image/:size
+// /charge/brainwave/:id/image/:size
 // ---
-router.delete('/cell/:id/image/:size', function(req, res) {
-    debug('[DELETE] /charge/cell/:id/image/:size');
+router.delete('/brainwave/:id/image/:size', function(req, res) {
+    debug('[DELETE] /charge/brainwave/:id/image/:size');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/address/:addressId
+// /charge/brainwave/:id/address/:addressId
 // ---
-router.delete('/cell/:id/address/:addressId', function(req, res) {
-    debug('[DELETE] /charge/cell/:id/address/:addressId');
+router.delete('/brainwave/:id/address/:addressId', function(req, res) {
+    debug('[DELETE] /charge/brainwave/:id/address/:addressId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/phone/:phoneId
+// /charge/brainwave/:id/phone/:phoneId
 // ---
-router.delete('/cell/:id/phone/:phoneId', function(req, res) {
-    debug('[DELETE] /charge/cell/:id/phone/:phoneId');
+router.delete('/brainwave/:id/phone/:phoneId', function(req, res) {
+    debug('[DELETE] /charge/brainwave/:id/phone/:phoneId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/instance/:instanceId
+// /charge/brainwave/:id/instance/:instanceId
 // ---
-router.delete('/cell/:id/instance/:locaitonId', function(req, res) {
-    debug('[DELETE] /charge/cell/:id/instance/:instanceId');
+router.delete('/brainwave/:id/instance/:locaitonId', function(req, res) {
+    debug('[DELETE] /charge/brainwave/:id/instance/:instanceId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/instance/:instanceId/address/:addressId
+// /charge/brainwave/:id/instance/:instanceId/address/:addressId
 // ---
-router.delete('/cell/:id/instance/:instanceId/address/:addressId', function(req, res) {
-    debug('[DELETE] /charge/cell/:id/instance/:instanceId/address/:addressId');
+router.delete('/brainwave/:id/instance/:instanceId/address/:addressId', function(req, res) {
+    debug('[DELETE] /charge/brainwave/:id/instance/:instanceId/address/:addressId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 
-// /charge/cell/:id/instance/:instanceId/phone/:phoneId
+// /charge/brainwave/:id/instance/:instanceId/phone/:phoneId
 // ---
-router.delete('/cell/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
-    debug('[DELETE] /charge/cell/:id/instance/:instanceId/phone/:phoneId');
+router.delete('/brainwave/:id/instance/:instanceId/phone/:phoneId', function(req, res) {
+    debug('[DELETE] /charge/brainwave/:id/instance/:instanceId/phone/:phoneId');
     res.status(501).send({ 'error': 'ROUTE INCOMPLETE' });
 });
 

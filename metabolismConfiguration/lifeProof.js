@@ -93,7 +93,7 @@ function(encodedToken, eeg, done) {
                     tokenId: decodedToken.iss, // tokenId
                     token: encodedToken
                 },
-                include: [ metabolism.Life, metabolism.CellStakeholder, metabolism.ServiceStakeholder ]
+                include: [ metabolism.Life, metabolism.BrainwaveStakeholder, metabolism.ServiceStakeholder ]
             })
             .then(function(token) {
                 // Verify the token was found
@@ -103,7 +103,7 @@ function(encodedToken, eeg, done) {
                 else if (!token.Life)
                     return done(null, false, 'Life not found');
                 // Verify there is only one associated stakeholder member record (only one at a time is allowed)
-                else if (token.CellStakeholder && token.ServiceStakeholder)
+                else if (token.BrainwaveStakeholder && token.ServiceStakeholder)
                     return done(null, false, 'Token is not properly formatted');
                 // Validate the token
                 else if (!token.Life.validEeg(eeg))
@@ -141,7 +141,7 @@ function(encodedToken, done) {
                     tokenId: decodedToken.iss, // tokenId
                     token: encodedToken
                 },
-                include: [ metabolism.Life, metabolism.CellStakeholder, metabolism.ServiceStakeholder ]
+                include: [ metabolism.Life, metabolism.BrainwaveStakeholder, metabolism.ServiceStakeholder ]
             })
             .then(function(token) {
                 // Verify the token was found
@@ -151,14 +151,14 @@ function(encodedToken, done) {
                 else if (!token.Life)
                     return done(null, false, 'Life not found');
                 // Verify there is only one associated stakeholder member record (only one at a time is allowed)
-                else if (token.CellStakeholder && token.ServiceStakeholder)
+                else if (token.BrainwaveStakeholder && token.ServiceStakeholder)
                     return done(null, false, 'Token is not properly formatted');
                 // Verify the token is validated
                 else if (!token.valid)
                     return done(null, false, 'Token is not validated');
-                // If there is a cell stakeholder record, authorize life with the stakeholder info
-                else if (token.CellStakeholder)
-                    return done(null, Immunities.createAuthInfoPacket(token.tokenId, token.Life, token.CellStakeholder));
+                // If there is a brainwave stakeholder record, authorize life with the stakeholder info
+                else if (token.BrainwaveStakeholder)
+                    return done(null, Immunities.createAuthInfoPacket(token.tokenId, token.Life, token.BrainwaveStakeholder));
                 // If there is a service stakeholder record, authorize life with the stakeholder info
                 else if (token.ServiceStakeholder)
                     return done(null, Immunities.createAuthInfoPacket(token.tokenId, token.Life, token.ServiceStakeholder));

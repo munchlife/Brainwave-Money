@@ -62,7 +62,7 @@ var authCallback = function(req, res, lifeId, serviceId) {
       /*newSignalPathway.reinforcementSignalPheromoneExpiration: set by serviceAPI*/
       /*newSignalPathway.optional:                               set by serviceAPI*/
         newSignalPathway.lifeId                                  = this.life.lifeId;
-      /*newSignalPathway.cellId:                                 null,*/
+      /*newSignalPathway.brainwaveId:                                 null,*/
         newSignalPathway.serviceId                                  = this.service.serviceId;
 
         return metabolism.ServiceSignalPathway.create(newSignalPathway);
@@ -112,9 +112,9 @@ router.use(Middlewares.tokenAuth);
 // ATTRIBUTE/INCLUDE SETUP
 // -----------------------------------------------------------------------------
 var attributesAddress           = [ 'addressId',       'name', 'address1', 'address2', 'address3', 'address4', 'locality', 'region', 'postalCode' ];
-//  attributesCharge            = [ 'chargeId',        'value', 'chargeCellId' ];
-//  attributesCellCheckin       = [ 'checkinId',       'field', 'major', 'minor', 'proximity', 'deviceType' ];
-var attributesCellStakeholder   = [ 'stakeholderId',   'immunities', 'cellId', 'instanceId' ];
+//  attributesCharge            = [ 'chargeId',        'value', 'chargeBrainwaveId' ];
+//  attributesBrainwaveCheckin       = [ 'checkinId',       'field', 'major', 'minor', 'proximity', 'deviceType' ];
+var attributesBrainwaveStakeholder   = [ 'stakeholderId',   'immunities', 'brainwaveId', 'instanceId' ];
 var attributesPhone             = [ 'phoneId',         'name', 'number', 'extension' ];
 var attributesServiceStakeholder   = [ 'stakeholderId',   'immunities', 'serviceId' ];
 var attributesServiceSignalPathway = [ 'signalPathwayId', 'serviceId' ];
@@ -125,19 +125,19 @@ var attributesLifeSelection     = [ /*'lifeId',*/      'dictionarySignalPathwayI
 // Remove fields from metabolism.Life: eegHash, eegExpiration, deletedAt
 var lifeAttributes = [ 'lifeId', 'phone', 'phoneVerified', 'email', 'emailVerified', 'receiptEmail', 'receiptEmailVerified', 'referralCode', 'givenName', 'middleName', 'familyName', 'species', 'sex', 'genomeHash', 'countryCode', 'createdAt', 'updatedAt' ];
 
-// Remove fields from metabolism.Cell: verified, createdAt, updatedAt, deletedAt
-var includeCell = { model: metabolism.Cell, attributes: [ 'cellId', 'name', 'type', 'website', 'countryCode' ] };
+// Remove fields from metabolism.Brainwave: verified, createdAt, updatedAt, deletedAt
+var includeBrainwave = { model: metabolism.Brainwave, attributes: [ 'brainwaveId', 'name', 'type', 'website', 'countryCode' ] };
 
-// Remove fields from metabolism.CellInstance: createdAt, updatedAt, deletedAt, cellId
-var includeInstance = { model: metabolism.CellInstance, attributes: [ 'instanceId', 'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'cellType', 'countryCode', 'fieldId' ] };
+// Remove fields from metabolism.BrainwaveInstance: createdAt, updatedAt, deletedAt, brainwaveId
+var includeInstance = { model: metabolism.BrainwaveInstance, attributes: [ 'instanceId', 'major', 'constructiveInterference', 'destructiveInterference', 'name', 'website', 'brainwaveType', 'countryCode', 'fieldId' ] };
 
 // Remove fields from metabolism.Service: supportEmail, supportEmailVerified, supportWebsite, supportVersion
 var includeService = { model: metabolism.Service, attributes: [ 'serviceId', 'serviceType', 'serviceName', 'companyName', 'website', 'countryCode' ] };
 
 var includeAddress           = { model: metabolism.Address,           as: 'Addresses',       attributes: attributesAddress };
 //  includeCharge            = { model: metabolism.Charge,            as: 'Charges',         attributes: attributesCharge };
-//  includeCellCheckin       = { model: metabolism.CellCheckin,       as: 'Checkins',        attributes: attributesCellCheckin };
-var includeCellStakeholder   = { model: metabolism.CellStakeholder,   as: 'CellStakeholder', attributes: attributesCellStakeholder };
+//  includeBrainwaveCheckin       = { model: metabolism.BrainwaveCheckin,       as: 'Checkins',        attributes: attributesBrainwaveCheckin };
+var includeBrainwaveStakeholder   = { model: metabolism.BrainwaveStakeholder,   as: 'BrainwaveStakeholder', attributes: attributesBrainwaveStakeholder };
 var includePhone             = { model: metabolism.Phone,             as: 'Phones',          attributes: attributesPhone };
 var includeServiceStakeholder   = { model: metabolism.ServiceStakeholder,   as: 'ServiceStakeholder', attributes: attributesServiceStakeholder };
 var includeServiceSignalPathway = { model: metabolism.ServiceSignalPathway, as: 'SignalPathways',  attributes: attributesServiceSignalPathway };
@@ -145,8 +145,8 @@ var includeLifeDevice        = { model: metabolism.LifeDevice,        as: 'Devic
 //  includeLifeVerification  = { model: metabolism.LifeVerification,  as: 'Verifications',   attributes: attributesLifeVerification };
 var includeLifeSelection     = { model: metabolism.LifeSelection,     as: 'Selections',      attributes: attributesLifeSelection };
 
-//  lifeIncludesAll  = [ includeAddress, includeCharge, includeCellCheckin, includeCellStakeholder, includePhone, includeServiceStakeholder, includeServiceSignalPathway, includeLifeDevice, includeLifeVerification, includeLifeSelection ];
-var lifeIncludesLife = [ includeAddress, includeCellStakeholder, includePhone, includeServiceStakeholder, includeServiceSignalPathway, includeLifeDevice, includeLifeSelection ];
+//  lifeIncludesAll  = [ includeAddress, includeCharge, includeBrainwaveCheckin, includeBrainwaveStakeholder, includePhone, includeServiceStakeholder, includeServiceSignalPathway, includeLifeDevice, includeLifeVerification, includeLifeSelection ];
+var lifeIncludesLife = [ includeAddress, includeBrainwaveStakeholder, includePhone, includeServiceStakeholder, includeServiceSignalPathway, includeLifeDevice, includeLifeSelection ];
 
 // -----------------------------------------------------------------------------
 // GET ROUTES
@@ -240,10 +240,10 @@ router.get('/:id/media', function(req, res) {
     sendLifeMedia(res, lifeId);
 });
 
-// /cell/:id/media/:type (all supported types)
-// --- retrieve cell media (logo) for cell (:id)
+// /brainwave/:id/media/:type (all supported types)
+// --- retrieve brainwave media (logo) for brainwave (:id)
 router.get('/:id/media/:type', function(req, res) {
-    debug('[GET] /cell/:id/media/:type');
+    debug('[GET] /brainwave/:id/media/:type');
     var lifeId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, true, false, res.locals.lifePacket))
@@ -448,20 +448,20 @@ router.get('/:id/signalPathwayForService/:serviceId', function(req, res) {
         });
 });
 
-// /life/:id/cell/stakeholder
-// --- retrieve array of cell stakeholdering for life (:id)
-router.get('/:id/cell/stakeholder', function(req, res) {
-    debug('[GET] /life/:id/cell/stakeholder');
+// /life/:id/brainwave/stakeholder
+// --- retrieve array of brainwave stakeholdering for life (:id)
+router.get('/:id/brainwave/stakeholder', function(req, res) {
+    debug('[GET] /life/:id/brainwave/stakeholder');
     var lifeId = req.params.id;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellStakeholder
+    metabolism.BrainwaveStakeholder
         .findAll({
             where: {lifeId: lifeId},
-            include: [ includeCell, includeInstance ],
-            attributes: attributesCellStakeholder
+            include: [ includeBrainwave, includeInstance ],
+            attributes: attributesBrainwaveStakeholder
         })
         .then(function(stakeholderMembers) {
             res.status(200).send(Blockages.respMsg(res, true, stakeholderMembers));
@@ -471,23 +471,23 @@ router.get('/:id/cell/stakeholder', function(req, res) {
         });
 });
 
-// /life/:id/cell/stakeholderMember/:stakeholderId
-// --- retrieve immunity info on cell stakeholder member (:stakeholderId) for life (:id)
-router.get('/:id/cell/stakeholderMember/:stakeholderId', function(req, res) {
-    debug('[GET] /life/:id/cell/stakeholderMember/:stakeholderId');
+// /life/:id/brainwave/stakeholderMember/:stakeholderId
+// --- retrieve immunity info on brainwave stakeholder member (:stakeholderId) for life (:id)
+router.get('/:id/brainwave/stakeholderMember/:stakeholderId', function(req, res) {
+    debug('[GET] /life/:id/brainwave/stakeholderMember/:stakeholderId');
     var lifeId        = req.params.id;
     var stakeholderId = req.params.stakeholderId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    metabolism.CellStakeholder
+    metabolism.BrainwaveStakeholder
         .find({
             where: {
                 stakeholderId: stakeholderId,
                 lifeId: lifeId
             },
-            attributes: attributesCellStakeholder
+            attributes: attributesBrainwaveStakeholder
         })
         .then(function(stakeholderMember) {
             if (!stakeholderMember)
@@ -578,21 +578,21 @@ router.get('/:id/signals', function(req, res) {
         });
 });
 
-var cellSignal = function(signal) {
+var brainwaveSignal = function(signal) {
     return metabolism.sequelize.Promise.all([
-        metabolism.Cell
-            .find({ where: {cellId: signal.cellId}, /* attributes: defaults */ }),
-        metabolism.CellGraph[signal.cellId.toString()].CycleLife
+        metabolism.Brainwave
+            .find({ where: {brainwaveId: signal.brainwaveId}, /* attributes: defaults */ }),
+        metabolism.BrainwaveGraph[signal.brainwaveId.toString()].CycleLife
             .find({ where: {cycleLifeId: signal.cycleLifeId}, /* attributes: defaults */ })
         ])
-        .spread(function(cell, cycleLife) {
-            signal.Cell      = cell;
+        .spread(function(brainwave, cycleLife) {
+            signal.Brainwave      = brainwave;
             signal.CycleLife = cycleLife;
 
             return metabolism.sequelize.Promise.all([
                 metabolism.Service
                     .find({ where: {serviceId: cycleLife.signalingServiceId}, /* attributes: defaults */ }),
-                metabolism.CellGraph[signal.cellId.toString()].Cycle
+                metabolism.BrainwaveGraph[signal.brainwaveId.toString()].Cycle
                     .find({ where: {cycleId: cycleLife.cycleId}, /* attributes: defaults */ })
                 ]);
         })
@@ -600,7 +600,7 @@ var cellSignal = function(signal) {
             signal.Service = service;
             signal.Cycle = cycle;
 
-            return metabolism.CellInstance
+            return metabolism.BrainwaveInstance
                 .find({ where: {instanceId: cycle.instanceId}, /* attributes: defaults */ });
         })
         .then(function(instance) {
@@ -645,18 +645,18 @@ router.get('/:id/signal/:signalId', function(req, res) {
 
             this.signal = signal;
 
-            if (signal.cellId != null)
-                return cellSignal(this.signal);
+            if (signal.brainwaveId != null)
+                return brainwaveSignal(this.signal);
             else
                 return lifeSignal(this.signal);
         })
         .then(function() {
             var signalJSON = this.signal.get();
 
-            if (this.signal.cellId != null) {
+            if (this.signal.brainwaveId != null) {
                 signalJSON.Cycle     = this.signal.Cycle.get();
                 signalJSON.CycleLife = this.signal.CycleLife.get();
-                signalJSON.Cell      = this.signal.Cell.get();
+                signalJSON.Brainwave      = this.signal.Brainwave.get();
                 signalJSON.Instance  = this.signal.Instance.get();
             }
             else {
@@ -673,18 +673,18 @@ router.get('/:id/signal/:signalId', function(req, res) {
         });
 });
 
-// Associate a life and cell/instance together in active access token
-var associateWithCell = function(res, tokenId, lifeId, cellId, instanceId) {
+// Associate a life and brainwave/instance together in active access token
+var associateWithBrainwave = function(res, tokenId, lifeId, brainwaveId, instanceId) {
 
     metabolism.sequelize.Promise.all([
-        metabolism.CellStakeholder
+        metabolism.BrainwaveStakeholder
             .find({
                 where: {
                     lifeId: lifeId,
-                    cellId: cellId,
+                    brainwaveId: brainwaveId,
                     instanceId: instanceId
                 },
-                attributes: attributesCellStakeholder
+                attributes: attributesBrainwaveStakeholder
             }),
         metabolism.Token
             .find({
@@ -695,24 +695,24 @@ var associateWithCell = function(res, tokenId, lifeId, cellId, instanceId) {
     .spread(function(stakeholderMember, token) {
         // If stakeholder record does not exist, pass back error
         if (!stakeholderMember)
-            throw new Blockages.NotFoundError('Cell stakeholder member not found');
+            throw new Blockages.NotFoundError('Brainwave stakeholder member not found');
         // If token is already associated with a service, pass back error
         else if (token.serviceStakeholderId !== null)
             throw new Blockages.ConflictError('Token occupied by service stakeholder member');
         // If stakeholderMember is for a specific instance, retrieve instance information
         else if (stakeholderMember.instanceId !== null) {
             return metabolism.sequelize.Promise.all([
-                token.setCellStakeholder(stakeholderMember),
-                metabolism.CellInstance.find({ where: {cellId: stakeholderMember.cellId, instanceId: instanceId}, include: metabolism.Cell}),
+                token.setBrainwaveStakeholder(stakeholderMember),
+                metabolism.BrainwaveInstance.find({ where: {brainwaveId: stakeholderMember.brainwaveId, instanceId: instanceId}, include: metabolism.Brainwave}),
                 metabolism.sequelize.Promise.resolve(function() {return 'Instance'; })
                 ]);
         }
-        // Otherwise, retrieve signaling cell information
+        // Otherwise, retrieve signaling brainwave information
         else {
             return metabolism.sequelize.Promise.all([
-                token.setCellStakeholder(stakeholderMember),
-                metabolism.Cell.find({ where: {cellId: stakeholderMember.cellId} }),
-                metabolism.sequelize.Promise.resolve(function() {return 'Cell'; })
+                token.setBrainwaveStakeholder(stakeholderMember),
+                metabolism.Brainwave.find({ where: {brainwaveId: stakeholderMember.brainwaveId} }),
+                metabolism.sequelize.Promise.resolve(function() {return 'Brainwave'; })
                 ]);
         }
     })
@@ -729,33 +729,33 @@ var associateWithCell = function(res, tokenId, lifeId, cellId, instanceId) {
     });
 };
 
-// /life/:id/token/associate/cell/:cellId
-// --- Associate the cell (:cellId) with the life (:id) in current token
-router.get('/:id/token/associate/cell/:cellId', function(req, res) {
-    debug('[GET] /life/:id/token/associate/cell/:cellId');
+// /life/:id/token/associate/brainwave/:brainwaveId
+// --- Associate the brainwave (:brainwaveId) with the life (:id) in current token
+router.get('/:id/token/associate/brainwave/:brainwaveId', function(req, res) {
+    debug('[GET] /life/:id/token/associate/brainwave/:brainwaveId');
     var lifeId  = req.params.id;
-    var cellId  = req.params.cellId;
+    var brainwaveId  = req.params.brainwaveId;
     var tokenId = res.locals.lifePacket.tokenId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    associateWithCell(res, tokenId, lifeId, cellId, null);
+    associateWithBrainwave(res, tokenId, lifeId, brainwaveId, null);
 });
 
-// /life/:id/token/associate/cell/:cellId/instance/:instanceId
-// --- Associate the instance (:instanceId) of cell (:cellId) with the life (:id) in current token
-router.get('/:id/token/associate/cell/:cellId/instance/:instanceId', function(req, res) {
-    debug('[GET] /life/:id/token/associate/cell/:cellId/instance/:instanceId');
+// /life/:id/token/associate/brainwave/:brainwaveId/instance/:instanceId
+// --- Associate the instance (:instanceId) of brainwave (:brainwaveId) with the life (:id) in current token
+router.get('/:id/token/associate/brainwave/:brainwaveId/instance/:instanceId', function(req, res) {
+    debug('[GET] /life/:id/token/associate/brainwave/:brainwaveId/instance/:instanceId');
     var lifeId     = req.params.id;
-    var cellId     = req.params.cellId;
+    var brainwaveId     = req.params.brainwaveId;
     var instanceId = req.params.instanceId;
     var tokenId    = res.locals.lifePacket.tokenId;
 
     if (!Immunities.verifyNoRejectionFromLife(lifeId, false, false, false, res.locals.lifePacket))
         return res.status(403).send(Blockages.respMsg(res, false, 'Access is restricted'));
 
-    associateWithCell(res, tokenId, lifeId, cellId, instanceId);
+    associateWithBrainwave(res, tokenId, lifeId, brainwaveId, instanceId);
 });
 
 // /life/:id/token/associate/service/:serviceId
@@ -788,9 +788,9 @@ router.get('/:id/token/associate/service/:serviceId', function(req, res) {
         // If stakeholder record does not exist, pass back error
         if (!stakeholderMember)
             throw new Blockages.NotFoundError('Service stakeholder member not found');
-        // If token is already associated with a cell, pass back error
-        else if (token.cellStakeholderId !== null)
-            throw new Blockages.ConflictError('Token occupied by cell stakeholder member');
+        // If token is already associated with a brainwave, pass back error
+        else if (token.brainwaveStakeholderId !== null)
+            throw new Blockages.ConflictError('Token occupied by brainwave stakeholder member');
 
         // Otherwise, retrieve signaling service information
         return metabolism.sequelize.Promise.all([
@@ -810,7 +810,7 @@ router.get('/:id/token/associate/service/:serviceId', function(req, res) {
 });
 
 // /life/:id/token/dissociate
-// --- Dissociate the current cell or service from the life (:id) in current token
+// --- Dissociate the current brainwave or service from the life (:id) in current token
 router.get('/:id/token/dissociate', function(req, res) {
     debug('[GET] /life/:id/token/dissociate');
     var lifeId  = req.params.id;
@@ -826,17 +826,17 @@ router.get('/:id/token/dissociate', function(req, res) {
         })
         .then(function(token) {
             // Check for any invalid states of the token
-            if (token.cellStakeholderId === token.serviceStakeholderId) {
-                if (token.cellStakeholderId === null)
+            if (token.brainwaveStakeholderId === token.serviceStakeholderId) {
+                if (token.brainwaveStakeholderId === null)
                     throw new Blockages.NotFoundError('Stakeholder member association not found');
                 else
                     throw new Blockages.BadRequestError('Bad token, multiple stakeholder member assocations');
             }
-            // If cell associated, remove association
-            else if (token.cellStakeholderId !== null) {
+            // If brainwave associated, remove association
+            else if (token.brainwaveStakeholderId !== null) {
                 return metabolism.sequelize.Promise.all([
-                    token.setCellStakeholder(null),
-                    metabolism.CellStakeholder.findAll({ where: {lifeId: lifeId} /*attributes: default*/ })
+                    token.setBrainwaveStakeholder(null),
+                    metabolism.BrainwaveStakeholder.findAll({ where: {lifeId: lifeId} /*attributes: default*/ })
                 ]);
             }
             // If service associated, remove association
@@ -1041,10 +1041,10 @@ router.put('/:id/address/:addressId', function(req, res) {
             address.region            = validate.trim(validate.toString(req.body.region));
             address.postalCode        = validate.trim(validate.toString(req.body.postalCode));
           /*address.lifeId:           not accessible for change */
-          /*address.cellId:           not accessible for change */
+          /*address.brainwaveId:           not accessible for change */
           /*address.instanceId:       not accessible for change */
           /*address.serviceId:           not accessible for change */
-          /*address.chargeCellId:     not accessible for change */
+          /*address.chargeBrainwaveId:     not accessible for change */
           /*address.chargeInstanceId: not accessible for change */
 
             return address.save();
@@ -1087,10 +1087,10 @@ router.put('/:id/phone/:phoneId', function(req, res) {
             phone.number            = validate.trim(validate.toString(req.body.number));
             phone.extension         = metabolism.Phone.extractExtension(metabolism, req.body.extension);
           /*phone.lifeId:           not accessible for change */
-          /*phone.cellId:           not accessible for change */
+          /*phone.brainwaveId:           not accessible for change */
           /*phone.instanceId:       not accessible for change */
           /*phone.serviceId:           not accessible for change */
-          /*phone.chargeCellId:     not accessible for change */
+          /*phone.chargeBrainwaveId:     not accessible for change */
           /*phone.chargeInstanceId: not accessible for change */
 
             return phone.save();
@@ -1261,10 +1261,10 @@ router.post('/:id/address', function(req, res) {
                 region:           validate.trim(validate.toString(req.body.region)),
                 postalCode:       validate.trim(validate.toString(req.body.postalCode)),
                 lifeId:           life.lifeId
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
               /*instanceId:       null,*/
               /*serviceId:           null,*/
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
               /*chargeInstanceId: null*/
             };
 
@@ -1305,10 +1305,10 @@ router.post('/:id/phone', function(req, res) {
                 number:           validate.trim(validate.toString(req.body.number)),
                 extension:        metabolism.Phone.extractExtension(metabolism, req.body.extension),
                 lifeId:           life.lifeId
-              /*cellId:           null,*/
+              /*brainwaveId:           null,*/
               /*instanceId:       null,*/
               /*serviceId:           null,*/
-              /*chargeCellId:     null,*/
+              /*chargeBrainwaveId:     null,*/
               /*chargeInstanceId: null*/
             };
 

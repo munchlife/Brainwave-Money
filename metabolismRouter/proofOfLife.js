@@ -38,8 +38,8 @@ var router = module.exports = express.Router();
  * @param {object} res - The express response object
  * @param {function} next - The express next or continuation function
  */
-var authenticateGenome = function(req, res, next) {
-    debug('#authenticateGenome()');
+var authenticateBrainSignature = function(req, res, next) {
+    debug('#authenticateBrainSignature()');
     lifeProof.authenticate('local-proofOfLife', {session: false}, function(error, life, info) {
         if (error)
             return res.status(500).send(Blockages.respMsg(res, false, error));
@@ -58,9 +58,9 @@ var authenticateGenome = function(req, res, next) {
  * @param {object} res - The express response object
  * @param {function} next - The express next or continuation function
  */
-var authenticateEeg = function(req, res, next) {
-    debug('#authenticateEeg()');
-    lifeProof.authenticate('local-eeg', {session: false}, function(error, token, info) {
+var authenticatePasscode = function(req, res, next) {
+    debug('#authenticatePasscode()');
+    lifeProof.authenticate('local-passcode', {session: false}, function(error, token, info) {
         if (error)
             return res.status(500).send(Blockages.respMsg(res, false, error));
         if (!token)
@@ -228,9 +228,9 @@ router.post('/life/registration', function(req, res) {
               /*emailVerified:        false,*/
                 receiptEmail:         metabolism.Life.extractEmail(metabolism, req.body.receiptEmail),
               /*receiptEmailVerified: false,*/
-                eeg:                  '',
-                eegExpiration:        new Date(),
-                genome:               req.files.genome,
+                passcode:             '',
+                passcodeExpiration:   new Date(),
+                brainSignature:       req.files.brainSignature,
                 species:              validate.trim(validate.toString(req.body.species)),
                 sex:                  validate.trim(validate.toString(req.body.sex)),
                 referralCode:         RandomString.servicerate(7),
@@ -487,8 +487,8 @@ router.post('/verify/email/:code', authenticateGenome, function(req, res) {
  *  successful proofOfLife. This token must then be verified using the eeg also
  *  produced in the execution of this endpoint.
  *
- * @apiParam (body) {String} identifer <desc>
- * @apiParam (body) {String} genome    <desc>
+ * @apiParam (body) {String} identifer         <desc>
+ * @apiParam (body) {String} brainSignature    <desc>
  *
  * @apiSuccess (200) {String} token <desc>
  *
@@ -523,7 +523,7 @@ function computeAlphaBandPower(eegData) {
     alphaBand.forward(eegData);
     // Compute power in alpha band (e.g., 8-13 Hz)
     return alphaBand.spectrum
-        .slice(8, 13)
+        .slice(7.83)
         .map(function(freq) { return Math.pow(freq.re, 2) + Math.pow(freq.im, 2); }) // Power = amplitude squared
         .reduce(function(acc, val) { return acc + val; }, 0);
 }
@@ -542,18 +542,18 @@ function trainModel(trainingData, labels) {
 }
 
 // Step 4: Authenticate user using trained model
-function authenticateUser(eegData, model) {
+function authenticateLife(eegData, model) {
     var features = extractFeatures(eegData);
     var prediction = model.predict(features);
     return prediction === 'valid';
 }
 
-// Example usage in /eeg endpoint
-router.post('/eeg', authenticateEeg, function(req, res) {
-    debug('[' + req.method + '] /eeg');
+// Example usage in /passcode endpoint
+router.post('/passcode', authenticatePasscode, function(req, res) {
+    debug('[' + req.method + '] /passcode');
 
     // Middleware only allows continuation with req.life being set properly
-    req.life.eegExpiration = new Date();
+    req.life.passcodeExpiration = new Date();
     req.life.save()
         .then(function() {
             return metabolism.Token.createAndPersistToken(req.life.lifeId, null, null);

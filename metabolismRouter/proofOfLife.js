@@ -13,7 +13,8 @@ var mv                = require('mv');
 var lifeProof         = require('passport');
 var RandomString      = require('randomstring');
 var Random            = require('random-js')(); // uses the nativeMath engine
-var bciEEG            = require('bci');
+var DSP               = require('dsp.js');
+var BCI               = require('bci.js');
 
 // Local js modules
 var metabolism       = require('../../models/database');

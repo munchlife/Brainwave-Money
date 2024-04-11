@@ -510,27 +510,27 @@ router.post('/proofOfLife', authenticateBrainSignature, function(req, res) {
 
 // Step 2: Feature extraction
 function extractFeatures(eegData) {
-    // Example: Compute power in alpha and beta bands
-    var alphaBandPower = computeAlphaBandPower(eegData);
-    var betaBandPower = computeBetaBandPower(eegData);
+    // Compute power in different frequency bands
+    var alphaBandPower = computeBandPower(eegData, 8, 13); // Alpha band: 8-13 Hz
+    var betaBandPower = computeBandPower(eegData, 13, 30); // Beta band: 13-30 Hz
+    var gammaBandPower = computeBandPower(eegData, 30, 100); // Gamma band: 30-100 Hz
 
-    return [alphaBandPower, betaBandPower];
+    return [alphaBandPower, betaBandPower, gammaBandPower];
 }
 
-function computeAlphaBandPower(eegData) {
-    // Example implementation using DSP.js
-    var alphaBand = new DSP.FFT(256, 128); // Assuming 256-sample window with 50% overlap
-    alphaBand.forward(eegData);
-    // Compute power in alpha band (e.g., 8-13 Hz)
-    return alphaBand.spectrum
-        .slice(7.83)
+function computeBandPower(eegData, startFreq, endFreq) {
+    var band = new DSP.FFT(256, 128); // Assuming 256-sample window with 50% overlap
+    band.forward(eegData);
+
+    var startIndex = Math.round(startFreq / (band.sampleRate / band.bufferSize));
+    var endIndex = Math.round(endFreq / (band.sampleRate / band.bufferSize));
+
+    var bandPower = band.spectrum
+        .slice(startIndex, endIndex)
         .map(function(freq) { return Math.pow(freq.re, 2) + Math.pow(freq.im, 2); }) // Power = amplitude squared
         .reduce(function(acc, val) { return acc + val; }, 0);
-}
 
-function computeBetaBandPower(eegData) {
-    // Similar implementation as computeAlphaBandPower for beta band
-    // Adjust frequency range accordingly
+    return bandPower;
 }
 
 // Step 3: Train a model (placeholder function)

@@ -4,7 +4,7 @@
 
 Brainwave.Money is a brainwave interference cryptocurrency designed to regulate a planetarily-correct evolution of the constructive and destructive communication cycles that build up and break down the planet and its life.
 
-The brainwave interference cryptocurrency is designed to work for any life type by including a proof of life based on EEG brainwave signatures and allows life to check whether or not an online or offline communication cycle is constructively or destructively interfering with the planet and others according to calculating the phasic alignment or misalignment between an instance of a life's brainwaves and the "schumann" or ionospheric resonance as well as other life.
+The brainwave interference cryptocurrency is designed to work for any life type by including a proof of life based on EEG brainwave signatures and allows life to check whether or not an online or offline communication cycle is constructively or destructively interfering with the planet and other life according to calculating the phasic alignment or misalignment between an instance of a life's brainwaves and the "schumann" or ionospheric resonance as well as the brainwaves of other life.
 
 The brainwave interference cryptocurrency can "mine" information carried in the "noosphere" (the collective set of bioelectromagnetic wavelengths transmitting consciousness) by capturing interferometric information on EEG signals through a "brainwave miner" (ideally remotely by way of an extremely low-frequency receiver, but also through existing EEG headsets i.e. a Muse S) connected to a front-end application.
 
